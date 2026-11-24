@@ -58,7 +58,7 @@ export function describeMeta(tool: string, meta: Meta): string {
   const k = (n: number | undefined) =>
     n === undefined ? '?' : n >= 10_000 ? `${Math.round(n / 1000)}k` : n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n)
   const key = meta.key === undefined ? '' : `; winnow_recall ${meta.key}`
-  return `winnow: hid ${meta.hidden ?? '?'} of ${meta.blocks ?? '?'} blocks of ${tool} (${k(meta.before)} to ${k(meta.after)} chars${key})`
+  return `winnow: скрыто ${meta.hidden ?? '?'} из ${meta.blocks ?? '?'} блоков ${tool} (${k(meta.before)} → ${k(meta.after)} символов${key})`
 }
 
 async function post(
@@ -74,11 +74,11 @@ async function post(
       body: JSON.stringify(payload),
     })
   } catch (err) {
-    $.ui.log(`winnow: sidecar not answering at ${url}: ${String(err)}`, { to: 'debug' })
+    $.ui.log(`winnow: sidecar не отвечает по адресу ${url}: ${String(err)}`, { to: 'debug' })
     return undefined
   }
   if (!res.ok) {
-    $.ui.log(`winnow: sidecar answered ${res.status} at ${url}`, { to: 'debug' })
+    $.ui.log(`winnow: sidecar ответил ${res.status} по адресу ${url}`, { to: 'debug' })
     return undefined
   }
   let meta: Meta | undefined
@@ -94,7 +94,7 @@ async function post(
   try {
     return { output: JSON.parse(res.text) as HookOutput, meta }
   } catch {
-    $.ui.log('winnow: sidecar sent something that is not JSON', { to: 'debug' })
+    $.ui.log('winnow: sidecar прислал не JSON', { to: 'debug' })
     return undefined
   }
 }

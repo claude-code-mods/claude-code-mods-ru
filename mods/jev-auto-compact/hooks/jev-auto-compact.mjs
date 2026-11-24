@@ -207,7 +207,7 @@ function buildHistoryEntry(msg, idx, callsByMsg, inputLimit, abridge, collapse, 
   // Collapse non-pinned messages without tool calls
   if (collapse && !pinnedIndices.has(idx) && !callsByMsg.has(idx)) {
     if (!text.trim()) return null;
-    return { i: idx, role, text: `[... ${text.length} chars omitted ...]` };
+    return { i: idx, role, text: `[... пропущено ${text.length} символов ...]` };
   }
 
   // Abridge long non-pinned text
@@ -215,7 +215,7 @@ function buildHistoryEntry(msg, idx, callsByMsg, inputLimit, abridge, collapse, 
   if (abridge && !pinnedIndices.has(idx) && text.length > ABRIDGE_TEXT_THRESHOLD) {
     displayText =
       text.substring(0, ABRIDGE_HEAD) +
-      `\n[... ${text.length - ABRIDGE_HEAD - ABRIDGE_TAIL} chars omitted ...]\n` +
+      `\n[... пропущено ${text.length - ABRIDGE_HEAD - ABRIDGE_TAIL} символов ...]\n` +
       text.substring(text.length - ABRIDGE_TAIL);
   }
 
@@ -227,7 +227,7 @@ function buildHistoryEntry(msg, idx, callsByMsg, inputLimit, abridge, collapse, 
       id: c.seqId,
       tool: c.tool,
       input: c.input.substring(0, inputLimit),
-      result: `${c.isError ? 'error' : 'ok'}, ${c.resultChars} chars (omitted)`,
+      result: `${c.isError ? 'ошибка' : 'ок'}, ${c.resultChars} символов (опущено)`,
     }));
   }
 
@@ -272,10 +272,10 @@ function fitState(rawMessages, rawCalls, goal) {
   pinnedIndices.add(0);
 
   const contextText =
-    'A coding assistant conversation is being compacted to free context. ' +
-    '`history` is the whole conversation; tool outputs are replaced by notes. ' +
-    'Each question asks whether one tool call or result still needs to stay verbatim. ' +
-    'Whatever is not kept is deleted permanently, but the assistant can re-run any tool.';
+    'Диалог с помощником по программированию сжимается, чтобы освободить контекст. ' +
+    '`history` — весь диалог; результаты инструментов заменяются краткими заметками. ' +
+    'Каждый вопрос проверяет, нужно ли сохранить вызов инструмента или его результат дословно. ' +
+    'Всё, что не сохранено, удаляется безвозвратно, но помощник может повторить любой инструмент.';
 
   // Progressive stages: [inputLimit, abridge, collapse, dropTextOnly]
   const stages = [
@@ -317,27 +317,27 @@ function questionsFor(call) {
     [`call_${seqId}`]: {
       type: 'noul',
       instructions: {
-        question: `Tool call ${seqId} (${tool}) should stay in the history: knowing this call was made, with its input, still matters for what the assistant does next.`,
+        question: `Вызов инструмента ${seqId} (${tool}) должен остаться в истории: сам факт вызова и его входные данные важны для следующих действий помощника.`,
         criteria: {
-          true: 'The call\'s input or the fact it was made is referenced, constrains, or informs later actions.',
-          false: 'The call was exploratory, superseded by a later call to the same tool on the same target, or its input is fully captured in later context.',
+          true: 'Входные данные вызова или сам факт вызова упоминаются, ограничивают или определяют последующие действия.',
+          false: 'Вызов был пробным, заменён последующим вызовом того же инструмента для того же объекта или его входные данные полностью отражены в более позднем контексте.',
         },
       },
     },
     [`result_${seqId}`]: {
       type: 'noul',
       instructions: {
-        question: `The full output of tool call ${seqId} (${tool}, ${resultChars} chars) should stay verbatim: the assistant still needs its contents and re-running the tool would not reproduce it.`,
+        question: `Полный результат вызова инструмента ${seqId} (${tool}, ${resultChars} символов) нужно сохранить дословно: помощнику всё ещё необходимо его содержимое, а повторный вызов инструмента его не воспроизведёт.`,
         criteria: {
-          true: 'The result contains information not available elsewhere: error details, file contents being modified, test output. Re-running would not reproduce it.',
-          false: 'The result is a simple acknowledgment, a file listing available from later reads, or output reproducible by re-running.',
+          true: 'Результат содержит информацию, которой нет больше нигде: подробности ошибки, содержимое изменяемого файла, вывод тестов. Повторный вызов её не восстановит.',
+          false: 'Результат — простое подтверждение, список файлов, доступный из последующих чтений, или вывод, который можно получить повторным вызовом.',
         },
       },
     },
     [`referenced_${seqId}`]: {
       type: 'noul',
       instructions: {
-        question: `The result of tool call ${seqId} (${tool}) was referenced or used in a later assistant message or tool call input.`,
+        question: `Результат вызова инструмента ${seqId} (${tool}) был упомянут или использован в более позднем сообщении помощника или во входных данных вызова инструмента.`,
       },
     },
   };
@@ -382,7 +382,7 @@ async function callJev(fetchFn, apiKey, state, questions, timeoutMs = JEV_TIMEOU
   const payload = { model: JEV_MODEL, state, questions };
   let timer;
   const timeout = new Promise((_, reject) => {
-    timer = setTimeout(() => reject(new Error('Jev request timed out')), timeoutMs);
+    timer = setTimeout(() => reject(new Error('Время ожидания запроса Jev истекло')), timeoutMs);
   });
   let response;
   try {
@@ -408,7 +408,7 @@ async function callJev(fetchFn, apiKey, state, questions, timeoutMs = JEV_TIMEOU
   }
 
   const data = JSON.parse(response.text);
-  if (!data.answers) throw new Error('Jev response missing answers');
+  if (!data.answers) throw new Error('В ответе Jev нет answers');
   return data;
 }
 
@@ -687,7 +687,7 @@ async function appendEvidence($, record) {
     await $.store.set(EVIDENCE_KEY, events);
   } catch (error) {
     // Evidence is best-effort; never let it break compaction. Say why once.
-    $.ui.log(`[jev-auto-compact] evidence not recorded (${error instanceof Error ? error.message : String(error)})`);
+    $.ui.log(`[jev-auto-compact] данные не записаны (${error instanceof Error ? error.message : String(error)})`);
   }
 }
 
@@ -755,8 +755,8 @@ export const register = (on, options) => {
         ((await $.settings.read())?.env || {})['TYPESAFE_API_KEY'];
 
       if (!apiKey) {
-        $.ui.log('[jev-auto-compact] no TYPESAFE_API_KEY, falling back to built-in');
-        await appendEvidence($, { ...base, engine: 'builtin', note: 'no api key' });
+        $.ui.log('[jev-auto-compact] TYPESAFE_API_KEY не задан, используется встроенный механизм');
+        await appendEvidence($, { ...base, engine: 'builtin', note: 'нет ключа API' });
         return next(event);
       }
 
@@ -794,9 +794,9 @@ export const register = (on, options) => {
           // Leave the conversation as it is: never hand a self-triggered
           // compaction to the built-in summarizer (minutes of LLM time).
           const reason = stats.overBudget
-            ? 'too large for one Jev pass'
-            : `nothing to prune (${pct(stats.ratio)} < ${pct(MIN_REDUCTION_RATIO)} min)`;
-          $.ui.log(`[jev-auto-compact] skipped: ${reason}`);
+            ? 'слишком много для одного прохода Jev'
+            : `нечего удалять (${pct(stats.ratio)} < минимум ${pct(MIN_REDUCTION_RATIO)})`;
+          $.ui.log(`[jev-auto-compact] пропущено: ${reason}`);
           await appendEvidence($, { ...base, ...statsRecord, engine: 'skipped', note: reason });
           skippedAt = { messages: event.messages.length, percent: usage.percent };
           return { skip: `jev-auto-compact: ${reason}` };
@@ -805,21 +805,21 @@ export const register = (on, options) => {
         // enough, so the built-in summarizer runs.
         const reason = stats.overBudget
           ? 'too large for one Jev pass'
-          : `${pct(stats.ratio)} < ${pct(MIN_REDUCTION_RATIO)} min`;
-        $.ui.log(`[jev-auto-compact] fallback to built-in (${reason})`);
+          : `${pct(stats.ratio)} < минимум ${pct(MIN_REDUCTION_RATIO)}`;
+        $.ui.log(`[jev-auto-compact] возврат к встроенному механизму (${reason})`);
         await appendEvidence($, { ...base, ...statsRecord, engine: 'builtin', note: reason });
         return next(event);
       }
 
       $.ui.log(
-        `[jev-auto-compact] ${result.messages.length}/${event.messages.length} msgs, ` +
-        `${pct(stats.ratio)} reduction, ` +
-        `${stats.droppedCall} dropped, ${stats.droppedResult} truncated, ` +
-        `${stats.pinned} pinned, ${stats.prefiltered} prefiltered ` +
-        `(${stats.latencyMs}ms, ${stats.jevJudged} Jev-judged, ${stats.jevCalls} API calls` +
-        (stats.errorBatches ? `, ${stats.errorBatches} failed` : '') +
-        `, redactions: ${stats.redactions ?? 0}` +
-        (usage.tokens ? `, ctx ${usage.tokens} tokens before)` : ')')
+        `[jev-auto-compact] ${result.messages.length}/${event.messages.length} сообщений, ` +
+        `сокращение ${pct(stats.ratio)}, ` +
+        `${stats.droppedCall} удалено, ${stats.droppedResult} усечено, ` +
+        `${stats.pinned} закреплено, ${stats.prefiltered} отфильтровано ` +
+        `(${stats.latencyMs} мс, ${stats.jevJudged} оценено Jev, ${stats.jevCalls} вызовов API` +
+        (stats.errorBatches ? `, ${stats.errorBatches} с ошибкой` : '') +
+        `, сокрытий: ${stats.redactions ?? 0}` +
+        (usage.tokens ? `, контекст до: ${usage.tokens} токенов)` : ')')
       );
       await appendEvidence($, { ...base, ...statsRecord, engine: 'jev' });
       skippedAt = null;
@@ -829,7 +829,7 @@ export const register = (on, options) => {
       return compacted;
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      $.ui.log(`[jev-auto-compact] fallback to built-in (${message})`);
+      $.ui.log(`[jev-auto-compact] возврат к встроенному механизму (${message})`);
       await appendEvidence($, { ...base, engine: 'error', note: message.substring(0, 200) });
       return next(event);
     }
@@ -867,11 +867,11 @@ export const register = (on, options) => {
         const roseBy = typeof skippedAt.percent === 'number' ? usage.percent - skippedAt.percent : Infinity;
         if (grewBy < SKIP_RETRY_MIN_NEW_MESSAGES && roseBy < SKIP_RETRY_MIN_PERCENT) return next(event);
       }
-      $.ui.log(`[jev-auto-compact] context at ${usage.percent.toFixed(0)}% >= ${COMPACT_AT_PERCENT}%, compacting`);
+      $.ui.log(`[jev-auto-compact] контекст заполнен на ${usage.percent.toFixed(0)}% >= ${COMPACT_AT_PERCENT}%, сжатие`);
       await $.session.compact();
     } catch (error) {
       $.ui.log(
-        `[jev-auto-compact] auto-compact skipped (${error instanceof Error ? error.message : String(error)})`
+        `[jev-auto-compact] автоматическое сжатие пропущено (${error instanceof Error ? error.message : String(error)})`
       );
     } finally {
       compacting = false;

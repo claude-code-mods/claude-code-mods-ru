@@ -22,27 +22,27 @@ export const ROUTE_TIMEOUT_MS = 2500
 export const ROUTE_QUESTIONS = {
   tier: {
     type: 'choice' as const,
-    instructions: 'Classify the coding task.',
+    instructions: 'Классифицируйте задачу по программированию.',
     criteria: {
-      mechanical: 'rename, format, typo, boilerplate, one-line fix',
-      standard: 'normal feature or bug with local scope',
-      hard: 'architecture, concurrency, security, wide blast radius',
+      mechanical: 'переименование, форматирование, опечатка, шаблонный код, исправление в одну строку',
+      standard: 'обычная функция или ошибка с локальной областью действия',
+      hard: 'архитектура, параллельность, безопасность, широкий круг последствий',
     },
   },
   effort: {
     type: 'choice' as const,
-    instructions: 'Reasoning effort this turn needs. Pick the cheapest that still solves the task.',
+    instructions: 'Усилия по рассуждению, необходимые в этом ходе. Выберите минимальные, с которыми задача всё ещё решается.',
     criteria: {
-      low: 'obvious, mechanical, follow an existing pattern; extra thinking is waste',
-      medium: 'normal implementation with local scope',
-      high: 'must think carefully; many tradeoffs or failure modes',
-      xhigh: 'deep architecture, concurrency, security, or wide blast radius; cheaper effort will miss it',
+      low: 'очевидное, механическое, по существующему шаблону; лишние рассуждения напрасны',
+      medium: 'обычная реализация с локальной областью действия',
+      high: 'нужно тщательно подумать; много компромиссов и вариантов отказа',
+      xhigh: 'сложная архитектура, параллельность, безопасность или широкий круг последствий; при меньших усилиях это упускается',
     },
   },
   risk: {
     type: 'noul' as const,
     instructions:
-      'Probability this change can cause data loss, a security issue, or a production outage.',
+      'Вероятность того, что это изменение приведёт к потере данных, проблеме безопасности или сбою в продакшене.',
   },
 }
 

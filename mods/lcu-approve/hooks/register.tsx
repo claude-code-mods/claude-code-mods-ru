@@ -13,8 +13,8 @@ import type { Approval, AppsState } from './views'
 const SERVER = 'lcu'
 const REQUEST_TOOL = 'approval_request'
 const CHOICE_TOOL = 'approval_choice'
-const ASK_HEADER = 'Использование компьютера'
-const APPROVAL_TITLE = 'Использование компьютера approval'
+const ASK_HEADER = 'Управление компьютером'
+const APPROVAL_TITLE = 'Запрос на управление компьютером'
 const APPS_COMMAND = 'computer-use-apps'
 const APPS_PANE = 'lcu-approved-apps'
 
@@ -133,7 +133,7 @@ export const register: Register = on => {
     const name = e.value.trim()
     if (e.kind === 'submit' && name) {
       await update($, apps, state => ({ ...state, nonce: state.nonce + 1 }))
-      await runLcu($, ['allow', name], `Разрешение ${name}. Подтвердите с помощью Touch ID или пароля...`)
+      await runLcu($, ['allow', name], `Разрешение ${name}. Подтвердите через Touch ID или пароль…`)
     }
     return { element: e.element, value: e.value }
   })
@@ -154,7 +154,7 @@ export const register: Register = on => {
   on('session.start', async ($, e, next) => {
     await $.command.register({
       name: APPS_COMMAND,
-      description: 'Show the apps Использование компьютера may control, and allow or revoke them',
+      description: 'Показать приложения, которыми может управлять функция управления компьютером, и разрешить или отозвать доступ',
     })
     const result = await next(e)
     // An update notice from the cache `lcu update --notice` keeps: the person gets one toast. The model never
@@ -315,7 +315,7 @@ async function sessionGrants($: any): Promise<SessionRow[]> {
 
 export async function loadApps($: any, lcu: string): Promise<AppsData> {
   const run = await $.process.run([lcu, 'apps', '--json'], { timeoutMs: 20000 })
-  if (!ok(run)) throw new Error(firstLine(run.stderr) || `Приложения lcu вышли из ${run.exitCode}`)
+  if (!ok(run)) throw new Error(firstLine(run.stderr) || `Команда lcu apps завершилась с кодом ${run.exitCode}`)
   let always: AppRow[]
   try {
     always = JSON.parse(run.stdout).apps
@@ -381,7 +381,7 @@ async function openApps($: any): Promise<void> {
   const state = await read($, apps)
   await $.ui.open({
     id: APPS_PANE,
-    title: 'Одобренные приложения',
+    title: 'Разрешённые приложения',
     focus: true,
     closeOnEscape: true,
     rows: appsRows(state),
@@ -395,7 +395,7 @@ async function refresh($: any): Promise<void> {
     const where = tried.length ? tried.join(' or ') : '~/.local/share/lcu/current/bin/lcu'
     await update($, apps, state => ({
       ...state, isLoaded: true, always: [], session: [],
-      unavailable: `Команда lcu не найдена в ${where}. Запустите команду lcu setup --agent claude-code еще раз.`,
+      unavailable: `Команда lcu не найдена по пути ${where}. Повторите lcu setup --agent claude-code.`,
     }))
     return
   }
@@ -403,7 +403,7 @@ async function refresh($: any): Promise<void> {
     const data = await loadApps($, path)
     await update($, apps, state => ({ ...state, ...data, isLoaded: true, unavailable: undefined }))
   } catch (error) {
-    const text = `Не удалось вывести список приложений: ${(error as Error).message}`
+    const text = `Не удалось получить список приложений: ${(error as Error).message}`
     await update($, apps, state => ({
       ...state, isLoaded: true, unavailable: state.always.length || state.session.length ? undefined : text,
       notice: { tone: 'error', text },
@@ -419,7 +419,7 @@ async function pressApps($: any, action: string): Promise<void> {
   }
   if (action.startsWith('revoke:')) {
     const bundleId = action.slice('revoke:'.length)
-    await runLcu($, ['revoke', bundleId], `Отмена ${bundleId}. Подтвердите с помощью Touch ID или пароля...`)
+    await runLcu($, ['revoke', bundleId], `Отзыв доступа для ${bundleId}. Подтвердите через Touch ID или пароль…`)
   }
 }
 
@@ -436,8 +436,8 @@ async function runLcu($: any, args: string[], working: string): Promise<void> {
   try {
     const run = await $.process.run([path, 'apps', ...args], { timeoutMs: 180000 })
     notice = run.exitCode === 0
-      ? { tone: 'ok', text: firstLine(run.stdout) || 'Done.' }
-      : { tone: 'error', text: firstLine(run.stderr).replace(/^lcu apps: /, '') || `Приложения lcu вышли из ${run.exitCode}` }
+      ? { tone: 'ok', text: firstLine(run.stdout) || 'Готово.' }
+      : { tone: 'error', text: firstLine(run.stderr).replace(/^lcu apps: /, '') || `Команда lcu apps завершилась с кодом ${run.exitCode}` }
   } catch (error) {
     notice = { tone: 'error', text: `Не удалось запустить LCU: ${(error as Error).message}` }
   }
@@ -462,14 +462,14 @@ async function record($: any, id: string, choice: Choice): Promise<boolean> {
 // A failure the person should see, and the debug log keeps.
 function report($: any, text: string): void {
   $.ui.log(`lcu-approve: ${text}`, { to: 'debug' })
-  $.ui.toast(`Использование компьютера approval: ${text}`)
+  $.ui.toast(`Управление компьютером: ${text}`)
 }
 
 const CONFIRMATION: Record<Choice, (name: string) => string> = {
-  session: name => `${name} allowed for this conversation`,
-  always: name => `${name} always allowed`,
-  deny: name => `${name} denied`,
-  cancel: name => `Одобрение для ${name} отклонено`,
+  session: name => `${name} разрешено для этого разговора`,
+  always: name => `${name} разрешено всегда`,
+  deny: name => `${name} запрещено`,
+  cancel: name => `Запрос для ${name} отклонён`,
 }
 
 // Record the person's choice, confirm it, then take the pane down. A refused record means the request ended.
@@ -523,8 +523,8 @@ const DISMISSED = '[User dismissed'
 
 // The question: the app, the risk when high. The desktop app draws only this text and the option labels.
 function askQuestion(approval: Approval): string {
-  const sentence = `Использование компьютера will be able to see and control ${approval.label} (${approval.app}).`
-  if (approval.riskLevel !== 'high') return `${sentence} Allow it?`
+  const sentence = `Управление компьютером сможет видеть и контролировать ${approval.label} (${approval.app}).`
+  if (approval.riskLevel !== 'high') return `${sentence} Разрешить?`
   const warning = approval.warning ? ` ${plainWarning(approval.warning)}` : ''
   return `\u26a0\ufe0f Высокий риск \u2014 ${sentence}${warning} Разрешить?`
 }

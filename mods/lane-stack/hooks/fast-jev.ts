@@ -177,7 +177,7 @@ export async function compactSession(
   config: HookConfig,
   fetchFn: HookFetch,
 ): Promise<SessionCompaction> {
-  if (!config.apiKey) throw new Error('no Jev key: set OPENLUX_API_KEY or TYPESAFE_API_KEY');
+  if (!config.apiKey) throw new Error('нет ключа Jev: задайте OPENLUX_API_KEY или TYPESAFE_API_KEY');
   const asker = jevAsker(fetchFn, config.apiKey, config.model, config.provider);
   const result = await compact(messages, asker, config);
   return { result, messages: toSessionMessages(messages, result.messages) };
@@ -190,14 +190,14 @@ function percent(ratio: number): string {
 export function summarize(result: CompactResult): string {
   const { stats } = result;
   const parts = [
-    stats.kept > 0 ? `${stats.kept} kept` : '',
-    stats.resultsDropped > 0 ? `${stats.resultsDropped} results truncated` : '',
-    stats.callsDropped > 0 ? `${stats.callsDropped} call_dropped` : '',
-    stats.pinned > 0 ? `${stats.pinned} pinned` : '',
+    stats.kept > 0 ? `сохранено: ${stats.kept}` : '',
+    stats.resultsDropped > 0 ? `усечено результатов: ${stats.resultsDropped}` : '',
+    stats.callsDropped > 0 ? `удалено вызовов: ${stats.callsDropped}` : '',
+    stats.pinned > 0 ? `закреплено: ${stats.pinned}` : '',
   ].filter(Boolean);
-  return `${percent(reductionRatio(result))} reduction; ${
+  return `сокращение ${percent(reductionRatio(result))}; ${
     parts.join(', ') || 'вызовы инструментов отсутствуют'
-  }; state ~${stats.stateTokens} tokens (${stats.stateStage}) in ${stats.requests} request(s)`;
+  }; состояние ~${stats.stateTokens} токенов (${stats.stateStage}) за ${stats.requests} запросов`;
 }
 
 const UI_LOG_MAX_CHARS = 4096;

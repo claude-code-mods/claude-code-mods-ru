@@ -4,135 +4,135 @@
 
 <h1 align="center">Context Attachment Manager</h1>
 
-<p align="center"><b>A local plugin for image-heavy chats in Codex, Claude Code and other agents.</b><br>Earlier images stop going out with every message. The model fetches the one it needs by its ID, also after the chat is compacted.</p>
+<p align="center"><b>Локальный плагин для чатов с множеством изображений в Codex, Claude Code и других агентах.</b><br>Ранние изображения больше не отправляются с каждым сообщением. Модель получает оригинал по его идентификатору, когда он ей нужен.
 
 <p align="center">
-  <a href="https://github.com/chipfighter/context-attachment-manager/releases"><img src="https://img.shields.io/github/v/release/chipfighter/context-attachment-manager?include_prereleases" alt="Release"></a>
-  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey" alt="Platform: Windows, macOS, Linux">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT"></a>
+  <a href="https://github.com/chipfighter/context-attachment-manager/releases"><img src="https://img.shields.io/github/v/release/chipfighter/context-attachment-manager?include_prereleases" alt="Выпуск"></a>
+  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey" alt="Платформа: Windows, macOS, Linux">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="Лицензия: MIT"></a>
 </p>
 
-<p align="center"><b>English</b> · <a href="README_CN.md">Китайский (упрощённый)</a> · <a href="README_JA.md">Японский</a> · <a href="README_KO.md">Корейский</a> · <a href="README_ES.md">Испанский</a> · <a href="README_PT_BR.md">Португальский (Бразилия)</a> · <a href="README_FR.md">Французский</a> · <a href="README_DE.md">Немецкий</a></p>
+<p align="center"><b>Английский</b> · <a href="README_CN.md">Китайский (упрощённый)</a> · <a href="README_JA.md">Японский</a> · <a href="README_KO.md">Корейский</a> · <a href="README_RU.md">Русский</a></p>
 
 <p align="center">
-  <img src="docs/images/loop.gif" alt="The panel on a task with fifteen keyframes. With auto-select on, earlier images turn grey and the next request drops from 7.5 MB to 1.7 MB." width="100%">
+  <img src="docs/images/loop.gif" alt="Панель на задаче с пятнадцатью ключевыми кадрами. При включённом автоотборе ранние изображения сереют, а следующий запрос падает с 7.5 MB до 1.7 MB." width="100%">
 </p>
 
-## What it does
+## Что он делает
 
-An agent normally sends every earlier image again with each message, so a long chat with many images gets slow and can stop going through. This plugin numbers each image (`IMG-001`, `IMG-002`, …) and sends earlier ones as short placeholders instead:
+Обычно агент отправляет каждое раннее изображение снова с каждым сообщением, поэтому длинный чат со множеством изображений тормозит и может перестать проходить. Этот плагин нумерует каждое изображение (`IMG-001`, `IMG-002`, …) и отправляет предыдущие как короткие заполнители:
 
-- **The model fetches what it needs**: when it has to look at an earlier image again, it gets the original back by its ID.
-- **It can tell images apart**: the model notes one line on what each image shows, plus your comments on it. These stay in the placeholders, also after the chat is compacted.
-- **The cache keeps working**: a placeholder is written once and then stays the same, so the earlier chat is still read from the model's prompt cache. See [the design](#design-keep-the-cache-working).
-- **Nothing is deleted**: your original images and chat history stay as they are.
+- **Модель берёт то, что нужно**: когда ей нужно снова посмотреть на раннее изображение, она получает оригинал по его ID.
+- **Она различает изображения**: модель делает одну заметку о том, что показано на каждом изображении, плюс ваши комментарии к нему. Они остаются в заполнителях, даже после сжатия чата.
+- **Кэш продолжает работать**: заполнитель записывается один раз и потом не меняется, поэтому ранний чат по-прежнему читается из кэша подсказок модели. См. [принципе работы](#design-keep-the-cache-working).
+- **Ничего не удаляется**: ваши оригинальные изображения и история чата остаются как есть.
 
-It is on by default; you do not need to open the panel. Typical uses: image and video creation, scanned documents, computer and browser use.
+Плагин включён по умолчанию; открывать панель не обязательно. Типичное применение: создание изображений и видео, отсканированные документы, работа с компьютером и браузером.
 
 ## Установка
 
-Send this to your agent. It identifies its platform and installs the right setup:
+Отправьте это агенту. Он определит свою платформу и установит нужную настройку:
 
 ```text
 Install Context Attachment Manager for me, following https://github.com/chipfighter/context-attachment-manager/blob/main/INSTALL.md
 ```
 
-Then restart the agent (in Claude Desktop, start a new Code session). See [supported agents](#works-with) and [installation, updates and uninstall](INSTALL.md).
+Затем перезапустите агента (в Claude Desktop начните новую Code-сессию). См. [поддерживаемых агентов](#works-with) и [установку, обновление и удаление](INSTALL.md).
 
-## The panel, when you want control
-
-<p align="center">
-  <img src="docs/images/hero.png" alt="The panel: automatically manage earlier images, search by what you remember, and preview an image." width="100%">
-</p>
-
-- **Find an image** by a detail or a comment you remember, like "rainy night" or "best face".
-- **Keep a reference in view**: open an image and check **Send every turn**.
-- **Choose images yourself**: turn off **Auto-select** and pick what goes with your next message.
-
-In **Codex**, open **Context Assets** in the task's side panel. In **Claude Desktop's Code tab**, the panel opens automatically when there are images; type `/cam` to bring it back.
-
-## Privacy
-
-The plugin runs locally. Your original images and chat history stay on your computer; requests go to the service your agent already uses.
-
-## How we tested
-
-In Codex, a chat with nine keyframes grew to 42.4 MB and could not be sent after a restart or a compaction; with the plugin the same requests were 0.12 MB. See the [Codex comparison](eval/README.md) and [Claude Code long-task comparison](eval/long-task/README.md) for the results and reproduction steps.
-
-## Design: keep the cache working
-
-Model services cache the start of a chat. When a request begins exactly like the one before, that part is read from the cache, which is faster and much cheaper. When something early in the chat changes, everything after the change is processed again.
-
-Any way of making a long chat smaller has to change something. The plugin makes its change as late in the chat as it can:
+## Панель, когда нужен контроль
 
 <p align="center">
-  <img src="docs/images/cache-compare.svg" alt="Four ways to handle a long chat with images, each drawn as the next request. Sending everything keeps the cache but sends every image again. Shrinking the images or dropping early history makes nearly the whole chat be processed again. With the plugin's placeholders, only the rest of the previous turn is processed again." width="100%">
+  <img src="docs/images/hero.png" alt="Панель: автоматическое управление ранними изображениями, поиск по тому, что вы помните, и предпросмотр изображения." width="100%">
 </p>
 
-- **A placeholder is written once**: an image becomes a placeholder in the turn after it appeared, so only the rest of that one turn is processed again. After that the placeholder stays the same from request to request.
-- **Fetching changes nothing earlier**: the original is added at the end of the current turn, and its placeholder stays where it is. Whichever image the model picks, and however many the chat holds, everything before the current turn is still read from the cache.
-- **The model gets the original back**: not a smaller copy, and not a summary of it.
+- **Найти изображение** по детали или комментарию, который вы помните, например «дождливая ночь» или «лучшее лицо».
+- **Держать образец перед глазами**: откройте изображение и отметьте **Отправлять каждый ход**.
+- **Выбирать изображения самим**: выключите **Автоотбор** и выберите, что отправить со следующим сообщением.
+
+В **Codex** откройте **Context Assets** в боковой панели задачи. Во **вкладке Code приложения Claude Desktop** панель открывается автоматически, когда есть изображения; введите `/cam`, чтобы вернуть её.
+
+## Конфиденциальность
+
+Плагин работает локально. Ваши оригинальные изображения и история чата остаются на компьютере; запросы идут в сервис, которым агент уже пользуется.
+
+## Как мы проверяли
+
+В Codex чат с девятью ключевыми кадрами вырос до 42.4 MB и не отправлялся после перезапуска или сжатия; с плагином те же запросы занимали 0.12 MB. Результаты и шаги воспроизведения — в [сравнении для Codex](eval/README.md) и [сравнении длинных задач в Claude Code](eval/long-task/README.md).
+
+## Принцип: кэш продолжает работать
+
+Сервисы моделей кэшируют начало чата. Когда запрос начинается точно так же, как предыдущий, эта часть читается из кэша — быстрее и намного дешевле. Когда что-то в начале чата меняется, всё после изменения обрабатывается заново.
+
+Любой способ уменьшить длинный чат должен что-то менять. Плагин меняет как можно более позднюю его часть:
 
 <p align="center">
-  <img src="docs/images/cache-fetch.svg" alt="When the model fetches IMG-001, the original is attached at the end of the current turn and the placeholder in turn 1 stays as it is, so every earlier turn is read from the cache. In the next turn the fetched copy becomes a one-line note, and only what came after it is processed again." width="100%">
+  <img src="docs/images/cache-compare.svg" alt="Четыре способа обработки длинного чата с изображениями, каждый нарисован как следующий запрос. Отправка всего сохраняет кэш, но отправляет каждое изображение снова. Уменьшение изображений или отбрасывание ранней истории заставляет почти весь чат обработать заново. С заполнителями плагина обрабатывается заново только остаток предыдущего хода." width="100%">
 </p>
 
-This is not free. After a turn with images, the rest of that turn is processed again once, and the model writes a short line for each new image. Changing an old image in the panel (unchecking it, checking it again, **Send every turn**) changes the chat at that image, so what follows it is processed again once. In our [long-task comparison in Claude Code](eval/long-task/README.md), 87% of the input was read from the cache with the plugin and 91% without it.
+- **Заполнитель записывается один раз**: изображение становится заполнителем в ходе после своего появления, поэтому заново обрабатывается только остаток этого хода. После этого заполнитель не меняется от запроса к запросу.
+- **Получение ничего не меняет раньше**: оригинал добавляется в конце текущего хода, а его заполнитель остаётся на месте. Какую бы картинку ни выбрала модель и сколько бы их ни было в чате, всё до текущего хода по-прежнему читается из кэша.
+- **Модель получает оригинал**: не уменьшенную копию и не сводку.
 
-The third row of the first figure is also what an agent's own compaction does, and what clearing old tool results on the API side does (Anthropic's context editing, for example): early content is removed, and what follows is processed again.
+<p align="center">
+  <img src="docs/images/cache-fetch.svg" alt="Когда модель получает IMG-001, оригинал добавляется в конец текущего хода, а заполнитель в ходе 1 остаётся как есть, поэтому все ранние ходы читаются из кэша. В следующем ходе полученная копия становится однострочной заметкой, и обрабатывается заново только то, что после неё." width="100%">
+</p>
 
-## Works with
+Это не бесплатно. После хода с изображениями остаток этого хода обрабатывается один раз заново, и модель пишет короткую строку для каждого нового изображения. Изменение старого изображения в панели (снятие отметки, повторная отметка, **Отправлять каждый ход**) меняет чат на этом изображении, поэтому всё после него обрабатывается заново. В нашем [сравнении длинных задач в Claude Code](eval/long-task/README.md) с плагином из кэша читалось 87% ввода, без плагина — 91%.
 
-Codex and Claude Code are tested, and Codex and Claude Desktop also have the panel. The other agents below are supported through adapters written from their code and docs, but we have not tested them live yet. If you use one of them, please [tell us how it went](https://github.com/chipfighter/context-attachment-manager/issues), whether it worked or not.
+Третий ряд первой картинки — это и то, что делает собственное сжатие агента, и то, что делает очистка старых результатов инструментов на стороне API (например, context editing у Anthropic): раннее содержимое удаляется, а последующее обрабатывается заново.
 
-| Agent | What it is | Support |
+## С какими агентами работает
+
+Codex и Claude Code проверены; в Codex и Claude Desktop есть и панель. Остальные агенты ниже поддерживаются через адаптеры, написанные по их коду и документации, но мы ещё не проверяли их вживую. Если вы пользуетесь одним из них, пожалуйста [расскажите, как прошло](https://github.com/chipfighter/context-attachment-manager/issues), работало или нет.
+
+| Агент | Что это | Поддержка |
 |---|---|---|
-| [Codex](https://github.com/openai/codex) | OpenAI's coding agent, desktop and CLI | Auto-select + panel, tested |
-| [Claude Code](https://github.com/anthropics/claude-code) | Anthropic's coding agent, desktop and CLI | Auto-select + panel (desktop), tested |
-| [WorkBuddy](https://www.workbuddy.cn) | Tencent's desktop AI work assistant, with CodeBuddy inside | Auto-select, not tested yet |
-| [OpenCode](https://github.com/anomalyco/opencode) | Open-source terminal coding agent for any model provider | Auto-select, not tested yet |
-| [Gemini CLI](https://github.com/google-gemini/gemini-cli) | Google's open-source terminal agent | Auto-select, not tested yet |
-| [pi](https://github.com/earendil-works/pi) | Minimal, extensible terminal coding agent | Auto-select (pi extension), not tested yet |
-| [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) | DeepSeek's agent harness where everything is a plugin | Auto-select (dsh plugin), not tested yet |
-| [Qwen Code](https://github.com/QwenLM/qwen-code) | Qwen's open-source terminal agent | Auto-select, not tested yet |
-| [Cline](https://github.com/cline/cline) | Open-source coding agent for VS Code, JetBrains and the terminal | Auto-select, not tested yet |
-| [Kilo Code](https://github.com/Kilo-Org/kilocode) | Open-source coding agent for VS Code, JetBrains and the terminal | Auto-select, not tested yet |
-| [goose](https://github.com/aaif-goose/goose) | Open-source agent for desktop and terminal, extended with MCP | Auto-select, not tested yet |
-| [Cherry Studio](https://github.com/CherryHQ/cherry-studio) | Open-source desktop chat client for many models | Auto-select, not tested yet |
+| [Codex](https://github.com/openai/codex) | Кодирующий агент OpenAI, desktop и CLI | Автоотбор + панель, проверено |
+| [Claude Code](https://github.com/anthropics/claude-code) | Кодирующий агент Anthropic, desktop и CLI | Автоотбор + панель (desktop), проверено |
+| [WorkBuddy](https://www.workbuddy.cn) | Настольный ИИ-помощник Tencent с CodeBuddy внутри | Автоотбор, ещё не проверено |
+| [OpenCode](https://github.com/anomalyco/opencode) | Открытый терминальный кодирующий агент для любого провайдера моделей | Автоотбор, ещё не проверено |
+| [Gemini CLI](https://github.com/google-gemini/gemini-cli) | Открытый терминальный агент Google | Автоотбор, ещё не проверено |
+| [pi](https://github.com/earendil-works/pi) | Минималистичный расширяемый терминальный агент | Автоотбор (расширение pi), ещё не проверено |
+| [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) | Харнесс агентов DeepSeek, где всё — плагин | Автоотбор (плагин dsh), ещё не проверено |
+| [Qwen Code](https://github.com/QwenLM/qwen-code) | Открытый терминальный агент Qwen | Автоотбор, ещё не проверено |
+| [Cline](https://github.com/cline/cline) | Открытый кодирующий агент для VS Code, JetBrains и терминала | Автоотбор, ещё не проверено |
+| [Kilo Code](https://github.com/Kilo-Org/kilocode) | Открытый кодирующий агент для VS Code, JetBrains и терминала | Автоотбор, ещё не проверено |
+| [goose](https://github.com/aaif-goose/goose) | Открытый агент для desktop и терминала с расширениями MCP | Автоотбор, ещё не проверено |
+| [Cherry Studio](https://github.com/CherryHQ/cherry-studio) | Открытый десктопный чат-клиент для многих моделей | Автоотбор, ещё не проверено |
 
-Setup for these agents: [INSTALL.md](INSTALL.md#other-agents). To connect another agent, see [ADAPTERS.md](ADAPTERS.md).
+Настройка этих агентов: [INSTALL.md](INSTALL.md#other-agents). Чтобы подключить другого агента, см. [ADAPTERS.md](ADAPTERS.md).
 
 ## FAQ
 
-### Why do Codex and Claude Code get slow in a long chat with many images?
+### Почему Codex и Claude Code тормозят в длинном чате со множеством изображений?
 
-The agent sends every earlier image again with each message, so a long chat with many images gets slow and can stop going through. In Codex, a chat with nine keyframes grew to 42.4 MB and could not be sent after a restart or a compaction; with Context Attachment Manager the same requests were 0.12 MB.
+Агент отправляет каждое раннее изображение снова с каждым сообщением, поэтому длинный чат со множеством изображений тормозит и может перестать проходить. В Codex чат с девятью ключевыми кадрами вырос до 42.4 MB и не отправлялся после перезапуска или сжатия; с Context Attachment Manager те же запросы занимали 0.12 MB.
 
-### Does Context Attachment Manager break the prompt cache?
+### Нарушает ли Context Attachment Manager кэш подсказок?
 
-Only a little. A placeholder is written once and then stays the same, and a fetched image is added at the end of the current turn, so earlier turns are still read from the cache. After a turn with images, the rest of that turn is processed again once. In our long-task comparison in Claude Code, 87% of the input was read from the cache with the plugin and 91% without it.
+Немного. Заполнитель записывается один раз и не меняется, а полученное изображение добавляется в конец текущего хода, поэтому ранние ходы по-прежнему читаются из кэша. После хода с изображениями остаток этого хода обрабатывается один раз заново. В нашем сравнении длинных задач в Claude Code с плагином из кэша читалось 87% ввода, без плагина — 91%.
 
-### How is it different from compaction, or from shrinking the images?
+### Чем это отличается от сжатия или уменьшения изображений?
 
-Compaction and dropping early history remove the early part of the chat, and shrinking the images changes it. Either way nearly the whole chat is processed again, and the model is left with a summary or a smaller copy. With Context Attachment Manager, only the rest of the previous turn is processed again, and the model gets the original image back by its ID.
+Сжатие и отбрасывание ранней истории удаляют раннюю часть чата, а уменьшение изображений меняет её. В любом случае обрабатывается почти весь чат, а модель остаётся со сводкой или уменьшенной копией. С Context Attachment Manager обрабатывается заново только остаток предыдущего хода, а модель получает оригинал изображения по его ID.
 
-### Can the model still see an earlier image?
+### Может ли модель по-прежнему видеть раннее изображение?
 
-Yes. Every image has an ID such as `IMG-001`, and the model fetches the original when it needs to look at it again, also after the chat is compacted.
+Да. У каждого изображения есть ID вроде `IMG-001`, и модель получает оригинал, когда ей нужно снова на него посмотреть, в том числе после сжатия чата.
 
-### Are my images deleted, or sent anywhere else?
+### Удаляются ли мои изображения или отправляются куда-то ещё?
 
-No. The plugin runs on your computer. Your original images and chat history stay as they are, and requests go to the service your agent already uses.
+Нет. Плагин работает на вашем компьютере. Оригинальные изображения и история чата остаются как есть, а запросы идут в сервис, которым агент уже пользуется.
 
-### Which agents does it work with, and is it free?
+### С какими агентами это работает и бесплатно ли это?
 
-Codex and Claude Code are tested. WorkBuddy, OpenCode, Gemini CLI, pi, DeepSeek Harness, Qwen Code, Cline, Kilo Code, goose and Cherry Studio are supported through adapters that we have not tested live yet. It is free and open source under the MIT license.
+Codex и Claude Code проверены. WorkBuddy, OpenCode, Gemini CLI, pi, DeepSeek Harness, Qwen Code, Cline, Kilo Code, goose и Cherry Studio поддерживаются через адаптеры, которые мы ещё не проверяли вживую. Это бесплатно и с открытым исходным кодом по лицензии MIT.
 
-### How do I install Context Attachment Manager? Do I need a terminal?
+### Как установить Context Attachment Manager? Нужен ли терминал?
 
-No. Send your agent the one sentence in [Install](#install) above: it identifies its platform and runs the setup itself, and you only restart the agent afterwards (in Claude Desktop, start a new Code session). In Codex you can also install it from the Plugins page with a few clicks. If you prefer to do it by hand, it takes one command in Codex and two `claude` commands in Claude Desktop; see [INSTALL.md](INSTALL.md).
+Нет. Отправьте агенту одно предложение из раздела [Установка](#install) выше: он определит платформу и выполнит настройку сам, а вам останется только перезапустить агента (в Claude Desktop начать новую Code-сессию). В Codex можно также установить его со страницы Plugins за пару кликов. Если предпочитаете вручную, в Codex нужна одна команда, в Claude Desktop две команды `claude`; см. [INSTALL.md](INSTALL.md).
 
-<p align="center"><sub><a href="CHANGELOG.md">Changelog</a> · <a href="CONTRIBUTING.md">Contributing</a> · <a href="LICENSE">MIT License</a></sub></p>
+<p align="center"><sub><a href="CHANGELOG.md">Журнал изменений</a> · <a href="CONTRIBUTING.md">Участие в разработке</a> · <a href="LICENSE">Лицензия MIT</a></sub></p>
 
 ## Источник и лицензия
 

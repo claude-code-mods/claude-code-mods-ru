@@ -231,14 +231,14 @@ function percent(ratio: number): string {
 export function summarize(result: CompactResult): string {
   const { stats } = result;
   const parts = [
-    stats.kept > 0 ? `${stats.kept} kept` : '',
-    stats.resultsDropped > 0 ? `${stats.resultsDropped} results truncated` : '',
+    stats.kept > 0 ? `${stats.kept} сохранено` : '',
+    stats.resultsDropped > 0 ? `${stats.resultsDropped} результатов усечено` : '',
     stats.callsDropped > 0 ? `${stats.callsDropped} call_dropped` : '',
-    stats.pinned > 0 ? `${stats.pinned} pinned` : '',
+    stats.pinned > 0 ? `${stats.pinned} закреплено` : '',
   ].filter(Boolean);
-  return `${percent(reductionRatio(result))} reduction; ${
+  return `${percent(reductionRatio(result))} сжатие; ${
     parts.join(', ') || 'вызовы инструментов отсутствуют'
-  }; state ~${stats.stateTokens} tokens (${stats.stateStage}) in ${stats.requests} request(s)`;
+  }; состояние ~${stats.stateTokens} токенов (${stats.stateStage}) в ${stats.requests} запросах`;
 }
 
 const UI_LOG_MAX_CHARS = 4096;

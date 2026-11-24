@@ -89,32 +89,32 @@ export function draftingRequest({ goal, worktree, base, root, lang }) {
     ].join('\n')
   }
   return [
-    `Draft an agentctl task scope for: "${goal}"`,
-    `First run ${helper.replace(' --stdin', ' --help')} for the fields. Read the project and propose the narrowest scope (edit paths, check commands, acceptance). If something is unclear, ask me and wait for my answer — write no proposal before it, and never invent permissions.`,
-    `Write it with ${helper} (base ${baseText}; a quoted heredoc delimiter that does not occur in the JSON). Write the proposal only, then wait for me to accept.`,
+    `Сформулируйте область задачи agentctl для: "${goal}"`,
+    `Сначала запустите ${helper.replace(' --stdin', ' --help')}, чтобы узнать поля. Изучите проект и предложите самую узкую область (пути правки, команды проверки, критерии приёмки). Если что-то неясно, спросите меня и дождитесь ответа — до этого не пишите proposal и не придумывайте разрешения.`,
+    `Запишите его через ${helper} (base ${baseText}; разделитель heredoc в кавычках, которого нет в JSON). Напишите только proposal, затем дождитесь моего подтверждения.`,
   ].join('\n')
 }
 
 const COPY = {
   en: {
-    filled: (bound) => `A request for Claude to draft the scope is in your prompt box — press Enter to send it. ${bound ? 'The current task stays in force until you accept the new scope.' : 'Nothing is bound yet.'}`,
-    mixed: (bound) => `The request was added after text you typed meanwhile; both are in your prompt box. Edit it before you press Enter. ${bound ? 'The current task stays in force until you accept the new scope.' : 'Nothing is bound yet.'}`,
-    copy: (bound) => `Send this to Claude to have it draft the scope (${bound ? 'the current task stays in force until you accept the new one' : 'nothing is bound yet'}):`,
-    typo: (v) => `Did you mean "/agentctl ${v}"? To start a task, describe it: /agentctl <what you are doing>`,
-    extra: (v) => `"/agentctl ${v}" takes no such arguments. ${v === 'proposal' ? 'It shows a waiting draft; to make one, describe the work: /agentctl <what you are doing>' : 'See /agentctl help.'}`,
-    acceptLine: (d) => `Accept this scope: /agentctl accept ${d} — it binds the scope only; it does not start any work.`,
-    accepted: 'Scope bound. Next: ask Claude to start the work.',
-    runChecks: (checks) => `To leave evidence, run each check as written: ${checks.join(' · ')} — a pipe, redirect or wrapper keeps a run from counting, and added arguments may check less than declared.`,
-    wholeScope: '/agentctl policy shows the whole scope.',
-    noTaskLast: 'No task is bound, so there is no hand-over yet. Start one: /agentctl <what you are doing>',
-    noHandover: 'This task has no saved hand-over yet: /agentctl handoff saves one.',
+    filled: (bound) => `Запрос Клоду сформулировать область задачи уже в поле ввода — нажмите Enter, чтобы отправить. ${bound ? 'Текущая задача действует, пока вы не примете новую область.' : 'Пока ничего не привязано.'}`,
+    mixed: (bound) => `Запрос добавлен после набранного вами текста; оба находятся в поле ввода. Отредактируйте перед нажатием Enter. ${bound ? 'Текущая задача действует, пока вы не примете новую область.' : 'Пока ничего не привязано.'}`,
+    copy: (bound) => `Отправьте это Клоду, чтобы он сформулировал область (${bound ? 'текущая задача действует, пока вы не примете новую' : 'пока ничего не привязано'}):`,
+    typo: (v) => `Возможно, вы имели в виду "/agentctl ${v}"? Чтобы начать задачу, опишите её: /agentctl <что вы делаете>`,
+    extra: (v) => `"/agentctl ${v}" не принимает таких аргументов. ${v === 'proposal' ? 'Он показывает ожидающий черновик; чтобы создать его, опишите работу: /agentctl <что вы делаете>' : 'См. /agentctl help.'}`,
+    acceptLine: (d) => `Принять эту область: /agentctl accept ${d} — это только привязывает область, но не начинает работу.`,
+    accepted: 'Область привязана. Далее: попросите Клода начать работу.',
+    runChecks: (checks) => `Чтобы оставить доказательства, выполните каждую проверку в точности как написано: ${checks.join(' · ')} — конвейер, перенаправление или обёртка не засчитываются, а добавленные аргументы могут проверять меньше объявленного.`,
+    wholeScope: '/agentctl policy показывает всю область.',
+    noTaskLast: 'Задача не привязана, поэтому передачи ещё нет. Начните: /agentctl <что вы делаете>',
+    noHandover: 'У этой задачи ещё нет сохранённой передачи: /agentctl handoff сохранит её.',
     next: {
-      none: 'Next: describe the work — /agentctl <what you are doing>. Built-in refusals (direct git push, production writes) apply even now.',
-      proposal: (d) => `Next: review /agentctl proposal, then /agentctl accept ${d}`,
-      task: 'Next: ask Claude to work; /agentctl handoff saves where things stand.',
-      taskThenChecks: (checks) => `Next: ask Claude to work, then to run the checks exactly as written: ${checks.join(' · ')}. Once they are current: /agentctl handoff`,
-      rerun: (checks) => `Next: not current on this tree — ask Claude to run exactly as written: ${checks.join(' · ')}. Then: /agentctl handoff`,
-      checksCurrent: 'Next: every declared check is current on this tree — /agentctl handoff saves the hand-over.',
+      none: 'Далее: опишите работу — /agentctl <что вы делаете>. Встроенные запреты (прямой git push, запись в продакшн) действуют и сейчас.',
+      proposal: (d) => `Далее: посмотрите /agentctl proposal, затем /agentctl accept ${d}`,
+      task: 'Далее: попросите Клода работать; /agentctl handoff сохранит текущее состояние.',
+      taskThenChecks: (checks) => `Далее: попросите Клода поработать, затем выполнить проверки в точности как написано: ${checks.join(' · ')}. Когда они актуальны: /agentctl handoff`,
+      rerun: (checks) => `Далее: на этом дереве проверки не актуальны — попросите Клода выполнить в точности как написано: ${checks.join(' · ')}. Затем: /agentctl handoff`,
+      checksCurrent: 'Далее: все объявленные проверки актуальны на этом дереве — /agentctl handoff сохранит передачу.',
     },
   },
   zh: {
@@ -148,7 +148,7 @@ export function copy(lang) {
 // shortened. An argv no quoting can carry is shown as its JSON array instead, which says to run it as
 // those words.
 export function checkLine(argv) {
-  return renderArgv(argv) ?? `${JSON.stringify(argv)} (as these words)`
+  return renderArgv(argv) ?? `${JSON.stringify(argv)} (как эти слова)`
 }
 
 // The task's declared checks, as the command lines Claude must run as written.
@@ -183,19 +183,19 @@ export function helpText(lang, advanced) {
     ].join('\n')
   }
   return advanced ? [
-    'Advanced:',
-    '  /agentctl task show | set <json> | clear — view or set the task directly',
-    '  /agentctl policy — the scope in force and its limits',
-    '  /agentctl events [n] — recent refusals and calls left to the host',
-    '  /agentctl handoff · last — save a hand-over · show the last one',
-    '  /agentctl stop — cancel the turn and save a hand-over',
-    '  /agentctl status --details · discard — full status · drop a draft',
+    'Дополнительно:',
+    '  /agentctl task show | set <json> | clear — просмотреть или задать задачу напрямую',
+    '  /agentctl policy — действующая область и её ограничения',
+    '  /agentctl events [n] — последние отказы и вызовы, переданные хосту',
+    '  /agentctl handoff · last — сохранить передачу · показать последнюю',
+    '  /agentctl stop — отменить ход и сохранить передачу',
+    '  /agentctl status --details · discard — полный статус · удалить черновик',
   ].join('\n') : [
-    'agentctl keeps Claude inside a scope you confirm and records check evidence.',
-    '  /agentctl <what you are doing> — Claude drafts a scope (binds nothing)',
-    '  /agentctl accept <digest> — you confirm it (starts no work)',
-    '  /agentctl — where things stand and what to do next',
-    'More: /agentctl help advanced',
+    'agentctl удерживает Клода в подтверждённой вами области и записывает доказательства проверок.',
+    '  /agentctl <что вы делаете> — Клод формулирует область (ничего не привязывает)',
+    '  /agentctl accept <digest> — вы подтверждаете её (работа не начинается)',
+    '  /agentctl — текущее состояние и следующие шаги',
+    'Подробнее: /agentctl help advanced',
   ].join('\n')
 }
 

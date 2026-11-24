@@ -124,7 +124,7 @@ export function evaluateStall(s, now, idleMs = IDLE_STALL_MS) {
   const idle = now - s.lastEventAt
   const bgInFlight = Object.values(s.background).some((b) => b.status === 'started' || b.status === 'in-flight')
   if (idle >= idleMs && !anyToolRunning(s) && !bgInFlight && s.runtime.value !== 'ended') {
-    return setIntervention(s, 'suspected-stall', now, { idleMs: idle, basis: 'no turn or tool event', confirmed: false }, 'info')
+    return setIntervention(s, 'suspected-stall', now, { idleMs: idle, basis: 'нет событий хода или инструмента', confirmed: false }, 'info')
   }
   return clearIntervention(s, 'suspected-stall')
 }

@@ -33,21 +33,21 @@ export function checkProgress(task, evidence, fingerprint) {
 
 // The four states a field can be in (FR-3).
 export function field(label, reading, now) {
-  if (!reading) return `${label}: missing`
-  if (reading.failed) return `${label}: unavailable (${reading.failed})`
+  if (!reading) return `${label}: нет данных`
+  if (reading.failed) return `${label}: недоступно (${reading.failed})`
   const age = Math.max(0, Math.round((now - reading.at) / 1000))
   const stale = reading.staleAfterMs !== undefined && now - reading.at > reading.staleAfterMs
-  return `${label}: ${reading.value} — ${reading.source}, ${age}s ago${stale ? ' (stale)' : ''}`
+  return `${label}: ${reading.value} — ${reading.source}, ${age} с назад${stale ? ' (устарело)' : ''}`
 }
 
 // review-state.js check --format=json → a gate reading. A gate pass is a gate pass, never a test pass.
 export function gateReading(run, at) {
   if (typeof run === 'string') return { failed: run, at }
-  if (!run || run.exitCode !== 0) return { failed: `check exited ${run ? run.exitCode : 'without a result'}`, at }
+  if (!run || run.exitCode !== 0) return { failed: `проверка завершилась ${run ? run.exitCode : 'без результата'}`, at }
   let s
-  try { s = JSON.parse(run.stdout) } catch { return { failed: 'not JSON', at } }
-  const word = (p) => (!p ? '?' : p.passed ? '✅' : p.verdict === 'fail' && p.digest_match ? '⛔' : p.noted && !p.digest_match ? '⏳ stale' : p.owed ? '⏳ owed' : '·')
-  return { value: `code ${word(s.code_review)} · doc ${word(s.doc_review)} · precommit ${word(s.precommit)}`, source: 'review-state.js check', at }
+  try { s = JSON.parse(run.stdout) } catch { return { failed: 'не JSON', at } }
+  const word = (p) => (!p ? '?' : p.passed ? '✅' : p.verdict === 'fail' && p.digest_match ? '⛔' : p.noted && !p.digest_match ? '⏳ устарело' : p.owed ? '⏳ ожидается' : '·')
+  return { value: `код ${word(s.code_review)} · док ${word(s.doc_review)} · прекоммит ${word(s.precommit)}`, source: 'проверка review-state.js', at }
 }
 
 // Usage windows are read by kind; a missing window is missing, never 0%. One account's windows are
@@ -56,44 +56,44 @@ export function usageReading(usage, kind, at) {
   if (!usage) return null
   const w = (usage.rateLimits ?? []).find((r) => r.kind === kind)
   if (!w) return null
-  return { value: `${Math.round(w.percentUsed)}%${w.resetsAt ? ` (resets ${w.resetsAt})` : ''}`, source: `session usage (${w.source ?? 'host'})`, at }
+  return { value: `${Math.round(w.percentUsed)}%${w.resetsAt ? ` (сброс ${w.resetsAt})` : ''}`, source: `использование сессии (${w.source ?? 'хост'})`, at }
 }
 
 export function contextReading(usage, at) {
   const p = usage?.context?.percent
-  return typeof p === 'number' ? { value: `${Math.round(p)}%`, source: 'session usage', at } : null
+  return typeof p === 'number' ? { value: `${Math.round(p)}%`, source: 'использование сессии', at } : null
 }
 
 function evidenceLines(evidence, currentFingerprint, now) {
   const out = []
   for (const ev of Object.values(evidence ?? {})) {
     const fresh = currentFingerprint && ev.after && ev.after.value === currentFingerprint.value && ev.before && ev.before.value === ev.after.value
-    const state = ev.outcome === 'backgrounded' ? 'started, completion unobserved'
+    const state = ev.outcome === 'backgrounded' ? 'запущено, завершение не наблюдалось'
       : ev.outcome === 'refused' ? 'refused'
-      : !ev.after || !ev.before ? 'evidence unavailable'
-      : ev.before.value !== ev.after.value ? 'tree changed during the run — unbound'
-      : fresh && [ev.coverage, ev.before.coverage, ev.after.coverage, currentFingerprint.coverage].includes('partial') ? 'matches, but a reading was partial'
+      : !ev.after || !ev.before ? 'доказательства недоступны'
+      : ev.before.value !== ev.after.value ? 'дерево изменилось во время выполнения — не привязано'
+      : fresh && [ev.coverage, ev.before.coverage, ev.after.coverage, currentFingerprint.coverage].includes('partial') ? 'совпадает, но одно чтение было неполным'
       : fresh ? 'current'
-      : 'stale (tree changed since)'
+      : 'устарело (дерево с тех пор изменилось)'
     const age = Math.max(0, Math.round((now - ev.at) / 1000))
-    out.push(`  ${sanitize(ev.requested, 120)}: ${ev.outcome === 'ok' ? 'no error reported' : ev.outcome} · ${state} · ${ev.coverage ?? 'coverage unknown'} · ${age}s ago`)
+    out.push(`  ${sanitize(ev.requested, 120)}: ${ev.outcome === 'ok' ? 'ошибок не сообщалось' : ev.outcome} · ${state} · ${ev.coverage ?? 'покрытие неизвестно'} · ${age}s ago`)
   }
   return out
 }
 
 const REASON_LABEL = {
-  input: 'waiting for your input',
-  permission: 'waiting for a permission decision',
-  'policy-denied': 'refused by task policy',
-  'rate-limit': 'rate limit reached',
-  'suspected-stall': 'no activity (unconfirmed stall)',
+  input: 'ожидает вашего ввода',
+  permission: 'ожидает решения о разрешении',
+  'policy-denied': 'запрещено политикой задачи',
+  'rate-limit': 'достигнут лимит запросов',
+  'suspected-stall': 'нет активности (останов не подтверждён)',
 }
 
 function interventionLines(state, now) {
   return Object.entries(state.interventions ?? {}).map(([reason, v]) => {
     const age = Math.max(0, Math.round((now - v.since) / 1000))
-    const detail = typeof v.detail === 'string' ? sanitize(v.detail, 120) : v.detail?.resetsAt ? `resets ${v.detail.resetsAt}` : ''
-    return `  ${REASON_LABEL[reason] ?? reason}${detail ? ` — ${detail}` : ''} · since ${age}s ago`
+    const detail = typeof v.detail === 'string' ? sanitize(v.detail, 120) : v.detail?.resetsAt ? `сброс ${v.detail.resetsAt}` : ''
+    return `  ${REASON_LABEL[reason] ?? reason}${detail ? ` — ${detail}` : ''} · ${age} с назад`
   })
 }
 
@@ -102,75 +102,75 @@ function interventionLines(state, now) {
 export function statusText(m, { details = false } = {}) {
   const { now, task, state } = m
   const lines = []
-  lines.push(task ? `Task: ${sanitize(task.goal, 120)} (${task.id})` : 'Task: none bound')
+  lines.push(task ? `Задача: ${sanitize(task.goal, 120)} (${task.id})` : 'Задача: не привязана')
   const iv = interventionLines(state, now)
-  lines.push(iv.length ? 'Needs attention:' : 'Needs attention: nothing observed')
+  lines.push(iv.length ? 'Требует внимания:' : 'Требует внимания: ничего не обнаружено')
   lines.push(...iv)
-  lines.push(field('Review gates', m.gate, now))
+  lines.push(field('Проверки ревью', m.gate, now))
   const ev = evidenceLines(m.evidence, m.fingerprint, now)
-  lines.push(ev.length ? 'Execution evidence (not a review verdict):' : 'Execution evidence: no declared check has run')
+  lines.push(ev.length ? 'Доказательства выполнения (не вердикт ревью):' : 'Доказательства выполнения: ни одна объявленная проверка не запускалась')
   lines.push(...ev)
   const bg = Object.entries(state.background ?? {}).filter(([, b]) => b.status === 'started' || b.status === 'in-flight')
-  if (bg.length) lines.push(`Background in flight: ${bg.length} (${bg.map(([id]) => id).join(', ')})`)
+  if (bg.length) lines.push(`Фоновых задач в процессе: ${bg.length} (${bg.map(([id]) => id).join(', ')})`)
   if (!details) {
-    lines.push('More: /agentctl status --details · /agentctl help')
+    lines.push('Подробнее: /agentctl status --details · /agentctl help')
     return lines.join('\n')
   }
-  lines.push(`State storage: ${m.health === 'ok' ? 'healthy' : m.health}`)
-  lines.push(`Runtime: ${state.runtime.value}${state.runtime.tool ? ` (${state.runtime.tool})` : ''} since ${Math.max(0, Math.round((now - state.runtime.since) / 1000))}s ago · phase ${state.phase.value} · result ${state.result.value}`)
+  lines.push(`Хранилище состояния: ${m.health === 'ok' ? 'исправно' : m.health}`)
+  lines.push(`Runtime: ${state.runtime.value}${state.runtime.tool ? ` (${state.runtime.tool})` : ''} ${Math.max(0, Math.round((now - state.runtime.since) / 1000))} с назад · фаза ${state.phase.value} · результат ${state.result.value}`)
   // A usage reading arrives with Claude's first reply in the session; before that it is absent.
-  const usage = (label, r) => (r ? field(label, r, now) : `${label}: missing (read after Claude's first reply)`)
-  lines.push(usage('Context', m.context))
-  lines.push(usage('5h window', m.fiveHour))
+  const usage = (label, r) => (r ? field(label, r, now) : `${label}: нет данных (читается после первого ответа Клода)`)
+  lines.push(usage('Контекст', m.context))
+  lines.push(usage('Окно 5 ч', m.fiveHour))
   return lines.join('\n')
 }
 
 export function bandText(m) {
   const { task, state, now } = m
   const iv = Object.keys(state.interventions ?? {})
-  const attention = iv.length ? `⚠ ${iv.map((r) => REASON_LABEL[r] ?? r).join(', ')}` : 'no attention needed'
-  const head = task ? `agentctl · ${sanitize(task.goal, 40)}` : 'agentctl · no task'
+  const attention = iv.length ? `⚠ ${iv.map((r) => REASON_LABEL[r] ?? r).join(', ')}` : 'внимание не требуется'
+  const head = task ? `agentctl · ${sanitize(task.goal, 40)}` : 'agentctl · задача не привязана'
   const rt = `${state.runtime.value}${state.runtime.tool ? `:${state.runtime.tool}` : ''} ${Math.max(0, Math.round((now - state.runtime.since) / 1000))}s`
-  let gate = 'gates missing'
-  if (m.gate?.failed) gate = 'gates unavailable'
+  let gate = 'проверок нет'
+  if (m.gate?.failed) gate = 'проверки недоступны'
   else if (m.gate) {
     const age = Math.max(0, Math.round((now - m.gate.at) / 1000))
     const stale = m.gate.staleAfterMs !== undefined && now - m.gate.at > m.gate.staleAfterMs
     gate = `${m.gate.value} (${age}s${stale ? ', stale' : ''})`
   }
-  const resume = m.checkpoint ? ` · last hand-over ${new Date(m.checkpoint.savedAt).toISOString()}` : ''
-  const proposal = m.pending ? ` · proposal ${m.pending.digest.slice(0, 8)} waiting — /agentctl accept` : ''
+  const resume = m.checkpoint ? ` · последняя передача ${new Date(m.checkpoint.savedAt).toISOString()}` : ''
+  const proposal = m.pending ? ` · черновик ${m.pending.digest.slice(0, 8)} ожидает — /agentctl accept` : ''
   return `${head} · ${rt} · ${attention} · ${gate}${proposal}${resume}${m.health === 'ok' ? '' : ` · ${m.health}`}`
 }
 
 export const LIMITS = [
-  'This mod is a control and a display, not an isolation boundary; production read-only is enforced by credentials and the target\'s own permissions.',
-  'If the host skips this mod\'s hook (worker crash, mod disabled) nothing here refuses; keep named dangerous commands in your permissions.deny rules.',
-  'Native permission rules match command text, not programs; another mod can change a verdict at tool.check.',
-  'Authorized executors run with their effects unclassified.',
+  'Этот мод — управление и отображение, а не граница изоляции; доступ к продакшну только на чтение обеспечивается учётными данными и правами самой цели.',
+  'Если хост пропускает хук этого мода (падение воркера, мод отключён), здесь ничего не запрещается; держите опасные команды в правилах permissions.deny.',
+  'Встроенные правила разрешений сопоставляют текст команды, а не программы; другой мод может изменить вердикт на tool.check.',
+  'Разрешённые исполнители запускаются без классификации их действий.',
 ]
 
 export function policyText(task) {
-  if (!task) return ['No task bound: the built-in production-write and remote-git-write classes are still refused; everything else goes to the host\'s own permission flow.', ...LIMITS].join('\n')
+  if (!task) return ['Задача не привязана: встроенные классы записи в продакшн и записи в удалённый git по-прежнему запрещены; всё остальное передаётся собственной системе разрешений хоста.', ...LIMITS].join('\n')
   const one = (x) => (Array.isArray(x) ? x.join(' ') : Array.isArray(x?.argv) ? x.argv.join(' ') + (x.check ? ' (check)' : '') : String(x))
   const fmt = (xs) => (xs?.length ? xs.map((x) => sanitize(one(x), 200)).join('; ') : 'none')
   return [
-    `Task ${task.id} · policy version ${task.policyVersion ?? 1}`,
-    ...(task.recordMissing ? ['The bound task record is missing: everything but reads inside the worktree is refused. Set the task again.'] : []),
-    `Worktree: ${sanitize(task.worktree, 200)}`,
-    `Edits: ${(task.allow ?? []).includes('edit') ? `allowed in ${fmt(task.editRoots ?? ['.'])}` : 'not allowed'}`,
-    `Forbidden (task): ${fmt(task.forbid)} · plus the built-in production-write and remote-git-write classes`,
-    `Authorized executors: ${fmt(task.executors)}`,
-    `Needs a person: ${fmt(task.needsUser)}`,
-    `Other tools allowed: ${fmt(task.tools)}`,
-    'Everything else goes to the host\'s own permission flow (or auto mode): the mod does not classify it.',
-    'Best-effort: the mod reads each tool call, never a script\'s contents or the commands it starts.',
+    `Задача ${task.id} · версия политики ${task.policyVersion ?? 1}`,
+    ...(task.recordMissing ? ['Запись привязанной задачи отсутствует: всё, кроме чтения внутри рабочего дерева, запрещено. Задайте задачу снова.'] : []),
+    `Рабочее дерево: ${sanitize(task.worktree, 200)}`,
+    `Правки: ${(task.allow ?? []).includes('edit') ? `разрешены в ${fmt(task.editRoots ?? ['.'])}` : 'не разрешены'}`,
+    `Запрещено (задача): ${fmt(task.forbid)} · плюс встроенные классы записи в продакшн и записи в удалённый git`,
+    `Разрешённые исполнители: ${fmt(task.executors)}`,
+    `Требует человека: ${fmt(task.needsUser)}`,
+    `Другие разрешённые инструменты: ${fmt(task.tools)}`,
+    'Всё остальное передаётся собственной системе разрешений хоста (или авторежиму): мод это не классифицирует.',
+    'По возможности: мод читает каждый вызов инструмента, но не содержимое скриптов и запускаемые ими команды.',
     ...LIMITS,
   ].join('\n')
 }
 
 export function eventsText(decisions, n, now) {
   const list = (decisions ?? []).slice(-n)
-  if (!list.length) return 'No decisions recorded in this session.'
-  return list.map((d) => `${Math.max(0, Math.round((now - d.at) / 1000))}s ago · ${d.outcome} · ${d.tool} · ${sanitize(d.requested, 160)} · ${sanitize(d.rule, 160)}`).join('\n')
+  if (!list.length) return 'В этой сессии решения не записаны.'
+  return list.map((d) => `${Math.max(0, Math.round((now - d.at) / 1000))} с назад · ${d.outcome} · ${d.tool} · ${sanitize(d.requested, 160)} · ${sanitize(d.rule, 160)}`).join('\n')
 }

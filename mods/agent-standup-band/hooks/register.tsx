@@ -16,12 +16,12 @@ type Status = { pid?: unknown; sessionId?: unknown; status?: unknown; waitingFor
 // "web-shop · release (VS Code)": the folder, the name you gave the session (not the one Claude Code made up), the app it runs in
 export const whereOf = (s: Status): string => {
   const cwd = typeof s.cwd === 'string' ? s.cwd : ''
-  const folder = cwd.split(/[\\/]/).filter(Boolean).pop() || 'A session'
+  const folder = cwd.split(/[\\/]/).filter(Boolean).pop() || 'Сессия'
   const named = typeof s.name === 'string' && s.name && s.nameSource !== 'derived' ? ' · ' + s.name : ''
-  const app = s.entrypoint === 'claude-vscode' ? ' (VS Code)' : s.entrypoint === 'claude-desktop' ? ' (desktop app)' : ''
+  const app = s.entrypoint === 'claude-vscode' ? ' (VS Code)' : s.entrypoint === 'claude-desktop' ? ' (приложение)' : ''
   return folder + named + app
 }
-export const whatOf = (w: unknown): string => (w === 'permission prompt' ? 'an approval' : w === 'input needed' ? 'an answer' : 'you')
+export const whatOf = (w: unknown): string => (w === 'permission prompt' ? 'разрешение' : w === 'input needed' ? 'ответ' : 'вы')
 // waiting, and not on a dialog the person opened there themselves (/model, /config…): those say "dialog open"
 const waits = (s: Status): boolean => s.status === 'waiting' && s.waitingFor !== 'dialog open'
 // a session a program started with claude -p (entrypoint sdk-cli): its questions go to that program, and its turns are not yours. An Agent SDK host (sdk-ts, sdk-py: Zed, a home-made app)
@@ -84,8 +84,8 @@ export const register: Register = on => {
       if (!first) {
         for (const s of rows) {
           const was = before.get(String(s.sessionId)), is = now.get(String(s.sessionId))
-          if (is === 'waiting' && was !== 'waiting' && live.has(Number(s.pid))) $.ui.toast(`✋ ${whereOf(s)} needs ${whatOf(s.waitingFor)}`)
-          else if (is === 'idle' && was === 'busy') $.ui.toast(`✓ ${whereOf(s)} has finished: your turn there`)
+          if (is === 'waiting' && was !== 'waiting' && live.has(Number(s.pid))) $.ui.toast(`✋ ${whereOf(s)} ждёт ${whatOf(s.waitingFor)}`)
+          else if (is === 'idle' && was === 'busy') $.ui.toast(`✓ ${whereOf(s)} завершил(а) работу: ваша очередь там`)
         }
       }
       before = now
@@ -108,15 +108,15 @@ export const register: Register = on => {
       <Box flexDirection="column">
         {list.slice(0, 3).map(n => (
           <Text key={n.id} wrap="truncate-end">
-            ✋ {n.where} <Text dimColor>needs {n.what}</Text>
+            ✋ {n.where} <Text dimColor>ждёт {n.what}</Text>
           </Text>
         ))}
-        {list.length > 3 ? <Text dimColor>and {list.length - 3} more</Text> : null}
+        {list.length > 3 ? <Text dimColor>и ещё {list.length - 3}</Text> : null}
         <Box flexDirection="row" gap={1}>
-          <Text dimColor>Agent Standup · /agent-standup:open shows them all</Text>
+          <Text dimColor>Agent Standup · /agent-standup:open показывает все</Text>
           <Button
             key="hide"
-            label="Hide"
+            label="Скрыть"
             plain
             onPress={() => {
               hidden = new Set(list.map(keyOf))

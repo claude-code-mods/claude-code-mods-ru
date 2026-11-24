@@ -21,17 +21,17 @@ export function proposalPath(home, worktreeKey) {
 // is the task bound when the mod reads the file — the preview names it, and accept still refuses if
 // the binding changed after the preview.
 export function readProposal(text, { cwd, boundId }) {
-  if (typeof text !== 'string' || text.length === 0) return { ok: false, errors: ['the proposal file is empty'] }
+  if (typeof text !== 'string' || text.length === 0) return { ok: false, errors: ['файл черновика пуст'] }
   // Bytes, not UTF-16 code units: a non-ASCII draft is up to three times longer on disk.
-  if (new TextEncoder().encode(text).length > MAX_PROPOSAL_BYTES) return { ok: false, errors: [`the proposal is over ${MAX_PROPOSAL_BYTES} bytes`] }
+  if (new TextEncoder().encode(text).length > MAX_PROPOSAL_BYTES) return { ok: false, errors: [`черновик превышает ${MAX_PROPOSAL_BYTES} байт`] }
   let input
-  try { input = JSON.parse(text) } catch { return { ok: false, errors: ['the proposal is not JSON'] } }
-  if (!input || typeof input !== 'object' || Array.isArray(input)) return { ok: false, errors: ['the proposal must be a JSON object'] }
+  try { input = JSON.parse(text) } catch { return { ok: false, errors: ['черновик не является JSON'] } }
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return { ok: false, errors: ['черновик должен быть объектом JSON'] }
   // The worktree comes from the session; a proposal naming another one is refused, never re-pointed.
-  if (input.worktree !== undefined && input.worktree !== cwd) return { ok: false, errors: ['the proposal names another worktree'] }
+  if (input.worktree !== undefined && input.worktree !== cwd) return { ok: false, errors: ['в черновике указано другое рабочее дерево'] }
   const base = input.base === undefined ? (boundId ?? null) : input.base
-  if (base !== null && typeof base !== 'string') return { ok: false, errors: ['base must be the bound task id or null'] }
-  if (base !== (boundId ?? null)) return { ok: false, stale: true, errors: [`stale: drafted against ${base ? `task ${sanitize(base, 64)}` : 'no task'}, but ${boundId ? `task ${sanitize(boundId, 64)}` : 'no task'} is bound now`] }
+  if (base !== null && typeof base !== 'string') return { ok: false, errors: ['base должен быть id привязанной задачи или null'] }
+  if (base !== (boundId ?? null)) return { ok: false, stale: true, errors: [`stale: drafted against ${base ? `task ${sanitize(base, 64)}` : 'задача не привязана'}, но сейчас привязано: ${boundId ? `задача ${sanitize(boundId, 64)}` : 'ничего'}`] }
   const { base: _b, id: _i, ...draft } = input
   const v = validateTask({ ...draft, worktree: cwd })
   if (!v.ok) return { ok: false, errors: v.errors.map((x) => sanitize(x, 200)) }
@@ -67,17 +67,17 @@ export function acceptedRecord(effective, { now, baseTask }) {
 // Every permission being accepted is listed; nothing is silently truncated beyond the per-entry cap.
 export function previewLines(pending) {
   const e = pending.effective
-  const one = (x) => (Array.isArray(x) ? x.join(' ') : Array.isArray(x?.argv) ? x.argv.join(' ') + (x.check ? ' (check)' : '') : String(x))
-  const fmt = (xs) => (xs?.length ? xs.map((x) => sanitize(one(x), 160)).join('; ') : 'none')
+  const one = (x) => (Array.isArray(x) ? x.join(' ') : Array.isArray(x?.argv) ? x.argv.join(' ') + (x.check ? ' (проверка)' : '') : String(x))
+  const fmt = (xs) => (xs?.length ? xs.map((x) => sanitize(one(x), 160)).join('; ') : 'нет')
   return [
-    `Proposed task ${pending.digest} — ${sanitize(e.goal, 120)}`,
-    `  Replaces: ${e.base ? `task ${sanitize(e.base, 64)}` : 'nothing (no task bound)'}`,
-    `  Edits: ${e.allow.includes('edit') ? `allowed in ${fmt(e.editRoots)}` : 'not allowed'}`,
-    `  Checks and executors: ${fmt(e.executors)}`,
-    `  Needs a person: ${fmt(e.needsUser)}`,
-    `  Other tools: ${fmt(e.tools)}`,
-    `  Forbidden (task): ${fmt(e.forbid)} · plus the built-in production-write and remote-git-write classes`,
-    ...(e.acceptance.length ? [`  Acceptance: ${e.acceptance.map((a) => sanitize(a, 160)).join('; ')}`] : []),
-    `  Accept this scope: /agentctl accept ${pending.digest.slice(0, 8)} — it binds the scope only; it does not start any work · or /agentctl discard`,
+    `Предлагаемая задача ${pending.digest} — ${sanitize(e.goal, 120)}`,
+    `  Заменяет: ${e.base ? `задачу ${sanitize(e.base, 64)}` : 'ничего (задача не привязана)'}`,
+    `  Правки: ${e.allow.includes('edit') ? `разрешены в ${fmt(e.editRoots)}` : 'не разрешены'}`,
+    `  Проверки и исполнители: ${fmt(e.executors)}`,
+    `  Требует человека: ${fmt(e.needsUser)}`,
+    `  Другие инструменты: ${fmt(e.tools)}`,
+    `  Запрещено (задача): ${fmt(e.forbid)} · плюс встроенные классы записи в продакшн и записи в удалённый git`,
+    ...(e.acceptance.length ? [`  Приёмка: ${e.acceptance.map((a) => sanitize(a, 160)).join('; ')}`] : []),
+    `  Принять область: /agentctl accept ${pending.digest.slice(0, 8)} — это только привязывает область, но не начинает работу · или /agentctl discard`,
   ]
 }

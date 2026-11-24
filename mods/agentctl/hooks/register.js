@@ -179,7 +179,7 @@ async function readGate($, c) {
     c.gate = { failed: sanitize('cannot look for review-state.js: ' + (err && err.message ? err.message : err), 80), at }
     return
   }
-  if (!script) { c.gate = { failed: 'no review-state.js here', at }; return }
+  if (!script) { c.gate = { failed: 'review-state.js здесь нет', at }; return }
   try {
     // `check` only — this mod never writes a verdict (FR-19).
     const r = await $.process.run(['node', script, 'check', '--format=json'], { cwd: c.cwd, timeoutMs: TIMEOUT_MS })
@@ -239,7 +239,7 @@ async function observe($, c, observation, taskId) {
   const now = await $.clock.now()
   const { toSend, sent } = decideNotices(c.state.interventions, c.notices, now)
   c.notices = sent
-  for (const n of toSend) $.ui.toast(`agentctl: ${n.reason.replace('-', ' ')} — /agentctl for details`)
+  for (const n of toSend) $.ui.toast(`agentctl: ${n.reason.replace('-', ' ')} — подробности: /agentctl`)
   persist(c, taskId)
   $.ui.invalidate('ui.render')
 }
@@ -264,7 +264,7 @@ async function closeBackground($, c, id, status, isError) {
       ev.outcome = status === 'completed' ? (isError ? 'error' : 'ok') : status === 'failed' ? 'error' : 'cancelled'
       ev.after = await readFingerprint($, c.cwd)
       ev.coverage = worstCoverage(ev.before, ev.after)
-      ev.note = 'after-reading taken when the terminal result was observed, not at completion'
+      ev.note = 'повторное чтение сделано при получении результата завершения, а не в момент завершения'
     }
   }
   persist(c, task?.id)
@@ -275,27 +275,27 @@ async function taskCommand($, c, e, rest) {
   const [sub, ...more] = rest
   if (!sub || sub === 'show') {
     const t = await boundTask($, c)
-    return t ? policyText(t) : 'No task bound to this worktree. Set one with /agentctl task set <json>.'
+    return t ? policyText(t) : 'К этому рабочему дереву задача не привязана. Задайте её: /agentctl task set <json>.'
   }
-  if (sub !== 'set' && sub !== 'clear') return 'Usage: /agentctl task show | set <json> | clear'
+  if (sub !== 'set' && sub !== 'clear') return 'Использование: /agentctl task show | set <json> | clear'
   // Scope changes come only from the person at the prompt (FR-25).
-  if (e.origin?.kind !== 'composer') return 'agentctl refused: the task can be set or cleared only from your own prompt.'
+  if (e.origin?.kind !== 'composer') return 'agentctl отклонил: задачу можно задать или снять только из вашего собственного запроса.'
   const now = await $.clock.now()
   if (sub === 'clear') {
     // Report what persisted (INV-006): a failed delete leaves the old policy in force.
     if (!(await c.writer.delete(keys.binding(worktreeKey(c.cwd))))) {
-      return 'agentctl: the task could not be cleared (store error); the previous task still applies.'
+      return 'agentctl: не удалось снять задачу (ошибка хранилища); предыдущая задача всё ещё действует.'
     }
-    return 'Task cleared for this worktree; only the built-in classes are refused now.'
+    return 'Задача для этого рабочего дерева снята; теперь запрещены только встроенные классы.'
   }
   let input
-  try { input = JSON.parse(more.join(' ')) } catch { return 'agentctl: the task must be JSON.' }
-  if (!input || typeof input !== 'object' || Array.isArray(input)) return 'agentctl: the task must be a JSON object.'
+  try { input = JSON.parse(more.join(' ')) } catch { return 'agentctl: задача должна быть JSON.' }
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return 'agentctl: задача должна быть объектом JSON.'
   // The worktree is this session's; a task naming another one is refused, never re-pointed.
-  if (input.worktree !== undefined && input.worktree !== c.cwd) return 'agentctl: task rejected —\n- the task names another worktree'
+  if (input.worktree !== undefined && input.worktree !== c.cwd) return 'agentctl: задача отклонена —\n- в ней указано другое рабочее дерево'
   const raw = { ...input, worktree: c.cwd }
   const v = validateTask(raw)
-  if (!v.ok) return `agentctl: task rejected —\n- ${v.errors.map((x) => sanitize(x, 200)).join('\n- ')}`
+  if (!v.ok) return `agentctl: задача отклонена —\n- ${v.errors.map((x) => sanitize(x, 200)).join('\n- ')}`
   // The policy version only rises: re-setting an id that already has a record continues from it, so
   // evidence and proposals tied to the earlier policy never read as this one's.
   const id = raw.id ?? `T${now}`
@@ -311,14 +311,14 @@ async function bindTask($, c, task) {
   const bindingKey = keys.binding(worktreeKey(c.cwd))
   const current = await $.store.get(bindingKey)
   if (!(await c.writer.set(keys.task(scopeOf(c, task.id)), task))) {
-    return 'agentctl: the task could not be saved (store error); the previous task, if any, still applies.'
+    return 'agentctl: не удалось сохранить задачу (ошибка хранилища); предыдущая задача, если была, всё ещё действует.'
   }
   if (current !== task.id && !(await c.writer.set(bindingKey, task.id))) {
-    return 'agentctl: the task was saved but could not be bound (store error); the previous task, if any, still applies.'
+    return 'agentctl: задача сохранена, но не привязана (ошибка хранилища); предыдущая задача, если была, всё ещё действует.'
   }
   persist(c, task.id)
   $.ui.invalidate('ui.render')
-  return `Task ${task.id} bound to this worktree.\n${policyText(task)}`
+  return `Задача ${task.id} привязана к этому рабочему дереву.\n${policyText(task)}`
 }
 
 // ── Proposals ───────────────────────────────────────────────────────────────────────────────────
@@ -345,10 +345,10 @@ async function checkProposal($, c) {
   const bound = await boundTask($, c)
   // A malformed submission is a rejection, never a failed hook.
   let r
-  try { r = readProposal(text, { cwd: c.cwd, boundId: bound?.id ?? null }) } catch { r = { ok: false, errors: ['the proposal could not be validated'] } }
+  try { r = readProposal(text, { cwd: c.cwd, boundId: bound?.id ?? null }) } catch { r = { ok: false, errors: ['не удалось проверить черновик'] } }
   if (!r.ok) {
     // No `agentctl:` prefix: the host already names the mod on every transcript line (found live).
-    $.ui.log(`proposal not shown — ${r.errors.join('; ')}`)
+    $.ui.log(`черновик не показан — ${r.errors.join('; ')}`)
     persist(c, bound?.id)
     return
   }
@@ -417,20 +417,20 @@ async function settleProposal($, c, p) {
 
 async function acceptCommand($, c, e, given) {
   // Scope comes only from the person at the prompt (FR-25).
-  if (e.origin?.kind !== 'composer') return 'agentctl refused: a proposal can be accepted only from your own prompt.'
+  if (e.origin?.kind !== 'composer') return 'agentctl отклонил: черновик можно принять только из вашего собственного запроса.'
   const p = c.pending
-  if (!p) return c.lang === 'zh' ? '目前沒有等待中的草稿。要起草：/agentctl <你要做的事>' : 'No proposal is waiting. To draft one: /agentctl <what you are doing>'
-  if (!digestMatches(given, p.digest)) return `agentctl refused: ${sanitize(given, 30)} does not match the waiting proposal ${p.digest.slice(0, 8)}. Check /agentctl proposal.`
+  if (!p) return c.lang === 'zh' ? '目前沒有等待中的草稿。要起草：/agentctl <你要做的事>' : 'Черновиков нет. Чтобы создать: /agentctl <что вы делаете>'
+  if (!digestMatches(given, p.digest)) return `agentctl отклонил: ${sanitize(given, 30)} не совпадает с ожидающим черновиком ${p.digest.slice(0, 8)}. Проверьте /agentctl proposal.`
   const bound = await boundTask($, c)
   if ((bound?.id ?? null) !== p.effective.base || revisionOf(bound) !== p.baseRev) {
     await settleProposal($, c, p)
     persist(c, bound?.id)
-    return 'agentctl refused: the bound task changed since this proposal was drafted (stale); it was discarded. Ask for a new draft.'
+    return 'agentctl отклонил: привязанная задача изменилась с момента создания черновика (устарел); он удалён. Запросите новый черновик.'
   }
   const now = await $.clock.now()
   const record = acceptedRecord(p.effective, { now, baseTask: bound })
   const text = await bindTask($, c, record)
-  if (!text.startsWith('Task ')) return text
+  if (!text.startsWith('Задача ')) return text
   await settleProposal($, c, p)
   persist(c, `T${now}`)
   // Say what accepting did and did not do; the full policy is one command away.
@@ -438,7 +438,7 @@ async function acceptCommand($, c, e, given) {
   // uncoached run, where `npm test | grep` passed but never counted). Never shortened: a cut command
   // would not match its check.
   const checks = checkArgv(record)
-  return [copy(c.lang).accepted, `Task ${record.id}: ${sanitize(record.goal, 120)}`,
+  return [copy(c.lang).accepted, `Задача ${record.id}: ${sanitize(record.goal, 120)}`,
     ...(checks.length ? [copy(c.lang).runChecks(checks.map((a) => sanitize(a, Infinity)))] : []), copy(c.lang).wholeScope].join('\n')
 }
 
@@ -446,22 +446,22 @@ async function stopCommand($, c) {
   const h = await saveHandoff($, c)
   const turnId = c.state.runtime.turnId
   // Say what happened: a checkpoint exists only when a task is bound.
-  const lines = [h.saved ? 'Hand-over saved before stopping.'
-    : h.reason === 'no-task' ? 'No task bound: the hand-over was not saved (see /agentctl handoff).'
-      : 'The hand-over could not be saved (store error); /agentctl handoff still prints it.']
-  if (!turnId) lines.push('No running turn was observed; nothing was cancelled.')
+  const lines = [h.saved ? 'Передача сохранена перед остановкой.'
+    : h.reason === 'no-task' ? 'Задача не привязана: передача не сохранена (см. /agentctl handoff).'
+      : 'Передачу не удалось сохранить (ошибка хранилища); /agentctl handoff всё равно её выведет.']
+  if (!turnId) lines.push('Активных ходов не обнаружено; ничего не отменено.')
   else {
     try {
       await $.turn.abort({ turnId })
-      lines.push(`Cancellation requested for turn ${turnId}; it reads as ended only once its end is observed.`)
+      lines.push(`Запрошена отмена хода ${turnId}; он считается завершённым только после подтверждения завершения.`)
     } catch (err) {
-      lines.push(`Cancellation request failed; turn outcome unconfirmed (${sanitize(err && err.message ? err.message : err, 120)}).`)
+      lines.push(`Не удалось запросить отмену; исход хода не подтверждён (${sanitize(err && err.message ? err.message : err, 120)}).`)
     }
   }
   const open = Object.entries(c.state.ops).filter(([, o]) => o.endedAt === undefined && o.outcome !== 'refused')
-  lines.push(open.length ? 'Tracked operations, as last observed:' : 'No tracked operation was running.')
+  lines.push(open.length ? 'Отслеживаемые операции (последние наблюдения):' : 'Отслеживаемых операций не было.')
   for (const [id, o] of open) lines.push(`- ${sanitize(o.requested, 120)} (${o.tool}) — ${o.outcome}, ${id}`)
-  lines.push('Untracked processes cannot be confirmed; this is never "all stopped".')
+  lines.push('Неотслеживаемые процессы подтвердить нельзя; это никогда не означает "всё остановлено".')
   return lines.join('\n')
 }
 
@@ -492,13 +492,13 @@ export function register(on) {
     if (c.checkpoint) {
       // Shown before any work: a transcript notice (not sent to the model; `-p` receives it as
       // ui_log) and the band. Nothing is replayed, and the mod holds no approvals to carry over.
-      $.ui.log(`last hand-over for task ${task.id}, saved ${new Date(c.checkpoint.savedAt).toISOString()} — /agentctl last shows it again`)
+      $.ui.log(`последняя передача для задачи ${task.id}, сохранена ${new Date(c.checkpoint.savedAt).toISOString()} — /agentctl last покажет её снова`)
       // The whole checkpoint (already bounded by the hand-over cap), never a silent preview.
       for (const line of String(c.checkpoint.markdown).split('\n')) $.ui.log(line)
     }
     await checkProposal($, c)
     // `immediate`: /agentctl stop must run while the turn it cancels is still in flight.
-    await $.command.register({ name: 'agentctl', description: 'Agent Control Plane — describe the work and Claude drafts a scope you accept', argumentHint: '<what you are doing> | accept <digest> | help', immediate: true })
+    await $.command.register({ name: 'agentctl', description: 'Пульт управления агентом — опишите работу, и Клод подготовит область, которую вы примете', argumentHint: '<что вы делаете> | accept <digest> | help', immediate: true })
     $.ui.invalidate('ui.render')
     return next(e)
   })
@@ -576,8 +576,8 @@ export function register(on) {
       // propose widening a task that cannot widen it (found live).
       const builtIn = BUILT_IN_RULES.has(v.rule)
       return { deny: builtIn
-        ? `agentctl refused (${rule}): a built-in class no task can lift. Run it yourself, or through your project's own push or deploy workflow.`
-        : `agentctl refused (${rule}). Do not reach the same result another way (a shell redirect, a script); if it is needed, ask the person to accept a wider scope. The task's scope is shown by /agentctl policy.` }
+        ? `agentctl отклонил (${rule}): встроенный класс, который никакая задача не может снять. Выполните это сами или через собственный workflow проекта для push/deploy.`
+        : `agentctl отклонил (${rule}). Не добивайтесь того же результата другим способом (перенаправление в оболочке, скрипт); если это необходимо, попросите человека принять более широкую область. Область задачи показана в /agentctl policy.` }
     }
     // Delegated: the host's permission flow (or auto mode) decides; the mod only records that it did
     // not classify the call, so the events list can show it.
@@ -594,7 +594,7 @@ export function register(on) {
     await observe($, c, { type: 'tool.end', id, outcome: outcomeOf(r), at: endAt }, task?.id)
     await observe($, c, { type: 'permission.settled', at: endAt }, task?.id)
     return r
-  }).catch(($, e, next) => (next.called ? next(e) : { deny: 'agentctl refused: the policy check failed before the call ran' }))
+  }).catch(($, e, next) => (next.called ? next(e) : { deny: 'agentctl отклонил: проверка политики не удалась до выполнения вызова' }))
 
   // Evidence, beneath the policy hook: brackets Bash calls; its failures are evidence failures,
   // never refusals (feasibility § 6).
@@ -660,14 +660,14 @@ export function register(on) {
       persist(c, task?.id)
     }
     return out
-  }).catch(() => ({ decision: 'deny', reason: 'agentctl refused: the verdict check failed' }))
+  }).catch(() => ({ decision: 'deny', reason: 'agentctl отклонил: проверка вердикта не удалась' }))
 
   // Text replies for every surface, answered without a model call.
   on('command.run', { command: 'agentctl' }, async ($, e) => {
     const c = await context($)
     // Replies carry no `agentctl:` prefix of their own: the host already adds one (found in a
     // first-run test, where every reply read "agentctl: agentctl:").
-    const reply = (text) => ({ text: String(text).replace(/^agentctl: /gm, '').replace(/^agentctl refused: /gm, 'Refused: ') })
+    const reply = (text) => ({ text: String(text).replace(/^agentctl: /gm, '').replace(/^agentctl отклонил: /gm, 'Отклонено: ') })
     const t = copy(c.lang)
     const p = parseCommand(e.args)
     if (p.kind === 'goal') return reply(await goalCommand($, c, e, p.text))
@@ -679,16 +679,16 @@ export function register(on) {
       const m = await model($, c)
       const bound = m.task && !m.task.recordMissing
       const next = c.pending ? t.next.proposal(c.pending.digest.slice(0, 8)) : bound ? nextForTask(t, checkProgress(m.task, m.evidence, m.fingerprint)) : t.next.none
-      const extra = c.checkpoint ? [`Last hand-over saved ${new Date(c.checkpoint.savedAt).toISOString()} — /agentctl last`] : []
+      const extra = c.checkpoint ? [`Последняя передача сохранена ${new Date(c.checkpoint.savedAt).toISOString()} — /agentctl last`] : []
       return reply([next, statusText(m, { details: rest[0] === '--details' }), ...extra].join('\n'))
     }
     if (sub === 'help') return reply(helpText(c.lang, rest[0] === 'advanced'))
     if (sub === 'last') {
-      if (c.checkpoint) return reply(`Last hand-over (${new Date(c.checkpoint.savedAt).toISOString()}):\n${c.checkpoint.markdown}`)
+      if (c.checkpoint) return reply(`Последняя передача (${new Date(c.checkpoint.savedAt).toISOString()}):\n${c.checkpoint.markdown}`)
       return reply((await boundTask($, c)) ? t.noHandover : t.noTaskLast)
     }
     if (sub === 'proposal') {
-      if (!c.pending) return reply(c.lang === 'zh' ? '目前沒有等待中的草稿。要起草：/agentctl <你要做的事>' : 'No proposal is waiting. To draft one: /agentctl <what you are doing>')
+      if (!c.pending) return reply(c.lang === 'zh' ? '目前沒有等待中的草稿。要起草：/agentctl <你要做的事>' : 'Черновиков нет. Чтобы создать: /agentctl <что вы делаете>')
       await suggestAccept($, c)
       return reply(preview(c).join('\n'))
     }
@@ -698,7 +698,7 @@ export function register(on) {
       await settleProposal($, c, c.pending)
       persist(c, (await boundTask($, c))?.id)
       $.ui.invalidate('ui.render')
-      return reply(had ? 'Proposal discarded; the bound task is unchanged.' : 'No proposal was waiting.')
+      return reply(had ? 'Черновик удалён; привязанная задача не изменилась.' : 'Черновиков не было.')
     }
     if (sub === 'task') {
       // A sentence where a subcommand belongs is a goal, not a usage error (found in a first-run test).

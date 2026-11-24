@@ -77,7 +77,7 @@ export function fold(results, changed = []) {
   const reasons = []
   const part = (name) => {
     const r = results[name]
-    if (!r) { reasons.push(`${name}: not read`); return '' }
+    if (!r) { reasons.push(`${name}: не прочитано`); return '' }
     if (r.error) { reasons.push(`${name}: ${r.error}`); return '' }
     if (name !== 'head' && r.exitCode !== 0) { reasons.push(`${name}: exit ${r.exitCode}`); return '' }
     return r.stdout ?? ''
@@ -86,20 +86,20 @@ export function fold(results, changed = []) {
   // a reading. A missing read, a thrown read or any other exit is a failed observation, never "unborn".
   const h = results.head
   let head
-  if (!h) { head = 'unknown'; reasons.push('head: not read') }
+  if (!h) { head = 'unknown'; reasons.push('head: не прочитано') }
   else if (h.error) { head = 'unknown'; reasons.push(`head: ${h.error}`) }
   else if (h.exitCode === 0) head = String(h.stdout ?? '').trim()
   else if (h.exitCode === 1 && !String(h.stdout ?? '').trim() && !String(h.stderr ?? '').trim()) head = 'unborn'
-  else { head = 'unknown'; reasons.push(`head: exit ${h.exitCode}`) }
+  else { head = 'unknown'; reasons.push(`head: выход ${h.exitCode}`) }
   const index = part('index')
   const statusOut = part('status')
   const flagsOut = part('flags')
   const hashOut = changed.length ? part('hash') : ''
   const status = parseStatus(statusOut)
   reasons.push(...status.reasons, ...parseFlags(flagsOut))
-  if (changed.length > MAX_HASHED_PATHS) reasons.push(`more than ${MAX_HASHED_PATHS} changed paths`)
+  if (changed.length > MAX_HASHED_PATHS) reasons.push(`более ${MAX_HASHED_PATHS} изменённых путей`)
   if (changed.length && hashOut.trim().split('\n').filter(Boolean).length !== Math.min(changed.length, MAX_HASHED_PATHS)) {
-    reasons.push('hash-object did not answer for every path')
+    reasons.push('hash-object не ответил для всех путей')
   }
   const value = digest([head, index, statusOut, hashOut].join('\u0001'))
   return {
@@ -112,4 +112,4 @@ export function fold(results, changed = []) {
 }
 
 export const COVERAGE_NOTE =
-  'HEAD, index entries, Git-reported changes, raw bytes of changed and untracked files; clean files rely on Git\'s cleanliness check; ignored files, submodule contents and the environment are not covered'
+  'HEAD, записи индекса, изменения по данным Git, байты изменённых и неотслеживаемых файлов; чистые файлы полагаются на Git\'s cleanliness check; игнорируемые файлы, содержимое подмодулей и окружение не покрываются'

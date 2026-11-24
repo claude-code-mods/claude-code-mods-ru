@@ -135,9 +135,9 @@ async function askBatch(
 function truncatedResultText(text: string, isError: boolean, headChars: number): string {
   if (text.length <= headChars + 120) return text;
   const head = headChars > 0 ? `${text.slice(0, headChars)}\n` : '';
-  return `${head}[caliber-jev-compaction truncated ${text.length - headChars} chars of this tool result${
-    isError ? ' (error)' : ''
-  }; re-run the tool if needed]`;
+  return `${head}[caliber-jev-compaction усечено ${text.length - headChars} символов результата инструмента${
+    isError ? ' (ошибка)' : ''
+  }; при необходимости запустите инструмент снова]`;
 }
 
 /**

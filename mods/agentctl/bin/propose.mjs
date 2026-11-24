@@ -36,15 +36,15 @@ const at = argv.indexOf('--worktree')
 const worktree = at >= 0 ? argv[at + 1] : undefined
 if (argv.includes('--help')) { process.stdout.write(HELP + '\n'); process.exit(0) }
 if (!worktree || !isAbsolute(worktree)) out({ ok: false, errors: ['--worktree <absolute path> is required'] }, 2)
-if (!argv.includes('--stdin')) out({ ok: false, errors: ['pass the JSON on stdin with --stdin (see --help)'] }, 2)
+if (!argv.includes('--stdin')) out({ ok: false, errors: ['передайте JSON через stdin с --stdin (см. --help)'] }, 2)
 
 let text
 try {
   const buf = readFileSync(0)
-  if (buf.length > MAX_PROPOSAL_BYTES) out({ ok: false, errors: [`the proposal is over ${MAX_PROPOSAL_BYTES} bytes`] }, 1)
+  if (buf.length > MAX_PROPOSAL_BYTES) out({ ok: false, errors: [`черновик превышает ${MAX_PROPOSAL_BYTES} байт`] }, 1)
   text = buf.toString('utf8')
 } catch (err) {
-  out({ ok: false, errors: [`stdin could not be read (${err.code || 'error'})`] }, 1)
+  out({ ok: false, errors: [`не удалось прочитать stdin (${err.code || 'ошибка'})`] }, 1)
 }
 // Validate against the draft's own base: the mod checks it against the task bound at reading.
 let base = null
@@ -59,6 +59,6 @@ try {
   writeFileSync(tmp, text, { mode: 0o600 })
   renameSync(tmp, file)
 } catch (err) {
-  out({ ok: false, errors: [`the proposal could not be written (${err.code || 'error'})`] }, 1)
+  out({ ok: false, errors: [`не удалось записать черновик (${err.code || 'ошибка'})`] }, 1)
 }
-out({ ok: true, path: file, next: 'The mod shows a preview when this turn ends; the person accepts it with /agentctl accept <digest>.' }, 0)
+out({ ok: true, path: file, next: 'Мод покажет черновик в конце хода; человек принимает его через /agentctl accept <digest>.' }, 0)

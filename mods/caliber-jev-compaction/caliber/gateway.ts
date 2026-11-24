@@ -33,10 +33,10 @@ export const GATEWAY_PROTOCOL_VERSION = '0.0.1';
 const GATEWAY_JEV_ALIASES = new Set(['jev', 'jev-latest', 'typesafe-ai/jev-latest']);
 
 export const GATEWAY_BILLING_ERROR_MESSAGE =
-  'Vercel AI Gateway rejected this request because the Vercel account has no payment method. ' +
-  'HTTP 403 "AI Gateway requires a valid credit card on file" is Vercel account billing, ' +
-  'not a Caliber protocol/auth bug. Add a credit card at https://vercel.com/docs/pricing/billing ' +
-  'then retry `npm run e2e:jev:gateway`.';
+  'Vercel AI Gateway отклонил запрос, потому что у учётной записи Vercel нет способа оплаты. ' +
+  'HTTP 403 "AI Gateway requires a valid credit card on file" относится к оплате учётной записи Vercel, ' +
+  'а не к ошибке протокола/авторизации Caliber. Добавьте карту по адресу https://vercel.com/docs/pricing/billing ' +
+  'затем повторите `npm run e2e:jev:gateway`.';
 
 export interface GatewayJevRequest {
   url: string;
@@ -143,18 +143,18 @@ export function parseGatewayJevResponse(
 ): GatewayJevResponse {
   if (!ok) {
     if (isGatewayBillingError(status, text)) {
-      throw new Error(`${GATEWAY_BILLING_ERROR_MESSAGE} Upstream: ${text.slice(0, 160)}`);
+      throw new Error(`${GATEWAY_BILLING_ERROR_MESSAGE} Источник: ${text.slice(0, 160)}`);
     }
-    throw new Error(`Jev request failed (${status}): ${text.slice(0, 200)}`);
+    throw new Error(`Запрос к Jev не удался (${status}): ${text.slice(0, 200)}`);
   }
   let parsed: unknown;
   try {
     parsed = JSON.parse(text);
   } catch {
-    throw new Error('Jev returned malformed JSON');
+    throw new Error('Jev вернул некорректный JSON');
   }
   if (!isRecord(parsed) || !('answers' in parsed) || !isRecord(parsed.answers)) {
-    throw new Error('Jev response is missing answers');
+    throw new Error('В ответе Jev нет answers');
   }
   return {
     ...parsed,

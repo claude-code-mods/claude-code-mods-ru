@@ -1,41 +1,41 @@
-# Claude Code native prompt predictions
+# Нативные подсказки запросов в Claude Code
 
-This managed adapter uses Claude Code's native function hooks. It is verified
-against Claude Code 2.1.310; older versions are not claimed as supported. It is
-loaded for a new process with `--plugin-dir <absolute-adapter-directory>` and
-`CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1`. Loading an adapter does not install it into
-the user's global Claude configuration.
+Этот управляемый адаптер использует нативные function hooks Claude Code. Его работа проверена
+на Claude Code 2.1.310; поддержка более старых версий не заявлена. Он
+загружается в новом процессе с `--plugin-dir <absolute-adapter-directory>` и
+`CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1`. Загрузка адаптера не устанавливает его в
+глобальную конфигурацию Claude пользователя.
 
-The launcher must provide `PEBREL_PREDICTION_ENDPOINT` (an HTTP IPv4 loopback
-address with a port), `PEBREL_PREDICTION_TOKEN`, and
-`CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=false`. The last variable suppresses Claude
-Code's built-in prediction inference for that process. Without it the adapter
-does nothing, avoiding two inference requests for the same completed turn. No
-global setting or main-model setting is changed.
+Запускающее приложение должно задать `PEBREL_PREDICTION_ENDPOINT` (HTTP-адрес IPv4 loopback
+с портом), `PEBREL_PREDICTION_TOKEN` и
+`CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=false`. Последняя переменная отключает встроенный
+вывод подсказок Claude Code для этого процесса. Без неё адаптер
+ничего не делает: так удаётся избежать двух запросов вывода для одного завершённого хода. Ни
+глобальные настройки, ни настройки основной модели не изменяются.
 
-Only a successful main turn with an empty, mounted terminal composer is eligible.
-`$.session.messages()` supplies in-memory user/assistant text; tool payloads are
-not sent. The bridge receives at most 24 messages, 3000 UTF-16 units per message,
-and 12000 units total. Pebrel owns the prediction prompt, configured provider,
-language, and further context limits. The adapter adds no speaking-style prompt
-or persistence.
+Подсказка допустима только после успешного хода с пустым подключённым терминальным полем ввода.
+`$.session.messages()` передаёт текст пользователя и ассистента в памяти; полезная нагрузка
+инструментов не отправляется. Мост получает не более 24 сообщений, по 3000 единиц UTF-16 на сообщение
+и 12000 единиц всего. За подсказку, настроенного провайдера,
+язык и дальнейшие ограничения контекста отвечает Pebrel. Адаптер не добавляет
+подсказок о стиле речи и не сохраняет данные.
 
-The localized bridge `loading_text` appears in Claude Code's dim `PromptHint`
-footer, followed by `.`, `..`, and `...` every 400 ms. It is noneditable and is
-never sent to `prompt.suggest`. A completed candidate uses native
-`$.prompt.suggest({text})`, so native Tab/right-arrow behavior fills the composer
-without submitting it. The composer remains owned by Claude Code.
+Локализованный текст `loading_text` моста появляется в затемнённом футере `PromptHint`
+Claude Code, за ним следуют `.`, `..` и `...` каждые 400 мс. Он недоступен для редактирования и
+никогда не отправляется в `prompt.suggest`. Готовый вариант использует нативный
+`$.prompt.suggest({text})`, поэтому нативные Tab/стрелка вправо заполняют поле ввода
+без отправки. Владение полем ввода остаётся у Claude Code.
 
-Editing, prompt changes, new turns, session end, and a ten-second deadline
-invalidate pending UI work. Every result rechecks the revision, session, and
-empty draft. The native `http.fetch` API has no abort signal: cancellation here
-suppresses stale results, while the bridge owns the network/request deadline.
-No disk polling or timers remain when prediction UI is idle.
+Редактирование, смена подсказки, новые ходы, завершение сессии и десятисекундный предел
+аннулируют отложенную работу интерфейса. Каждый результат повторно проверяет версию, сессию и
+пустой черновик. У нативного API `http.fetch` нет сигнала прерывания: отмена здесь
+подавляет устаревшие результаты, а мост управляет сроком сетевого запроса.
+Когда подсказки не работают, опрос диска и таймеры не остаются.
 
-Run the behavior contract with `node --test tests/*.test.mjs`, and the actual
-Claude scanner with `claude plugin validate --strict --json <adapter-directory>`.
-Mock tests do not establish native terminal visual acceptance or compatibility
-with an untested Claude version.
+Контракт поведения проверяйте командой `node --test tests/*.test.mjs`, а реальный
+сканер Claude — `claude plugin validate --strict --json <adapter-directory>`.
+Мок-тесты не подтверждают визуальное принятие в нативном терминале или совместимость
+с непроверенной версией Claude.
 
 ## Источник и лицензия
 

@@ -2,33 +2,33 @@
 
 ![Agent Standup](.claude-plugin/icon.png)
 
-A line above your Claude Code prompt when another Claude Code session on this computer needs you:
+Строка над полем ввода Claude Code, когда другая сессия Claude Code на этом компьютере нуждается в вас:
 
-    ✋ web-shop (VS Code) needs an approval
-    Agent Standup · /agent-standup:open shows them all   Hide
+    ✋ web-shop (VS Code) ждёт одобрения
+    Agent Standup · /agent-standup:open показывает все   Скрыть
 
-and a short toast when one starts waiting for you, or finishes its turn. Вы остаётесь в текущей сессии и при этом узнаёте, когда другая сессия застряла на вопросе или одобрении.
+и короткое уведомление, когда одна сессия начинает ждать вас или завершает ход. Вы остаётесь в текущей сессии и при этом узнаёте, когда другая сессия застряла на вопросе или одобрении.
 
-It is a mod: a plugin of Claude Code's function hooks. It draws in the terminal and in the Claude desktop app's Code tab. In VS Code, the [Agent Standup extension](https://marketplace.visualstudio.com/items?itemName=DoubleGeste.agent-standup) shows the same in its status bar.
+Это мод: плагин для function hooks Claude Code. Он рисует в терминале и во вкладке Code приложения Claude Desktop. В VS Code [расширение Agent Standup](https://marketplace.visualstudio.com/items?itemName=DoubleGeste.agent-standup) показывает то же самое в строке состояния.
 
 ## Установка
 
-In Claude Code 2.1.294 or later:
+В Claude Code 2.1.294 или новее:
 
     /plugin install agent-standup-band --marketplace Atoll92/agent-standup
 
-With an earlier version it loads and does nothing: those versions do not run mods (and before 2.1.221 in the terminal, 2.1.269 elsewhere, they do not write the status it reads either).
+В более ранних версиях плагин загружается, но ничего не делает: они не запускают моды (а до 2.1.221 в терминале и 2.1.269 в остальных местах они даже не записывают статус, который читает мод).
 
-To see every session as a live team call, install the main plugin too: `/plugin install agent-standup --marketplace Atoll92/agent-standup`, then `/agent-standup:open`.
+Чтобы видеть все сессии как живой командный созвон, установите также основной плагин: `/plugin install agent-standup --marketplace Atoll92/agent-standup`, затем `/agent-standup:open`.
 
-## What it reads and runs
+## Что он читает и запускает
 
-- Every 4 seconds, the status file Claude Code keeps for each open session, in `~/.claude/sessions/<pid>.json` (or under `CLAUDE_CONFIG_DIR`): which session, its folder, and whether it is busy, idle or waiting for you. Not the conversations. A session started by a program with `claude -p` is left out: its questions go to that program. An Agent SDK app (Zed, a home-made app) is kept, since it may show its menus to a person.
-- `ps`, to check that a session said to be waiting still runs: a session that crashed leaves its file behind.
+- Каждые 4 секунды читает файл статуса, который Claude Code ведёт для каждой открытой сессии: `~/.claude/sessions/<pid>.json` (или каталог `CLAUDE_CONFIG_DIR`) — какая сессия, её папка и занята ли она, простаивает или ждёт вас. Не содержимое разговоров. Сессии, запущенные программой через `claude -p`, исключаются: их вопросы адресованы этой программе. Приложения на Agent SDK (Zed, самописные приложения) учитываются, поскольку могут показывать свои меню человеку.
+- `ps`, чтобы проверить, что сессия, объявленная ожидающей, ещё запущена: после аварийного завершения сессии её файл остаётся.
 
-It writes nothing and sends nothing anywhere.
+Мод ничего не записывает и никуда не отправляет.
 
-## More
+## Подробнее
 
 Источник и проблемы: https://github.com/Atoll92/agent-standup. Неофициальный проект: не связан с Anthropic и не одобрен им. Лицензия MIT.
 

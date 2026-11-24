@@ -1,239 +1,239 @@
 <p align="center">
-  <img src="docs/homepage.jpg" alt="A recording of the Tern homepage plays inside Claude Code, with the list of what changed beside it" width="100%">
+  <img src="docs/homepage.jpg" alt="Запись главной страницы Tern воспроизводится внутри Claude Code, со списком изменений рядом" width="100%">
 </p>
 
 <h1 align="center">claude-show-your-work</h1>
 
-<p align="center">See, review and iterate on your agent's work without leaving the terminal.<br>Images, videos and visual QA for Claude Code.</p>
+<p align="center">Смотрите, проверяйте и дорабатывайте работу агента, не покидая терминал.<br>Изображения, видео и визуальная проверка для Claude Code.</p>
 
 <p align="center">
-  <a href="https://github.com/iamumeransari/claude-show-your-work/stargazers"><img src="https://img.shields.io/github/stars/iamumeransari/claude-show-your-work?style=flat&logo=github&label=Stars&color=E3B341" alt="GitHub stars"></a>
-  <a href="#install"><img src="https://img.shields.io/badge/Claude_Code-plugin-D97757?logo=claude&logoColor=white" alt="Claude Code plugin"></a>
-  <a href="#install"><img src="https://img.shields.io/badge/macOS_%7C_Linux-555555" alt="macOS and Linux"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/iamumeransari/claude-show-your-work?color=22C55E" alt="MIT license"></a>
+  <a href="https://github.com/iamumeransari/claude-show-your-work/stargazers"><img src="https://img.shields.io/github/stars/iamumeransari/claude-show-your-work?style=flat&logo=github&label=Stars&color=E3B341" alt="Звёзды GitHub"></a>
+  <a href="#install"><img src="https://img.shields.io/badge/Claude_Code-plugin-D97757?logo=claude&logoColor=white" alt="Плагин Claude Code"></a>
+  <a href="#install"><img src="https://img.shields.io/badge/macOS_%7C_Linux-555555" alt="macOS и Linux"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/iamumeransari/claude-show-your-work?color=22C55E" alt="Лицензия MIT"></a>
 </p>
 
 ## Установка
 
-Run these two commands in Claude Code:
+Выполните эти две команды в Claude Code:
 
 ```
 /plugin marketplace add https://github.com/iamumeransari/claude-show-your-work.git#releases
 /plugin install show-your-work@iamumeransari
 ```
 
-It supports Ghostty and kitty, on macOS and Linux, with Claude Code 2.1.286 or later. Videos and audio also need ffmpeg: install it with your package manager (`brew install ffmpeg` on macOS), or ask Claude to install it. HTML pages need Chrome, Chromium or Playwright's browser, and PDFs need poppler (`brew install poppler`).
+Поддерживаются Ghostty и kitty на macOS и Linux с Claude Code 2.1.286 или новее. Видео и аудио также нуждаются в ffmpeg: установите его менеджером пакетов (`brew install ffmpeg` на macOS) или попросите Claude установить его. HTML-страницам нужен Chrome, Chromium или браузер Playwright, а PDF — poppler (`brew install poppler`).
 
-When the install finishes, a short onboarding shows you around. Run `/show-your-work` at any time to change your settings.
+По завершении установки короткий тур знакомства покажет вам возможности. Выполняйте `/show-your-work` в любое время, чтобы изменить настройки.
 
-## Usage
+## Использование
 
-Claude shows you its work in the chat whenever it builds or changes something visual. You can also ask for it directly:
+Claude показывает вам свою работу в чате, когда создаёт или меняет что-то визуальное. Можно также попросить об этом напрямую:
 
-- "Give me four directions for the homepage hero and show them side by side."
-- "Build the sign-up form, test it, and show me the recording."
-- "Fix the billing toggle and show me before and after."
+- «Предложи четыре варианта главного экрана и покажи их рядом».
+- «Сделай форму регистрации, протестируй её и покажи запись».
+- «Исправь переключатель выставления счетов и покажи до и после».
 
-### Visual QA with before-and-after recordings
+### Визуальная проверка с записями «до и после»
 
-<p align="center"><img src="docs/qa-product.jpg" alt="A recording of a new-trip form being tested, with what changed and the checks beside it" width="100%"></p>
+<p align="center"><img src="docs/qa-product.jpg" alt="Запись тестирования формы создания поездки, с изменениями и проверками рядом" width="100%"></p>
 
-When Claude builds a feature or fixes a bug, it tests the change with Playwright, records the run and plays the recording in the chat, with everything you need to review the work in one place:
+Когда Claude создаёт функцию или исправляет баг, он тестирует изменение через Playwright, записывает прогон и проигрывает запись в чате — всё необходимое для проверки работы в одном месте:
 
-- **Before and After:** For any change, from a new feature to a bug fix, Claude records the same steps on the old version and the new one. Compare then plays both side by side, in sync.
-- **Change Markers:** Every change Claude made is listed beside the video with its timestamp, and clicking one jumps straight to the moment it shows up.
-- **Live Checks:** Each test check turns green or red as the video reaches it, so you can see exactly where the fix works and where something still fails.
-- **One Place to Review:** You don't need to open a browser, rerun the tests or read through logs, because the recording and its results are right there in the chat.
+- **До и после:** для любого изменения, от новой функции до исправления бага, Claude записывает одни и те же шаги на старой и новой версии. Compare проигрывает обе записи синхронно рядом.
+- **Метки изменений:** каждое изменение, которое внёс Claude, перечислено рядом с видео с временной меткой, а клик по нему ведёт прямо к моменту, когда оно видно.
+- **Проверки в реальном времени:** каждая проверка теста зеленеет или краснеет, когда видео доходит до неё, так что видно, где исправление работает, а где что-то ещё падает.
+- **Одно место для проверки:** не нужно открывать браузер, перезапускать тесты или читать логи — запись и её результаты прямо в чате.
 
-### Images
-
-<p align="center">
-  <img src="docs/concepts.jpg" alt="Four landing page concepts for Tern shown in the chat" width="49%">
-  <img src="docs/breakpoints.jpg" alt="The Tern homepage at desktop, tablet and phone sizes shown in the chat" width="49%">
-</p>
-
-Whatever Claude designs, you see it right in the chat: landing pages, app screens, components, design concepts, slides, charts and generated images. Ask for a few directions and they appear side by side, then keep iterating on the one you like.
-
-- **Compare Directions:** Several concepts show together, so you can pick one at a glance instead of opening files one by one.
-- **Every Version Kept:** Each new version lands in the same player, and History lets you step back through every earlier draft.
-- **Before and After:** Switch between the old and new design, or put them side by side, to see exactly what changed.
-
-### Video
+### Изображения
 
 <p align="center">
-  <img src="docs/persona.jpg" alt="An ad persona in the chat" width="49%">
-  <img src="docs/reel.jpg" alt="The ad made from it, playing in the chat" width="49%">
+  <img src="docs/concepts.jpg" alt="Четыре концепции посадочной страницы Tern, показанные в чате" width="49%">
+  <img src="docs/breakpoints.jpg" alt="Главная страница Tern в размерах десктопа, планшета и телефона, показанная в чате" width="49%">
 </p>
 
-Beyond product QA, Claude can show you a video of almost anything it works on. Building a website and want to see how it feels as you scroll from top to bottom? Just ask, and the recording plays in the chat, animations and all.
+Что бы ни спроектировал Claude, вы видите это прямо в чате: посадочные страницы, экраны приложений, компоненты, концепции дизайна, слайды, графики и сгенерированные изображения. Попросите несколько вариантов — и они появятся рядом, после чего можно продолжать дорабатывать понравившийся.
 
-Making an ad, an animation or a launch video? Each cut plays right in the chat, in a full-featured video player:
+- **Сравнение вариантов:** несколько концепций показываются вместе, так что можно выбрать одну с взгляда, а не открывать файлы по очереди.
+- **Сохраняется каждая версия:** каждая новая версия попадает в тот же проигрыватель, а History позволяет вернуться к любому предыдущему черновику.
+- **До и после:** переключайтесь между старым и новым дизайном или ставьте их рядом, чтобы точно увидеть, что изменилось.
 
-- **Video Controls:** Play, pause, scrub through the timeline, and skip forward or back to the moment you want. A video with sound plays with its sound; Mute turns sound off for the session.
-- **Timestamps:** The sidebar walks you through what happens in the video, step by step. Each step is timestamped, so one click takes you right to that moment.
-- **Compare Versions:** When Claude makes a new version of a video, it opens in the same player. You can flip between drafts in History or play the old and new versions side by side, in sync.
-- **Quick Functions:** Open the video in QuickTime Player for a bigger view, or save it straight to your Downloads folder in one click.
+### Видео
 
-## Terminals
+<p align="center">
+  <img src="docs/persona.jpg" alt="Персонаж рекламы в чате" width="49%">
+  <img src="docs/reel.jpg" alt="Ролик, сделанный по нему и воспроизводящийся в чате" width="49%">
+</p>
 
-show-your-work supports Ghostty and kitty, on macOS and Linux. Pictures work there straight away.
+Помимо проверки продукта, Claude может показать видео почти о чём угодно, над чем работает. Делаете сайт и хотите увидеть, как он ощущается при прокрутке сверху вниз? Просто попросите — и запись, со всеми анимациями, пойдёт в чате.
 
-- **Rex and the Herdr app:** pictures and videos draw, but Claude Code only turns them on there when it starts with `CLAUDE_CODE_FORCE_TERMINAL_IMAGES=1`. The notice's Turn on pictures button adds a line to your shell profile that sets it in that terminal only, and copies a command to reopen the chat.
-- **Warp, WezTerm and Konsole:** these support the kitty graphics protocol, but not the Unicode placeholders Claude Code draws pictures with, so pictures can't show in them yet.
-- **Other terminals built on Ghostty or kitty:** Claude Code doesn't recognise them and leaves pictures off. Start it with `CLAUDE_CODE_FORCE_TERMINAL_IMAGES=1` (the notice copies a command that does this), or add `export CLAUDE_CODE_FORCE_TERMINAL_IMAGES=1` to your shell profile.
-- **tmux:** works inside Ghostty or kitty. Claude Code leaves pictures off in tmux unless it starts with `CLAUDE_CODE_FORCE_TERMINAL_IMAGES=1`, so the first time, the plugin turns that on for new tmux panes and the notice copies a command that reopens the chat with it. The plugin also turns on `allow-passthrough` for its own pane and passes the pictures through. Nothing in your tmux config is changed.
+Делаете рекламу, анимацию или видео запуска? Каждый фрагмент проигрывается прямо в чате в полнофункциональном видеоплеере:
 
-Versions 0.6.7 to 0.6.9 offered a Turn on pictures button in Warp, WezTerm and Konsole, which added a line to your shell profile. It made pictures draw as a grid of boxes, so the plugin now removes that line by itself.
+- **Управление видео:** воспроизведение, пауза, перемотка по шкале времени, переход вперёд или назад к нужному моменту. Видео со звуком идёт со звуком; Mute выключает звук для сессии.
+- **Временные метки:** боковая панель ведёт вас по видео шаг за шагом. У каждого шага есть метка времени, и один клик ведёт прямо к нему.
+- **Сравнение версий:** когда Claude делает новую версию видео, она открывается в том же плеере. Можно переключать черновики через History или проигрывать старую и новую версии рядом синхронно.
+- **Быстрые функции:** откройте видео в QuickTime Player для большего просмотра или сохраните его прямо в папку Загрузки одним кликом.
+
+## Терминалы
+
+show-your-work поддерживает Ghostty и kitty на macOS и Linux. Картинки работают там сразу.
+
+- **Rex и приложение Herdr:** картинки и видео рисуются, но Claude Code включает их там, только если запущен с `CLAUDE_CODE_FORCE_TERMINAL_IMAGES=1`. Кнопка Turn on pictures в уведомлении добавляет строку в ваш профиль оболочки, задавая её только в этом терминале, и копирует команду для повторного открытия чата.
+- **Warp, WezTerm и Konsole:** они поддерживают графический протокол kitty, но не Unicode-заполнители, которыми Claude Code рисует картинки, поэтому картинки в них пока показать нельзя.
+- **Другие терминалы на базе Ghostty или kitty:** Claude Code их не распознаёт и оставляет картинки выключенными. Запустите его с `CLAUDE_CODE_FORCE_TERMINAL_IMAGES=1` (уведомление копирует такую команду) или добавьте `export CLAUDE_CODE_FORCE_TERMINAL_IMAGES=1` в профиль оболочки.
+- **tmux:** работает внутри Ghostty или kitty. Claude Code оставляет картинки выключенными в tmux, если не запущен с `CLAUDE_CODE_FORCE_TERMINAL_IMAGES=1`, поэтому в первый раз плагин включает это для новых панелей tmux, а уведомление копирует команду повторного открытия чата с этим флагом. Плагин также включает `allow-passthrough` для своей панели и пропускает картинки через неё. В конфиге tmux ничего не меняется.
+
+В версиях 0.6.7–0.6.9 была кнопка Turn on pictures в Warp, WezTerm и Konsole, которая добавляла строку в профиль оболочки. Из-за неё картинки рисовались сеткой квадратов, поэтому теперь плагин убирает эту строку сам.
 
 ## FAQ
 
 <details>
-<summary><b>Can Claude Code show images in the terminal?</b></summary>
+<summary><b>Может ли Claude Code показывать изображения в терминале?</b></summary>
 
-Yes, Claude Code can show images in the terminal with the show-your-work plugin. Once it's installed, Claude shows screenshots, designs, charts and other images right in the chat. It works in Ghostty and kitty.
-
-</details>
-
-<details>
-<summary><b>Can Claude Code play videos in the terminal?</b></summary>
-
-Yes, Claude Code can play videos in the terminal with the show-your-work plugin. It plays screen recordings, animations, ads and launch videos inside the Claude Code chat. It comes with a feature-rich video player, with scrubbing, skip controls, clickable timestamps and side-by-side comparisons.
+Да, с плагином show-your-work Claude Code может показывать изображения в терминале. После установки Claude показывает скриншоты, дизайны, графики и другие изображения прямо в чате. Работает в Ghostty и kitty.
 
 </details>
 
 <details>
-<summary><b>How do I see what Claude Code built without opening a browser?</b></summary>
+<summary><b>Может ли Claude Code воспроизводить видео в терминале?</b></summary>
 
-You can see what Claude Code built by installing the show-your-work plugin. Whenever Claude builds or changes something visual, it takes a screenshot or records it and shows you the result in the chat. You don't have to switch to a browser and find the page yourself.
-
-</details>
-
-<details>
-<summary><b>Can Claude Code test my app and show me a recording?</b></summary>
-
-Yes, Claude Code can test your app and show you a recording with the show-your-work plugin. Claude tests the features it builds with Playwright, records each run and plays the recording in the chat. The steps are listed beside the video with timestamps. Each check turns green or red as the video reaches it.
+Да, с плагином show-your-work Claude Code может воспроизводить видео в терминале — записи экрана, анимации, рекламу и видео запуска внутри чата. Есть полнофункциональный плеер с перемоткой, пропуском, кликабельными метками времени и сравнением рядом.
 
 </details>
 
 <details>
-<summary><b>Can Claude Code show me a before and after of a change or bug fix?</b></summary>
+<summary><b>Как увидеть, что сделал Claude Code, не открывая браузер?</b></summary>
 
-Yes, Claude Code can show you a before and after of a change or bug fix with the show-your-work plugin. Claude records the same Playwright steps on the old version and the new one. Compare plays both recordings side by side, in sync. Each test check turns green or red as the video reaches it.
-
-</details>
-
-<details>
-<summary><b>Is there a Claude Code plugin for visual QA?</b></summary>
-
-Yes, show-your-work is a Claude Code plugin for visual QA. It records Claude's Playwright test runs and plays them in the chat. Each recording comes with clickable change markers and checks that turn green or red as the video plays. For a change or bug fix, it plays the before and after side by side, in sync.
+Установите плагин show-your-work, и вы увидите, что сделал Claude Code. Когда он создаёт или меняет что-то визуальное, он делает скриншот или запись и показывает результат в чате. Переключаться в браузер и искать страницу самостоятельно не нужно.
 
 </details>
 
 <details>
-<summary><b>How do I check that Claude Code actually fixed a bug?</b></summary>
+<summary><b>Может ли Claude Code протестировать моё приложение и показать запись?</b></summary>
 
-The easiest way to check that Claude Code actually fixed a bug is to have it record the fix with show-your-work. Ask Claude to fix the bug and show you the before and after. The old and new versions play side by side, in sync, with the checks that now pass marked in green.
-
-</details>
-
-<details>
-<summary><b>How is show-your-work different from just viewing images in the terminal?</b></summary>
-
-show-your-work goes beyond viewing images in the terminal. Its main strength is visual QA. It plays synced before-and-after Playwright recordings, lists the changes you can click to jump to, and turns each check green or red as the video plays. You can review a feature or a fix without leaving Claude Code.
+Да, с плагином show-your-work Claude Code может протестировать ваше приложение и показать запись. Он тестирует созданные функции через Playwright, записывает каждый прогон и проигрывает запись в чате. Шаги перечислены рядом с видео с метками времени. Каждая проверка зеленеет или краснеет, когда видео доходит до неё.
 
 </details>
 
 <details>
-<summary><b>Does showing images and videos use up tokens?</b></summary>
+<summary><b>Может ли Claude Code показать до и после изменения или исправления?</b></summary>
 
-No, show-your-work barely uses any extra tokens, because it's built from the ground up to be both token and memory efficient. Images and videos are drawn straight into your terminal with the kitty graphics protocol, without using any tokens. Videos are also decoded and streamed efficiently, so very little memory is used.
-
-</details>
-
-<details>
-<summary><b>Which terminals does it work in?</b></summary>
-
-The show-your-work plugin supports Ghostty and kitty, on macOS and Linux.
+Да, с плагином show-your-work Claude Code может показать до и после изменения или исправления. Он записывает одни и те же шаги Playwright на старой и новой версиях. Compare проигрывает обе записи синхронно рядом. Каждая проверка зеленеет или краснеет, когда видео доходит до неё.
 
 </details>
 
 <details>
-<summary><b>Is it free?</b></summary>
+<summary><b>Есть ли плагин Claude Code для визуальной проверки?</b></summary>
 
-Yes, show-your-work is free and open source under the MIT license.
-
-</details>
-
-<details>
-<summary><b>Do I need to update the plugin myself when new features and fixes come out?</b></summary>
-
-No, you don't need to update it yourself. The plugin updates itself, so you're never left behind. You can choose between Stable and Latest releases during the onboarding, or any time with `/show-your-work`.
+Да, show-your-work — плагин Claude Code для визуальной проверки. Он записывает прогоны тестов Claude через Playwright и проигрывает их в чате. К каждой записи прилагаются кликабельные метки изменений и проверки, которые зеленеют или краснеют по мере воспроизведения. Для изменения или исправления бага он проигрывает «до» и «после» синхронно рядом.
 
 </details>
 
 <details>
-<summary><b>How do I see the onboarding again?</b></summary>
+<summary><b>Как проверить, что Claude Code действительно исправил баг?</b></summary>
 
-You can see the onboarding again by running `/show-your-work tour`. It covers recordings, before and after, version history and the settings.
-
-</details>
-
-<details>
-<summary><b>Does it take up much space?</b></summary>
-
-No, it doesn't take up much space. It keeps recent pictures and videos so you can flip back through them, and clears out the oldest once they add up to about 1 GB.
+Проще всего попросить Claude записать исправление через show-your-work. Попросите его исправить баг и показать до и после. Старая и новая версии идут синхронно рядом, а проверки, которые теперь проходят, отмечены зелёным.
 
 </details>
 
 <details>
-<summary><b>Does it collect any data?</b></summary>
+<summary><b>Чем show-your-work отличается от простого просмотра картинок в терминале?</b></summary>
 
-You choose whether to share anonymous usage data. You can make that choice during the onboarding, or change it any time with `/show-your-work`. It never collects any sensitive data whatsoever. The details are in the [Privacy policy](PRIVACY.md).
+show-your-work идёт дальше просмотра изображений в терминале. Его главная сила — визуальная проверка. Он проигрывает синхронные записи Playwright «до и после», перечисляет изменения, по которым можно перейти кликом, и окрашивает каждую проверку в зелёный или красный по мере видео. Вы можете проверить функцию или исправление, не покидая Claude Code.
 
 </details>
 
 <details>
-<summary><b>What does it run, keep and connect to on my computer?</b></summary>
+<summary><b>Расходуют ли картинки и видео токены?</b></summary>
 
-Here's everything the plugin does on your computer, so you know exactly what you're installing. Your pictures and videos never leave your machine.
-
-To get pictures and videos ready, it uses `ffmpeg` and `ffprobe` (turning a video into frames and reading its length) and, on macOS, `sips` (converting a picture to PNG). When you play a video with sound, `ffplay` (part of ffmpeg) plays its sound, and on macOS `osascript` reads how long your speakers or headphones take to play it, so the picture waits for the sound. When you press View, Show in Finder or Save to Downloads, it opens the file with `open` on macOS or `xdg-open` on Linux. On macOS, `mdfind` helps `/img` find an image you pasted. To show an HTML page or a Markdown or Mermaid document, it renders it in a hidden Chrome or Chromium with a throwaway profile (never your logins); for PDFs it uses poppler's `pdftoppm` and `pdfinfo`.
-
-A few short scripts run with `sh` and `perl`. They find `ffmpeg` and your home folder, read the terminal's cell size so pictures fit, tidy the plugin's temp folder, open a viewer on Linux, and switch between the Stable and Latest channels. It also uses `cp`, `mkdir`, `rm`, `cat` and `touch` for its own temp files, and `claude plugin` to install its own updates from this repository, at most once a day. You can turn updates off. The updater will be turned off after the plugin moves to the Claude Code plugin directory, which keeps it up to date instead.
-
-It keeps these files:
-
-- Video frames and converted pictures go in a temp folder (`$TMPDIR/claude-show-your-work-<your user id>`), and anything older than a week is cleaned up.
-- A copy of each file Claude shows you goes in `.show-your-work/` in your project, so you can look back through versions.
-- Save to Downloads puts a copy in `~/Downloads`.
-- If your shell profile has the line an older version's Turn on pictures added (see [Terminals](#terminals)), it removes that one line.
-- With `SHOW_YOUR_WORK_DEBUG=1`, it writes a `debug.log` in the temp folder.
-
-Once a day it reads the plugin's latest version number from `raw.githubusercontent.com`.
-
-If Usage data is set to share in `/show-your-work`, it sends anonymous usage counts to `us.i.posthog.com`. These are event names and counts, plus the plugin and Claude Code versions, your terminal, your OS and whether ffmpeg is installed, under a random install id. They never include file names, paths, prompts, anything you type or your IP address. The key in the code is PostHog's public key, which can only send events.
-
-Inside Claude Code, it uses these hooks:
-
-- `prompt.submit` sends one short line with your message, telling Claude this terminal can show pictures (or why it can't). It sends it once a session, again after a compaction, and when that changes.
-- `prompt.submit` closes the settings when you send a message and remembers the names of images you paste, so `/img` can find them. Your message isn't changed.
-- `tool.call` handles the plugin's own `show_image`, `show_video`, `show_html`, `show_audio` and `show_document` tools. It never touches other tools.
-- `command.run` runs `/img`, `/page`, `/audio`, `/doc` and `/show-your-work`. Right after you install, it runs `/show-your-work tour` once to show you around.
-- `ui.render` draws the plugin's player, notices, settings and tour.
-- `session.start` and `session.end` set up the temp folder and terminal at the start, and send any waiting usage counts at the end. Inside tmux they also start and stop the picture pass-through for the plugin's pane (see [Terminals](#terminals)).
+Нет, show-your-work почти не расходует дополнительных токенов, поскольку изначально создан экономным и по токенам, и по памяти. Изображения и видео рисуются прямо в вашем терминале по протоколу kitty без расхода токенов токенов. Видео также декодируется и передаётся эффективно, так что памяти расходуется очень мало.
 
 </details>
 
-## Feedback
+<details>
+<summary><b>В каких терминалах это работает?</b></summary>
 
-To report a bug or suggest a change, [open an issue](https://github.com/iamumeransari/claude-show-your-work/issues).
+Плагин show-your-work поддерживает Ghostty и kitty на macOS и Linux.
 
-## For developers
+</details>
 
 <details>
-<summary>Tools, settings and local development</summary>
+<summary><b>Это бесплатно?</b></summary>
 
-The plugin gives Claude five tools: `show_image`, `show_video`, `show_html` (a snapshot of an HTML page), `show_audio` (MP3 and WAV, with a waveform) and `show_document` (PDF, Markdown and Mermaid, page by page). A basic call needs only a path. For a before and after, Claude also passes the old file and the test results:
+Да, show-your-work бесплатен и имеет открытый код по лицензии MIT.
+
+</details>
+
+<details>
+<summary><b>Нужно ли самому обновлять плагин, когда выходят новые функции и исправления?</b></summary>
+
+Нет, обновляться самому не нужно. Плагин обновляется сам, так что вы не отстанете. Выбрать Stable или Latest можно при первом знакомстве или в любое время через `/show-your-work`.
+
+</details>
+
+<details>
+<summary><b>Как снова увидеть тур знакомства?</b></summary>
+
+Запустите `/show-your-work tour`. Он покрывает записи, сравнение до и после, историю версий и настройки.
+
+</details>
+
+<details>
+<summary><b>Много ли места он занимает?</b></summary>
+
+Нет, занимает немного. Он хранит недавние картинки и видео, чтобы вы могли вернуться к ним, и удаляет самые старые, когда их суммарный объём достигает примерно примерно 1 GB.
+
+</details>
+
+<details>
+<summary><b>Собирает ли он какие-либо данные?</b></summary>
+
+Вы сами решаете, делиться ли анонимными данными использования. Выбор можно сделать при знакомстве или изменить в любое время через `/show-your-work`. Никаких конфиденциальных данных он никогда не собирает. Подробности — в [Политике конфиденциальности](PRIVACY.md).
+
+</details>
+
+<details>
+<summary><b>Что он запускает, хранит и к чему подключается на моём компьютере?</b></summary>
+
+Вот всё, что плагин делает на вашем компьютере, чтобы вы точно знали, что устанавливаете. Ваши картинки и видео никогда не покидают компьютер.
+
+Чтобы подготовить картинки и видео, он использует `ffmpeg` и `ffprobe` (превращает видео в кадры и читает его длительность), а на macOS — `sips` (преобразует картинку в PNG). Когда вы проигрываете видео со звуком, `ffplay` (часть ffmpeg) воспроизводит звук, а на macOS `osascript` узнаёт, сколько времени чтобы аудиовыходу нужно на воспроизведение, чтобы картинка ждала звук. Когда вы нажимаете View, Show in Finder или Save to Downloads, он открывает файл через `open` на macOS или `xdg-open` на Linux. На macOS `mdfind` помогает `/img` найти вставленную вами картинку. Чтобы показать HTML-страницу или документ Markdown/Mermaid, он отрисовывает его в скрытом Chrome или Chromium с одноразовым профилем (никогда с вашими входами); для PDF использует `pdftoppm` и `pdfinfo` из poppler.
+
+Несколько коротких сценариев работают под `sh` и `perl`. Они находят `ffmpeg` и вашу домашнюю папку, читают размер ячейки терминала, чтобы картинки вписались, убирают временную папку плагина, открывают просмотрщик на Linux и переключаются между каналами Stable и Latest. Он также использует `cp`, `mkdir`, `rm`, `cat` и `touch` для своих временных файлов и `claude plugin` для установки собственных обновлений из этого репозитория не чаще раза в день. Обновления можно выключить. Обновлятор будет отключён после перехода плагина в каталог плагинов Claude Code, который будет поддерживать его в актуальном состоянии сам.
+
+Он хранит эти файлы:
+
+- Кадры видео и преобразованные картинки идут во временную папку (`$TMPDIR/claude-show-your-work-<your user id>`), и всё старше недели убирается.
+- Копия каждого файла, который Claude вам показал, идёт в `.show-your-work/` вашего проекта, чтобы вы могли вернуться к версиям.
+- Save to Downloads кладёт копию в `~/Downloads`.
+- Если в профиле оболочки есть строка, добавленная Turn on pictures старой версии (см. [Терминалы](#terminals)), он убирает эту одну строку.
+- При `SHOW_YOUR_WORK_DEBUG=1` он пишет `debug.log` во временной папке.
+
+Раз в день он читает номер последней версии плагина с `raw.githubusercontent.com`.
+
+Если в `/show-your-work` задано делиться данными использования, он отправляет анонимные счётчики на `us.i.posthog.com`. Это имена событий и числа, плюс версии плагина и Claude Code, ваш терминал, ваша ОС и наличие ffmpeg, под случайным id установки. Туда никогда не входят имена файлов, пути, запросы, что-либо, что вы набрали, или ваш IP. Ключ в коде — публичный ключ PostHog, который может только отправлять события.
+
+Внутри Claude Code он использует эти хуки:
+
+- `prompt.submit` отправляет одну короткую строку с вашим сообщением, говоря Claude, что этот терминал может показывать картинки (или почему не может). Отправляется раз за сессию, снова после сжатия и когда это меняется.
+- `prompt.submit` закрывает настройки, когда вы отправляете сообщение, и запоминает имена вставленных картинок, чтобы `/img` мог их найти. Ваше сообщение не меняется.
+- `tool.call` обрабатывает собственные инструменты плагина `show_image`, `show_video`, `show_html`, `show_audio` и `show_document`. Другие инструменты он не трогает.
+- `command.run` запускает `/img`, `/page`, `/audio`, `/doc` и `/show-your-work`. Сразу после установки он один раз запускает `/show-your-work tour`, чтобы показать вам возможности.
+- `ui.render` рисует плеер плагина, уведомления, настройки и тур.
+- `session.start` и `session.end` готовят временную папку и терминал в начале и отправляют ожидающие счётчики использования в конце. Внутри tmux они также включают и выключают пропуск картинок для панели плагина (см. [Терминалы](#terminals)).
+
+</details>
+
+## Обратная связь
+
+Чтобы сообщить об ошибке или предложить изменение, [откройте issue](https://github.com/iamumeransari/claude-show-your-work/issues).
+
+## Для разработчиков
+
+<details>
+<summary>Инструменты, настройки и локальная разработка</summary>
+
+Плагин даёт Claude пять инструментов: `show_image`, `show_video`, `show_html` (снимок HTML-страницы), `show_audio` (MP3 и WAV с волновой формой) и `show_document` (PDF, Markdown и Mermaid, постранично). Базовый вызов требует только пути. Для сравнения до и после Claude ещё передаёт старый файл и результаты тестов:
 
 ```jsonc
 {
@@ -252,23 +252,23 @@ The plugin gives Claude five tools: `show_image`, `show_video`, `show_html` (a s
 }
 ```
 
-Videos are cut into frames at up to 12 per second, at the width the window shows them (at most 2400 px), with a cap of 3,600 frames (five minutes at full rate). To open a file yourself, run `/img path/to/file.png`.
+Видео режется на кадры до 12 в секунду, в ширину, в которую его показывает окно (не более 2400 px), с ограничением в 3 600 кадров (пять минут на полной скорости). Чтобы открыть файл самим, выполните `/img path/to/file.png`.
 
-To work on the plugin, edit the modules in `hooks/` (`register.tsx` is the entry) and run `/reload-plugins` to load your changes. Before sending a change, run `claude plugin validate .` and `claude plugin test .`.
+Чтобы работать над плагином, редактируйте модули в `hooks/` (`register.tsx` — точка входа) и выполняйте `/reload-plugins` для загрузки изменений. Перед отправкой изменения запустите `claude plugin validate .` и `claude plugin test .`.
 
 </details>
 
-## Status
+## Статус
 
-show-your-work is actively maintained. It is the first plugin to bring pictures, videos and automated visual QA with Playwright recordings into the Claude Code terminal. Its launch video has been viewed more than 275,000 times. It has since become the popular choice among developers who want to see what Claude builds without leaving the terminal. It's listed in some of the biggest Claude Code plugin catalogs and currently ranks among the top trending plugins for Claude Code.
+show-your-work активно поддерживается. Это первый плагин, который принёс картинки, видео и автоматическую визуальную проверку с записями Playwright в терминал Claude Code. Его видео запуска посмотрели более 275 000 раз. С тех пор он стал популярным выбором разработчиков, которые хотят видеть, что строит Claude, не покидая терминал. Он перечислен в некоторых из крупнейших каталогов плагинов Claude Code и сейчас входит в число наиболее быстро растущих плагинов для Claude Code.
 
-If you want Claude Code to show you screenshots, screen recordings or before-and-after comparisons of its work without leaving the terminal, this plugin is built for exactly that.
+Если вы хотите, чтобы Claude Code показывал вам скриншоты, записи экрана или сравнения своей работы «до и после», не покидая терминал, этот плагин создан именно для этого.
 
-## License
+## Лицензия
 
-[MIT](LICENSE). Photography in the examples is from [Unsplash](https://unsplash.com), used under the Unsplash License. [Privacy](PRIVACY.md).
+[MIT](LICENSE). Фотографии в примерах — с [Unsplash](https://unsplash.com), по лицензии Unsplash. [Конфиденциальность](PRIVACY.md).
 
-<p align="center"><a href="#install"><img src="docs/end-card.jpg" alt="show-your-work, with the install commands" width="100%"></a></p>
+<p align="center"><a href="#install"><img src="docs/end-card.jpg" alt="show-your-work с командами установки" width="100%"></a></p>
 
 ## Источник и лицензия
 

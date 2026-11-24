@@ -1,36 +1,36 @@
 # agent-usage-guard
 
-> Stops Claude Code from spending your five-hour usage window in ten minutes.
+> Не даёт Claude Code потратить ваше пятичасовое окно использования за десять минут.
 
-`agent-usage-guard` is a Claude Code [mod](https://code.claude.com/docs/en/plugins/mods/overview): it runs inside Claude Code and holds runaway spend before it happens. It reads your plan's live usage, and it holds subagent fan-out, heavy-context churn and retry loops.
+`agent-usage-guard` — это [мод](https://code.claude.com/docs/en/plugins/mods/overview) Claude Code: он работает внутри Claude Code и останавливает неудержимый расход до того, как он начнётся. Он читает текущее использование вашего тарифа и сдерживает массовый запуск субагентов, переработку большого контекста и циклы повторных попыток.
 
 <p align="center">
   <a href="https://www.producthunt.com/products/agent-usage-guard?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-agent-usage-guard" target="_blank" rel="noopener noreferrer">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1289693&amp;theme=dark">
-      <img alt="agent-usage-guard on Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1289693&amp;theme=light">
+      <img alt="agent-usage-guard на Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1289693&amp;theme=light">
     </picture>
   </a>
 </p>
 
 <p align="center">
-  <img src="https://github.com/rbartoli/agent-usage-guard/releases/download/agent-usage-guard--v1.0.0/agent-usage-guard.gif" alt="Four scenes in Claude Code's interactive UI. The guard asks before a prompt re-writes the expired cache of a 486k-token session resumed after two hours, before a fifth parallel agent starts against a limit of four, before a twenty-first tool call at 433k context, and before a new agent once subagents have processed 10.9M tokens." width="900">
+  <img src="https://github.com/rbartoli/agent-usage-guard/releases/download/agent-usage-guard--v1.0.0/agent-usage-guard.gif" alt="Четыре сцены в интерактивном интерфейсе Claude Code. Защитник спрашивает перед отправкой запроса, который перезапишет истёкший кэш сессии на 486k токенов, возобновлённой через два часа; перед запуском пятого параллельного агента при лимите четыре; перед двадцать первым вызовом инструмента при контексте 433k; и перед новым агентом после того, как субагенты обработали 10,9M токенов." width="900">
 </p>
 
 <p align="center">
-  <sub>Recorded from Claude Code's interactive UI with the guard loaded. A <a href="demo/scripted-api.ts">scripted local API</a> stands in for Claude, so the sessions and token counts are staged and no usage is spent. Every question on screen is the guard's own. <a href="demo/render.sh">Rebuild it</a> from the <a href="demo/fixture/northstar-api">Northstar fixture</a>.</sub>
+  <sub>Записано в интерактивном интерфейсе Claude Code с загруженным защитником. Вместо Claude используется <a href="demo/scripted-api.ts">локальный API со сценарием</a>, поэтому сессии и счётчики токенов подготовлены заранее и реальное использование не расходуется. Все вопросы на экране — от самого защитника. <a href="demo/render.sh">Пересоздайте запись</a> из <a href="demo/fixture/northstar-api">фикстуры Northstar</a>.</sub>
 </p>
 
-It acts before the spend, not after it: before an agent starts, a prompt is sent, or a tool call runs. Agent limits hold across every Claude Code session on your machine, and fan-out and heavy context are capped at any usage level, not only near the limit. When you are at the keyboard it asks you, in Claude Code's own question dialog. When nobody can answer, it refuses and tells Claude why, so the model can wait, batch the work, or stop. `/agent-guard report` shows what it did.
+Он действует до траты, а не после: до запуска агента, отправки запроса или вызова инструмента. Лимиты агентов действуют во всех сессиях Claude Code на этом компьютере, а ограничения параллелизма и тяжёлого контекста работают при любом уровне использования, а не только рядом с лимитом. Когда вы за клавиатурой, он спрашивает вас в собственном диалоге Claude Code. Когда ответить некому, он отказывает и объясняет Claude причину, чтобы модель могла подождать, объединить работу или остановиться.  показывает, что он сделал.
 
-- **Plan-aware.** It reads the 5-hour and weekly percentages Claude Code reports, and keeps the end of the window for you.
-- **One answer covers a while.** An approval lifts its condition until it clears or times out, so the same question does not come back call after call.
-- **Local and privacy-minimal.** No network, no processes. It stores counts and coarse buckets, never prompt text, tool inputs or model output.
-- **Fails open.** If one of its hooks fails, the event goes ahead: a broken guard never breaks your session. The one exception is an agent it could not judge, which is refused so that Claude starts it again.
+- **Учитывает тариф.** Он читает пятичасовой и недельный проценты, о которых сообщает Claude Code, и оставляет вам конец окна.
+- **Одного ответа хватает надолго.** Одобрение снимает условие до того, как оно сбросится или истечёт, поэтому тот же вопрос не повторяется при каждом вызове.
+- **Локально и с минимумом данных.** Без сети и процессов. Он хранит счётчики и крупные интервалы, но никогда не текст запросов, ввод инструментов или вывод модели.
+- **Работает с отказами на открытом.** Если один из его хуков даёт сбой, событие продолжается: сломанный защитник не ломает вашу сессию. Единственное исключение — агент, которого он не смог оценить: тот отклоняется, чтобы Claude запустил его заново.
 
 ## Установка
 
-Run these commands inside Claude Code v2.1.287 or later:
+Выполните эти команды в Claude Code версии 2.1.287 или новее:
 
 ```text
 /plugin marketplace add rbartoli/agent-usage-guard
@@ -38,52 +38,52 @@ Run these commands inside Claude Code v2.1.287 or later:
 /reload-plugins
 ```
 
-Then run `/agent-guard` to see what it sees, and `/agent-guard simulate concurrency` to see the question it asks when too many agents run, with nothing held or spent. Mods are on by default; the [overview](https://code.claude.com/docs/en/plugins/mods/overview#turn-mods-on-or-off) lists the settings that turn them off.
+Затем выполните `/agent-guard`, чтобы увидеть, что он видит, и `/agent-guard simulate concurrency`, чтобы увидеть вопрос, который он задаёт при слишком большом числе агентов, — ничего не задерживается и не тратится. Моды включены по умолчанию; [обзор](https://code.claude.com/docs/en/plugins/mods/overview#turn-mods-on-or-off) перечисляет настройки, которые их отключают.
 
-## Why this exists
+## Почему это нужно
 
-One afternoon I gave Claude Code a research prompt at max effort. It spawned **394 subagent calls, 341 of them running at once, and pushed 84M context tokens through the API in ten minutes.** Session over: *"Claude usage limit reached."* Locked out until the window reset.
+Однажды днём я дал Claude Code исследовательский запрос с максимальным уровнем усилий. Он породил **394 вызова субагентов, 341 из которых работали одновременно, и за десять минут прогнал через API 84M токенов контекста.** Сессия закончилась: *«Достигнут лимит использования Claude».* До сброса окна я был отрезан.
 
-That wasn't a one-off. Sixty days of my own logs held **12 lockouts** and 166 ten-minute windows with agent bursts. The failure mode multiplies: *a large context × rapid tool loops × parallel agents × blind retries*. Each protection below removes one factor.
+Это не единичный случай. В моих логах за шестьдесят дней было **12 блокировок** и 166 десятиминутных окон со всплесками агентов. Схема сбоя умножается: *большой контекст × быстрые циклы инструментов × параллельные агенты × слепые повторы*. Каждая защита ниже убирает один из множителей.
 
-And it's not just me: [339 subagents from a single prompt](https://www.reddit.com/r/ClaudeAI/comments/1u5d02w/), [half a weekly Max plan consumed by recursive spawning](https://github.com/anthropics/claude-code/issues/68619), and multi-agent runs using [~15× the tokens of a chat session](https://www.anthropic.com/engineering/built-multi-agent-research-system).
+И дело не только во мне: [339 субагентов от одного запроса](https://www.reddit.com/r/ClaudeAI/comments/1u5d02w/), [половина недельного тарифа Max, съеденная рекурсивным порождением](https://github.com/anthropics/claude-code/issues/68619), а_multi-агентные прогоны расходуют [примерно в 15 раз больше токенов, чем обычный чат](https://www.anthropic.com/engineering/built-multi-agent-research-system).
 
-## What it does
+## Что он делает
 
-| Area | Rule | Default | What happens |
+| Область | Правило | По умолчанию | Что происходит |
 |---|---|---|---|
-| Plan windows | New agents need approval once a window is this full | 80% | asks; approval lasts until that window resets |
-| | New agents are refused once a window is this full | 95% | refuses |
-| | `ScheduleWakeup` and `CronCreate` are refused once a window is this full, so no turn starts itself into the limit | 95% | refuses |
-| | Each session is told once to finish its step and say what is left | 95% | adds a note to the next prompt |
-| | New agents need approval when the 5-hour window rises this fast | 20 points / 10 min | asks |
-| | New agents need approval when the 5-hour window's pace over the last 10 minutes would fill it within the hour, before it resets | at least 2 points over 2 min | asks |
-| Agents | Agents running at once, across every session on this machine | 4 | asks |
-| | Agents started or resumed per 10 minutes, across this machine | 12 | asks |
-| | Tokens processed by subagents per 10 minutes, across this machine; an approval lasts an hour | 10M | asks |
-| | Subagents may not start their own agents | depth 1 | refuses |
-| Context | Claude is told once to keep the turn bounded | 300k tokens | adds a note to the prompt |
-| | A prompt that would re-read this much context | 500k tokens | asks: compact then send, send anyway, or cancel |
-| | Tool calls per 10 minutes while a conversation or agent carries this much | 20 calls at 400k | asks: keep going, compact after this turn, or stop |
-| | A heavy session idle long enough for its prompt cache to expire | 150k tokens, 1 h idle | asks before re-writing the cache |
-| Loops | The same tool call failing again and again, with no other call in between | 3 identical failures | refuses the identical retry |
-| | Refused agent calls within 10 minutes | 5 | pauses agent spawns for 10 min |
+| Окна тарифа | Новые агенты требуют одобрения, когда окно заполнено на столько | 80% | спрашивает; одобрение действует до сброса окна |
+| | Новые агенты отклоняются, когда окно заполнено на столько | 95% | отклоняет |
+| | `ScheduleWakeup` и `CronCreate` отклоняются при таком заполнении окна, чтобы ход не начинал сам себя у лимита | 95% | отклоняет |
+| | Каждой сессии один раз говорят завершить шаг и сказать, что осталось | 95% | добавляет заметку в следующий запрос |
+| | Новые агенты требуют одобрения, если пятичасовое окно растёт так быстро | 20 пунктов / 10 мин | спрашивает |
+| | Новые агенты требуют одобрения, если темп пятичасового окна за последние 10 минут заполнит его в течение часа до сброса | минимум 2 пункта за 2 мин | спрашивает |
+| Агенты | Одновременно работающие агенты во всех сессиях на этом компьютере | 4 | спрашивает |
+| | Запущенные или возобновлённые агенты за 10 минут на этом компьютере | 12 | спрашивает |
+| | Токены, обработанные субагентами за 10 минут на этом компьютере; одобрение действует час | 10M | спрашивает |
+| | Субагенты не могут запускать своих агентов | глубина 1 | отклоняет |
+| Контекст | Claude один раз говорят держать ход ограниченным | 300k токенов | добавляет заметку в запрос |
+| | Запрос, который перечитал бы столько контекста | 500k токенов | спрашивает: сжать и отправить, отправить всё равно или отменить |
+| | Вызовы инструментов за 10 минут, когда разговор или агент несёт столько контекста | 20 вызовов при 400k | спрашивает: продолжить, сжать после хода или остановиться |
+| | Тяжёлая сессия простаивала достаточно долго, чтобы её кэш истёк | 150k токенов, 1 ч простоя | спрашивает перед перезаписью кэша |
+| Циклы | Один и тот же вызов инструмента снова и снова завершается ошибкой без других вызовов между ними | 3 одинаковых ошибки | отклоняет одинаковую повторную попытку |
+| | Отклонённые вызовы агентов за 10 минут | 5 | приостанавливает запуск агентов на 10 мин |
 
-Agents covers subagents, agent-team teammates, workflow agents, and finished subagents resumed with `SendMessage`. Haiku agents stay out of the running and starts limits, whether Claude asks for Haiku or the agent's own definition picks it; they still count toward the subagent token budget and every plan-window rule. Each tool call is judged on the context of the loop that makes it, so a small subagent never inherits the main conversation's size.
+Правило Agents охватывает субагентов, участников агентских команд, агентов воркфлоу и завершённых субагентов, возобновлённых через `SendMessage`. Агенты Haiku не учитываются в лимитах одновременной работы и запуска — независимо от того, попросил ли Claude Haiku или это выбрало определение самого агента; но они идут в счёт бюджета токенов субагентов и всех правил окон тарифа. Каждый вызов инструмента оценивается по контексту цикла, который его делает, поэтому маленький субагентnever не наследует размер основной беседы.
 
-**When it asks.** The question appears in Claude Code's own dialog, the one Claude uses to ask you something, and the call waits for your answer. Agents started in parallel while it is open are held back, and Claude starts them again once you answer. If you allow it, that condition stays allowed for a while: a plan window until it resets, a heavy context until it shrinks (for tool calls, an hour at most), the agent counts for 10 minutes. If you decline or dismiss the question, or it closes without an answer for any other reason, Claude is told not to start agents for the next 10 minutes (`AGENT_GUARD_WINDOW_SECONDS`), and is not asked again in that time. Typed words reach Claude, so you can answer "use haiku agents instead".
+**Когда он спрашивает.** Вопрос появляется в собственном диалоге Claude Code — том, которым Claude задаёт вам вопросы, — и вызов ждёт вашего ответа. Агенты, запущенные параллельно, пока диалог открыт, задерживаются, а после вашего ответа Claude запускает их снова. Если вы разрешите, условие остаётся разрешённым некоторое время: окно тарифа — до сброса, тяжёлый контекст — пока не уменьшится (для вызовов инструментов не более часа), счётчики агентов — 10 минут. Если вы откажете или закроете вопрос, либо он закроется без ответа по другой причине, Claude говорят не запускать агентов следующие 10 минут (`AGENT_GUARD_WINDOW_SECONDS`), и за это время его больше не спрашивают. Введённый текст доходит до Claude, поэтому можно ответить «используй агентов haiku вместо этого».
 
-**When nobody can answer.** In `claude -p`, the Agent SDK and `dontAsk` mode, an agent or tool gate refuses instead of asking. A heavy prompt is held with the reason, and so is a dormant heavy resume once the machine-wide cap of one per 10 minutes is reached. Prompts that start a turn on their own, such as a schedule or `/loop` firing, a message relayed from a channel like Slack, or a Slack ping, are held the same way, even in a session someone could be asked in; they never lift limits. Claude reads each refusal as the tool's result. Repeat refusals of the same condition are worded differently each time and escalate: the second says nothing has changed and to try something else, the third says to end the turn. If a Stop hook such as `/goal` keeps reopening the turn, the refusal says the user has to decide.
+**Когда ответить некому.** В `claude -p`, Agent SDK и режиме `dontAsk` агенты и инструменты отклоняются вместо вопроса. Тяжёлый запрос задерживается с причиной, как и спящий тяжёлый возврат при достижении общекомпьютерного лимита одного за 10 минут. Запросы, которые сами начинают ход, например срабатывание расписания или `/loop`, сообщение из канала вроде Slack или пинг Slack, задерживаются так же, даже в сессии, где можно было бы спросить человека; они никогда не снимают ограничения. Claude читает каждое отклонение как результат инструмента. Повторные отклонения одного условия формулируются каждый раз иначе и ужесточаются: второе говорит, что ничего не изменилось и стоит попробовать другое, третье — завершить ход. Если hook Stop вроде `/goal` снова открывает ход, отклонение говорит, что решение за пользователем.
 
-**What it shows.** While agents run on this machine, or the guard is holding or has just refused something, a line above the prompt shows it: `Usage guard · 3 of 4 agents running · 5 of 12 started in the last 10 min · last refusal 14:22: concurrency`. It is bold once a limit is reached or something is held, and gone when there is nothing to say. Claude Code's `[-]` beside it collapses it. Plan windows and context stay in the status line.
+**Что он показывает.** Пока на этом компьютере работают агенты или защитник что-то задерживает или только что отклонил, над запросом появляется строка: `Usage guard · 3 of 4 agents running · 5 of 12 started in the last 10 min · last refusal 14:22: concurrency`. Она жирная, когда лимит достигнут или что-то задержано, и исчезает, когда нечего показывать. `[-]` рядом от Claude Code сворачивает её. Окна тарифа и контекст остаются в строке состояния.
 
-**What it leaves alone.** It never holds a background task's notification or another session's message, because that would lose the result. It no longer blocks prompts after a usage limit: since v2.1.234, Claude Code waits at a limit and continues at reset on its own (`autoContinueAtUsageLimit`). The guard's job is to keep you from reaching the limit, and its journal counts the lockouts it did not prevent. Near the limit it only adds a note: from 95%, each session's next prompt tells Claude to finish the step in progress, start nothing large, and end the turn with what is done and what is left, so a lockout finds every session at a clean stop.
+**Чего он не трогает.** Он никогда не задерживает уведомление фоновой задачи или сообщение другой сессии — это потеряло бы результат. После лимита использования он больше не блокирует запросы: начиная с 2.1.234 Claude Code сам ждёт на лимите и продолжает после сброса (`autoContinueAtUsageLimit`). Задача защитника — не дать вам дойти до лимита, и его журнал считает блокировки, которые он не предотвратил. Близко к лимиту он лишь добавляет заметку: с 95% следующий запрос каждой сессии говорит Claude завершить текущий шаг, не начинать ничего большого и закончить ход с тем, что сделано и что осталось, чтобы блокировка застала все сессии в чистой точке останова.
 
-**Idle compaction.** Since v2.1.299, Claude Code compacts a conversation of 200k tokens or more that sits idle for about 54 minutes, before its one-hour prompt cache expires (`idleCompaction`, on by default). The guard reads the compacted size, so it does not ask about that session. Since v2.1.314 it also runs in VS Code and Claude Desktop's Code tab, for subscribers with telemetry turned off, and on Bedrock, Vertex, Foundry and LLM gateways once the one-hour prompt cache is on. Its dormant question covers what idle compaction leaves out: conversations from 150k to 200k tokens, `claude -p` and SDK sessions, a machine that was asleep at the 54-minute mark, and setups with idle compaction or auto-compaction turned off.
+**Сжатие от простоя.** С 2.1.299 Claude Code сжимает беседу от 200k токенов, простаивавшую около 54 минут, до истечения её часового кэша (`idleCompaction`, включено по умолчанию). Защитник читает размер после сжатия, поэтому не спрашивает об этой сессии. С 2.1.314 он работает также в VS Code и вкладке Code Claude Desktop у подписчиков с отключённой телеметрией, а на Bedrock, Vertex, Foundry и LLM-шлюзах — когда включён часовой кэш. Его вопрос про спящую сессию покрывает то, что сжатие от простоя не охватывает: беседы от 150k до 200k токенов, сессии `claude -p` и SDK, компьютер, спавший в момент 54 минут, и конфигурации с отключённым сжатием от простоя или автосжатием.
 
-**Claude Code's own resume warning.** Since v2.1.304, on Pro and Max plans, Claude Code warns before resuming an inactive conversation, or sending to one whose cache went cold while idle, when that would use a noticeable share of your 5-hour limit: you resume anyway or start a new conversation. It shows only from a minimum share, which Anthropic sets per plan and model, so for most models it shows only on very large conversations. The guard's dormant question asks from 150k tokens, so it still covers most cold resumes, and on the largest you may see both.
+**Собственное предупреждение Claude Code о возврате.** С 2.1.304 на тарифах Pro и Max Claude Code предупреждает перед возобновлением неактивной беседы или отправкой в ту, чей кэш остыл, если это займёт заметную долю пятичасового лимита: вы всё равно продолжаете или начинаете новую беседу. Предупреждение показывается только с минимальной доли, которую Anthropic задаёт для тарифа и модели, поэтому у большинства моделей оно появляется лишь на очень больших беседах. Вопрос защитника про спящую сессию срабатывает от 150k токенов, так что он покрывает большинство холодных возвратов, а на самых больших вы можете увидеть оба.
 
-## Commands
+## Команды
 
 ```text
 /agent-guard [status]                          what the guard sees right now
@@ -95,99 +95,99 @@ Agents covers subagents, agent-team teammates, workflow agents, and finished sub
 /agent-guard help                              these commands
 ```
 
-`/agent-guard` runs at once, even mid-turn, and never starts a model turn, so Claude never sees an override and cannot take one as permission. Only you can lift limits: when another plugin runs `/agent-guard allow` or `pause`, the guard refuses and says so in the transcript. Sending `[allow-usage-guard]` or `[allow-agent-burst]` alone as a prompt, the markers of earlier versions, does the same as `/agent-guard allow` or `allow agents`.
+`/agent-guard` срабатывает сразу, даже посреди хода, и never не запускает модельный ход, поэтому Claude не видит переопределения и не может принять его за разрешение. Только вы можете снять ограничения: когда другой плагин выполняет `/agent-guard allow` или `pause`, защитник отказывает и говорит об этом в транскрипте. Отправка `[allow-usage-guard]` или `[allow-agent-burst]` отдельным запросом — маркеры прежних версий — действует так же, как `/agent-guard allow` или `allow agents`.
 
-## What it can and cannot see
+## Что он видит, а что нет
 
-Checked against Claude Code v2.1.316:
+Проверено на Claude Code v2.1.316:
 
-| Path | Coverage |
+| Путь | Покрытие |
 |---|---|
-| Subagents, teammates and workflow agents | Held before they start (`agent.spawn`) |
-| A finished subagent sent new work with `SendMessage` | Held before it resumes, and counted as a start, once |
-| A teammate brought back from disk (Claude Code 2.1.299 or later) | Held before it resumes, and counted as a start |
-| `/subtask` forks, and anything else that starts without `agent.spawn` | Counted when they start, never held: Claude Code offers no event before they do. Forks Claude starts through the Agent tool are held like any agent |
-| Claude Code's internal agents (prompt suggestions, compaction) | Not counted |
-| Plan-window percentages | From the last API response on a subscription, in `claude -p` too. API-key sessions report none, so only the token and count budgets apply |
-| Teammates running in their own terminal panes | Not visible: their loops run in other processes |
-| Sessions on other machines | Not counted: the cross-session records live in this machine's mod store |
-| Tools the API runs itself, such as the advisor | Not holdable: no tool event fires for them |
+| Субагенты, участники команд и агенты воркфлоу | Задерживаются до запуска (`agent.spawn`) |
+| Завершённый субагент, которому отправили новую работу через `SendMessage` | Задерживается до возобновления и считается одним запуском |
+| Участник команды, восстановленный с диска (Claude Code 2.1.299 или новее) | Задерживается до возобновления и считается запуском |
+| Форки `/subtask` и всё, что запускается без `agent.spawn` | Считаются при запуске, но никогда не задерживаются: Claude Code не даёт события до них. Форки, которые Claude запускает через инструмент Agent, задерживаются как обычные агенты |
+| Внутренние агенты Claude Code (подсказки запросов, сжатие) | Не считаются |
+| Проценты окон тарифа | Из последнего ответа API по подписке, также в `claude -p`. Сессии с API-ключом их не сообщают, поэтому действуют только бюджеты токенов и счётчиков |
+| Участники команд, работающие в собственных панелях терминала | Не видны: их циклы идут в других процессах |
+| Сессии на других компьютерах | Не считаются: межсессионные записи лежат в хранилище мода на этом компьютере |
+| Инструменты, которые API выполняет само, например advisor | Не задерживаются: для них не срабатывает событие инструмента |
 
-Mods run in `claude` in a terminal, in the Desktop app's Code tab, in `claude -p` and the Agent SDK. They don't run in a Desktop-app WSL session ([where mods run](https://code.claude.com/docs/en/plugins/mods/overview#where-mods-run)).
+Моды работают в `claude` в терминале, во вкладке Code приложения Desktop, в `claude -p` и Agent SDK. Они не работают в WSL-сессии приложения Desktop ([где работают моды](https://code.claude.com/docs/en/plugins/mods/overview#where-mods-run)).
 
-**On Team and Enterprise plans**, and on machines with managed settings, Claude Code runs its built-in `cc-plugin-sec-default` plugin ahead of every other, unless managed `prependPlugins` leaves it out. That plugin sends Claude Code's classic hook events on past user plugins, and Claude Code shows a line for each of the guard's it skipped, such as "agent-usage-guard: its classic.PostToolUse hook was skipped". The guard follows compactions, lockouts, `/clear` and resumes, and Stop hooks that reopen a turn through events that still reach it. Two things need the classic events: the permission mode reaches the guard only when an agent starts, so it may ask you in `dontAsk` mode, and `/subtask` forks go uncounted.
+**На тарифах Team и Enterprise**, а также на компьютерах с управляемыми настройками Claude Code запускает встроенный плагин `cc-plugin-sec-default` раньше всех остальных, если управляемый `prependPlugins` его не исключает. Этот плагин пропускает классические события хуков пользовательских плагинов мимо, и Claude Code показывает строку для каждого пропущенного события защитника, например «agent-usage-guard: its classic.PostToolUse hook was skipped». Защитник следует за сжатиями, блокировками, `/clear` и возвратами, а также хуками Stop, которые открывают ход заново через события, всё ещё доходящие до него. Две вещи требуют классических событий: режим разрешений доходит до защитника только при запуске агента, поэтому он может спрашивать вас в режиме `dontAsk`, а форки `/subtask` не учитываются.
 
-**Native limits still matter.** Claude Code caps a session at 20 concurrent subagents (`CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`) and three layers of nesting (`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`). It has no limit on the total number of agents a session starts. Since v2.1.316, `CLAUDE_CODE_SUBAGENT_EFFORT` sets the effort subagents run at when nothing else names one, instead of the session's: a lower one makes each agent cheaper, and the guard still limits how many run. The guard's defaults are stricter and span sessions; the native caps remain the outer wall for the paths the guard only counts.
+**Нативные лимиты тоже важны.** Claude Code ограничивает сессию 20 одновременными субагентами (`CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`) и тремя уровнями вложенности (`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`). У него нет лимита на общее число агентов, запущенных сессией. С 2.1.316 `CLAUDE_CODE_SUBAGENT_EFFORT` задаёт уровень усилий субагентов, когда его не задали иначе, вместо уровня сессии: меньший делает каждого агента дешевле, но защитник по-прежнему ограничивает их число. Значения по умолчанию у защитника строже и действуют между сессиями; нативные лимиты остаются внешней стеной для путей, которые защитник только считает.
 
-## See what it did
+## Посмотреть, что он сделал
 
 ```text
 /agent-guard report 30
 ```
 
-The report counts usage-limit lockouts (each locked window once), plan-window threshold crossings, wind-down notes, and every question and refusal by rule, with what you answered. It reads every session's journal on this machine and never leaves it. Set `AGENT_GUARD_JOURNAL=0` to stop recording.
+Отчёт считает блокировки по лимиту использования (каждое заблокированное окно один раз), пересечения порогов окон тарифа, заметки о свёртывании и каждый вопрос и отказ по правилу, с вашим ответом. Он читает журнал каждой сессии на этом компьютере и никогда не покидает его. Установите `AGENT_GUARD_JOURNAL=0`, чтобы停止 запись.
 
-## Security and privacy
+## Безопасность и конфиденциальность
 
-A mod runs inside Claude Code with your permissions; read [what a mod can reach](https://code.claude.com/docs/en/plugins/mods/overview#what-a-mod-can-reach) before you install one. This one is about 3,000 lines of TypeScript with no dependencies, and `claude plugin validate .` lists every API it calls and every environment variable it reads:
+Мод работает внутри Claude Code с вашими разрешениями; прочитайте [до чего может добраться мод](https://code.claude.com/docs/en/plugins/mods/overview#what-a-mod-can-reach) перед установкой. Этот — около 3 000 строк TypeScript без зависимостей, и `claude plugin validate .` перечисляет все API, которые он вызывает, и все переменные окружения, которые читает:
 
-- It makes no network requests and starts no processes. The only file it reads is its own `plugin.json`, for the version `/agent-guard status` shows.
-- It decides only what the rules above describe: whether an agent starts, a prompt is sent, or a tool call runs. It asks you whenever you can answer, and gives the reason when it refuses. It reads permission modes but never changes them, and it writes no settings.
-- The only prompt it submits is your own. After "Compact, then send", it takes the prompt you typed out of the input box and sends it unchanged once compaction finishes, or puts it back if compaction fails. A prompt with an image or an @ mention stays in the input box for you to send, since a resend would drop them.
-- Its prompt hook passes your prompt on unchanged, adds a one-time note for Claude when the context passes 300k or a plan window reaches 95%, or holds the prompt to ask you first (when nobody can answer, it says why instead). Its `SessionStart` hook changes nothing.
-- It keeps its state in the mod store, a JSON file under `~/.claude/plugins/store/`. Each session writes its own counts (running agents, recent starts and dormant resumes, subagent tokens per minute, its latest 5-hour reading), when it was last active (kept 30 days, so a resumed session knows how long it sat idle), and its journal rows (time, a session-id prefix, rule, tool name, context bucket such as `400-500k`, plan window and percentage, refusal number, and your answer). Each record is stored under the session's full id, which is also the name of that session's transcript file. If the store stops saving, such as when it is full, the status line says so: other sessions then stop counting this one.
-- It never stores prompt text, tool inputs, error text or model output. When a turn ends on an API error, it reads the conversation's last message, the error Claude Code showed, to tell a usage-limit lockout from other failures. A tool call is reduced to a 13-character fingerprint. Agent names stay in memory and are never written.
-- Journal days older than 90 days are deleted (`AGENT_GUARD_JOURNAL_DAYS`).
-- `demo/`, which builds the GIF above, is not part of what runs. It starts Claude Code in a temporary home directory with a made-up API key for a scripted local API, and reads none of your credentials.
+- Он не делает сетевых запросов и не запускает процессов. Единственный файл, который он читает, — собственный `plugin.json` для версии, показанной `/agent-guard status`.
+- Он решает только то, что описано правилами выше: запускать агента, отправлять запрос или выполнять вызов инструмента. Он спрашивает вас, когда вы можете ответить, и объясняет причину при отказе. Он читает режимы разрешений, но никогда их не меняет и не пишет настройки.
+- Единственный отправляемый им запрос — ваш собственный. После «Сжать, затем отправить» он берёт набранный вами запрос из поля ввода и отправляет его без изменений после сжатия или возвращает обратно, если сжатие не удалось. Запрос с изображением или @-упоминанием остаётся в поле для вашей отправки, поскольку повторная отправка их потеряет.
+- Его prompt-хук передаёт ваш запрос без изменений, добавляет однократную заметку Claude при контексте выше 300k или окне тарифа 95%, либо задерживает запрос, чтобы сначала спросить вас (когда ответить некому, он вместо этого говорит причину). Его хук `SessionStart` ничего не меняет.
+- Он хранит состояние в хранилище мода, JSON-файле в `~/.claude/plugins/store/`. Каждая сессия пишет свои счётчики (работающие агенты, недавние запуски и спящие возвраты, токены субагентов в минуту, последнее показание пятичасового окна), время последней активности (хранится 30 дней, чтобы возобновлённая сессия знала, сколько она простаивала), и строки журнала (время, префикс id сессии, правило, имя инструмента, интервал контекста вроде `400-500k`, окно тарифа и процент, номер отказа и ваш ответ). Каждая запись хранится под полным id сессии, который одновременно является именем файла транскрипта этой сессии. Если хранилище перестаёт сохранять, например из-за заполнения, строка состояния говорит об этом: другие сессии перестают учитывать эту.
+- Он никогда не сохраняет текст запросов, ввод инструментов, текст ошибок или вывод модели. Когда ход заканчивается ошибкой API, он читает последнее сообщение беседы — ошибку, показанную Claude Code, — чтобы отличить блокировку по лимиту от других сбоев. Вызов инструмента сводится к 13-символьному отпечатку. Имена агентов остаются в памяти и никогда не записываются.
+- Строки журнала старше 90 дней удаляются (`AGENT_GUARD_JOURNAL_DAYS`).
+- `demo/`, который собирает GIF выше, не входит в работающую часть. Он запускает Claude Code во временном домашнем каталоге с выдуманным API-ключом для сценарного локального API и не читает ваши учётные данные.
 
-Set `AGENT_GUARD=0` to turn it off without uninstalling it.
+Установите `AGENT_GUARD=0`, чтобы выключить его без удаления.
 
-## Configuration
+## Настройка
 
-Set these as environment variables, or under `env` in `~/.claude/settings.json`. Times are in seconds; a value that isn't a number in range keeps its default, and `/agent-guard` says so.
+Задайте это как переменные окружения или в блоке `env` файла `~/.claude/settings.json`. Время в секундах; значение, не являющееся числом в допустимом диапазоне, сохраняет значение по умолчанию, и `/agent-guard` сообщает об этом.
 
-| Variable | Meaning (default) |
+| Переменная | Смысл (по умолчанию) |
 |---|---|
-| `AGENT_GUARD` | `0`, `false`, `off` or `no` turns the guard off (`1`) |
-| `AGENT_GUARD_JOURNAL` | `0` stops the journal (`1`) |
-| `AGENT_GUARD_HAIKU_EXEMPT` | `0` counts Haiku agents in the running and starts limits like any other (`1`: they stay out) |
-| `AGENT_GUARD_JOURNAL_DAYS` | Days of journal kept (`90`) |
-| `AGENT_GUARD_WINDOW_SECONDS` | Rolling window for budgets, burn and refusals (`600`) |
-| `AGENT_GUARD_AGENT_MAX` | Agents running at once on this machine (`4`) |
-| `AGENT_GUARD_ROLLING_MAX` | Agent starts and resumes per window on this machine (`12`) |
-| `AGENT_GUARD_AGENT_TOKENS_MAX` | Subagent tokens per window on this machine (`10000000`) |
-| `AGENT_GUARD_DEPTH_MAX` | Agent layers below the main conversation (`1`) |
-| `AGENT_GUARD_LIMIT_ASK_PERCENT` | Plan-window percentage from which new agents ask (`80`) |
-| `AGENT_GUARD_LIMIT_DENY_PERCENT` | Plan-window percentage from which new agents, wakeups and scheduled jobs are refused and each session is told to wind down (`95`) |
-| `AGENT_GUARD_BURN_PERCENT` | 5-hour-window points per window that make new agents ask (`20`) |
-| `AGENT_GUARD_CONTEXT_WARN` | Context at which Claude is told once to keep the turn bounded (`300000`) |
-| `AGENT_GUARD_CONTEXT_HARD` | Context at which a prompt asks before it is sent (`500000`) |
-| `AGENT_GUARD_TOOL_CONTEXT` | Context above which tool calls count against the tool budget (`400000`) |
-| `AGENT_GUARD_TOOL_MAX` | Tool calls per window above that context (`20`) |
-| `AGENT_GUARD_DORMANT_SECONDS` | Idle time after which a heavy session's cache counts as expired (`3600`) |
-| `AGENT_GUARD_DORMANT_CONTEXT` | Context at which an idle session counts as heavy (`150000`) |
-| `AGENT_GUARD_DORMANT_MAX` | Heavy dormant resumes per window on this machine when nobody can be asked (`1`) |
-| `AGENT_GUARD_TOOL_FAILURE_MAX` | Identical failures before the identical retry is refused (`3`) |
-| `AGENT_GUARD_FUSE_MAX` | Refused agent calls per fuse period that pause spawns (`5`) |
-| `AGENT_GUARD_FUSE_SECONDS` | The fuse period, and how long the pause lasts (`600`) |
-| `AGENT_GUARD_PEER_TTL_SECONDS` | How long another session's counts, or an agent with no sign of activity, still count (`900`) |
+| `AGENT_GUARD` | `0`, `false`, `off` или `no` выключают защитник (`1`) |
+| `AGENT_GUARD_JOURNAL` | `0` останавливает журнал (`1`) |
+| `AGENT_GUARD_HAIKU_EXEMPT` | `0` учитывает агентов Haiku в лимитах работы и запусков как всех остальных (`1`: исключены) |
+| `AGENT_GUARD_JOURNAL_DAYS` | Дней журнала хранится (`90`) |
+| `AGENT_GUARD_WINDOW_SECONDS` | Скользящее окно для бюджетов, темпа расхода и отказов (`600`) |
+| `AGENT_GUARD_AGENT_MAX` | Одновременно работающие агенты на этом компьютере (`4`) |
+| `AGENT_GUARD_ROLLING_MAX` | Запуски и возобновления агентов за окно на этом компьютере (`12`) |
+| `AGENT_GUARD_AGENT_TOKENS_MAX` | Токены субагентов за окно на этом компьютере (`10000000`) |
+| `AGENT_GUARD_DEPTH_MAX` | Уровни агентов ниже основной беседы (`1`) |
+| `AGENT_GUARD_LIMIT_ASK_PERCENT` | Процент заполнения окна тарифа, с которого новые агенты требуют вопроса (`80`) |
+| `AGENT_GUARD_LIMIT_DENY_PERCENT` | Процент заполнения окна тарифа, с которого новые агенты, wakeup и задания по расписанию отклоняются, а каждой сессии говорят свёртываться (`95`) |
+| `AGENT_GUARD_BURN_PERCENT` | Пунктов пятичасового окна за окно, из-за которых новые агенты требуют вопроса (`20`) |
+| `AGENT_GUARD_CONTEXT_WARN` | Контекст, при котором Claude один раз говорят держать ход ограниченным (`300000`) |
+| `AGENT_GUARD_CONTEXT_HARD` | Контекст, при котором запрос требует вопроса перед отправкой (`500000`) |
+| `AGENT_GUARD_TOOL_CONTEXT` | Контекст, выше которого вызовы инструментов идут в счёт бюджета (`400000`) |
+| `AGENT_GUARD_TOOL_MAX` | Вызовы инструментов за окно выше этого контекста (`20`) |
+| `AGENT_GUARD_DORMANT_SECONDS` | Время простоя, после которого кэш тяжёлой сессии считается истёкшим (`3600`) |
+| `AGENT_GUARD_DORMANT_CONTEXT` | Контекст, при котором простаивающая сессия считается тяжёлой (`150000`) |
+| `AGENT_GUARD_DORMANT_MAX` | Тяжёлые спящие возвраты за окно на этом компьютере, когда спросить некого (`1`) |
+| `AGENT_GUARD_TOOL_FAILURE_MAX` | Одинаковых ошибок до отклонения одинаковой повторной попытки (`3`) |
+| `AGENT_GUARD_FUSE_MAX` | Отклонённых вызовов агентов за период предохранителя, которые приостанавливают запуски (`5`) |
+| `AGENT_GUARD_FUSE_SECONDS` | Период предохранителя и длительность паузы (`600`) |
+| `AGENT_GUARD_PEER_TTL_SECONDS` | Как долго счётчики другой сессии или агент без признаков активности ещё учитываются (`900`) |
 
-The dormant default assumes the one-hour prompt cache that subscriptions get within plan usage. With an API key or extra usage, the cache lasts five minutes, so set `AGENT_GUARD_DORMANT_SECONDS=300`.
+Значение по умолчанию для спящей сессии предполагает часовой кэш, который подписки получают в рамках тарифа. С API-ключом или дополнительным usage кэш живёт пять минут, поэтому установите `AGENT_GUARD_DORMANT_SECONDS=300`.
 
-## Beyond Claude Code
+## За пределами Claude Code
 
-The rules live in a harness-agnostic core (`core/`) that performs no I/O. The Claude Code mod is its first adapter. [docs/architecture.md](docs/architecture.md) describes the contract an adapter keeps and what another agent harness must offer to carry each rule.
+Правила живут в не зависящем от харнесса ядре (`core/`), которое не совершает I/O. Мод Claude Code — его первый адаптер. [docs/architecture.md](docs/architecture.md) описывает контракт, который соблюдает адаптер, и что должен предоставлять другой агентский харнесс, чтобы выполнять каждое правило.
 
-## Tests
+## Тесты
 
 ```sh
 claude plugin validate . --strict
 claude plugin test
 ```
 
-`claude plugin test` runs the suite inside Claude Code's own test kit: unit tests of the core, and tests that fire real Claude Code events through the hooks module with no session, model or network. [TESTING.md](TESTING.md) covers the layers and what each test proves.
+`claude plugin test` запускает набор в собственном тестовом kits Claude Code: юнит-тесты ядра и тесты, которые посылают реальные события Claude Code через модуль хуков без сессии, модели и сети. [TESTING.md](TESTING.md) описывает слои и то, что доказывает каждый тест.
 
-## License
+## Лицензия
 
 MIT
 

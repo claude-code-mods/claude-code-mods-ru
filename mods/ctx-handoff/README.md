@@ -1,128 +1,128 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-dark.svg">
-    <img src="docs/assets/banner-light.svg" width="900" alt="ctx-handoff: the long-session toolkit for Claude Code">
+    <img src="docs/assets/banner-light.svg" width="900" alt="ctx-handoff: набор инструментов для длинных сессий в Claude Code">
   </picture>
 </p>
 
 <p align="center">
-  <b>Have Claude remember what you taught it, catch its usual slips,<br>and pick long sessions back up when you return.</b>
+  <b>Пусть Claude запомнит, чему вы его научили, ловит его обычные ошибки,<br>и возвращается к длинным сессиям, когда вы вернётесь.</b>
 </p>
 
 <p align="center">
-  <a href="https://github.com/cablate/ctx-handoff-mod/releases"><img src="https://img.shields.io/github/v/release/cablate/ctx-handoff-mod?include_prereleases&display_name=release&label=release&color=7dd3fc" alt="Latest release"></a>
-  <a href="https://github.com/cablate/ctx-handoff-mod/actions/workflows/check.yml"><img src="https://github.com/cablate/ctx-handoff-mod/actions/workflows/check.yml/badge.svg" alt="CI"></a>
-  <img src="https://img.shields.io/badge/Claude_Code-2.1.287%2B-a78bfa" alt="Claude Code 2.1.287 or later">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license"></a>
+  <a href="https://github.com/cablate/ctx-handoff-mod/releases"><img src="https://img.shields.io/github/v/release/cablate/ctx-handoff-mod?include_prereleases" alt="Релиз"></a>
+  <a href="https://github.com/cablate/ctx-handoff-mod/actions/workflows/check.yml"><img src="https://github.com/cablate/ctx-handoff-mod/actions/workflows/check.yml/badge.svg" alt="Проверки"></a>
+  <img src="https://img.shields.io/badge/Claude_Code-2.1.287%2B-a78bfa" alt="Claude Code 2.1.287 или новее">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="Лицензия MIT"></a>
 </p>
 
 <p align="center">
-  <b>English</b> · <a href="README.zh-TW.md">Китайский (традиционный)</a> · <a href="#install">Установка</a> · <a href="#whats-inside">Возможности</a> · <a href="docs/guide.md">Руководство</a> · <a href="CHANGELOG.md">Журнал изменений</a>
+  <b>Английский</b> · <a href="README.zh-TW.md">Китайский (традиционный)</a> · <a href="#install">Установка</a> · <a href="#whats-inside">Возможности</a>
 </p>
 
 <p align="center">
-  <img src="docs/assets/handoff.svg" width="900" alt="Animation: a long session fills its context to the threshold; ctx-handoff writes a summary of verified work, failed attempts, your limits and the next step, clears, and a fresh session continues from it">
+  <img src="docs/assets/handoff.svg" width="900" alt="Анимация: длинная сессия заполняет контекст до порога; ctx-handoff записывает сводку проверенной работы, неудачных попыток, ваших лимитов и следующего шага, очищает беседу, и новая сессия продолжает с неё">
 </p>
 
-## Why
+## Зачем
 
-Long Claude Code sessions run into the same chores again and again. ctx-handoff takes care of them in the background, so in normal use you type no commands.
+Длинные сессии Claude Code снова и снова наталкиваются на одни и те же рутинные задачи. ctx-handoff берёт их на себя в фоне, поэтому в обычном использовании вам не нужно вводить команды.
 
-| When… | Without it | With ctx-handoff |
+| Когда… | Без него | С ctx-handoff |
 |---|---|---|
-| the conversation is nearly full | You write a summary, `/clear`, paste it back | A summary is written, the conversation is cleared, and a fresh one continues |
-| you step away for an hour | Your next message rereads everything at full price | The cache is kept warm for up to about 4 hours |
-| you repeat an instruction | The next conversation forgets it | It becomes a project note, and after 3 times a line in your repo |
-| you `/clear` or reopen Claude Code | The new conversation starts blind | It's told where the last one stopped |
-| Claude retries a failing command, or says "done" untested | You find out later | Claude gets a one-line nudge right away |
+| беседа почти заполнена | Вы пишете сводку, `/clear`, вставляете её обратно | Сводка записана, беседа очищена, новая продолжается |
+| вы уходите на час | Следующее сообщение перечитывает всё по полной цене | Кэш поддерживается тёплым до примерно 4 часов |
+| вы повторяете инструкцию | Следующая беседа забывает её | Она становится заметкой проекта, а после 3 повторов — строкой в вашем репозитории |
+| вы `/clear` или открываете Claude Code заново | Новая беседа начинается вслепую | Ей сообщают, где остановилась предыдущая |
+| Claude повторяет неудачную команду или говорит «готово» без проверки | Вы узнаёте об этом позже | Claude сразу получает однострочное напоминание |
 
 ## Установка
 
-Requires Claude Code 2.1.287 or later. Tested up to 2.1.302.
+Требуется Claude Code 2.1.287 или новее. Проверено до 2.1.302.
 
 ```sh
 claude plugin marketplace add cablate/ctx-handoff-mod
 claude plugin install ctx-handoff@ctx-handoff-mod
 ```
 
-Start a new session and type `/handoff`. You should see:
+Начните новую сессию и введите `/handoff`. Вы должны увидеть:
 
 ```
 context 12034 / threshold 600000 (window 1000000)
 Cache refresh on, refreshed 0/3 this idle period, timer not started
 ```
 
-That's it. Update with `claude plugin update ctx-handoff@ctx-handoff-mod`, or turn on auto-update under **Marketplaces** in `/plugin`.
+Это всё. Обновление командой `claude plugin update ctx-handoff@ctx-handoff-mod` или включите автообновление в разделе **Marketplaces** в `/plugin`.
 
 > [!NOTE]
-> Built for Claude subscriptions and long sessions (for example on a 1M-context model). On an API key, Bedrock or Vertex the cache lasts only 5 minutes, so run `/handoff refresh off`; everything else works. ctx-handoff is experimental, because Claude Code mods are still in early access.
+> Создано для подписок Claude и длинных сессий (например, на модели с контекстом 1M). С API-ключом, Bedrock или Vertex кэш живёт всего 5 минут, поэтому выполните `/handoff refresh off`; всё остальное работает. ctx-handoff экспериментален, поскольку моды Claude Code всё ещё в раннем доступе.
 
-## What's inside
+## Что внутри
 
-ctx-handoff is a growing toolkit for long sessions: new features for working with Claude over hours land here.
+ctx-handoff — это расширяющийся набор инструментов для длинных сессий: новые возможности для работы с Claude часами появляются здесь.
 
-### Hands off before the context fills (optional)
+### Передача до заполнения контекста (необязательно)
 
-Off by default, so Claude Code's own compact takes over. Turn on `auto_handoff` in the panel's Settings tab and at 600k tokens it waits for Claude and its subagents to finish, writes a summary that keeps verified work apart from unverified changes, lists what failed, the limits you set in your own words and what was already found out, ends with one next step, clears, and continues in a fresh conversation. Anything you type meanwhile is carried over.
+По умолчанию выключено, поэтому срабатывает собственное сжатие Claude Code. Включите `auto_handoff` во вкладке Settings панели, и при 600k токенов мод дождётся завершения Claude и его субагентов, запишет сводку, отделяя проверенную работу от непроверенных изменений, перечислит неудачи, ваши лимиты в ваших же словах и уже выясненное, закончит одним следующим шагом, очистит беседу и продолжит в новой. Всё, что вы введёте за это время, будет перенесено.
 
-### Keeps the cache warm while you're away
+### Поддерживает кэш тёплым, пока вы отсутствуете
 
-After about 50 idle minutes it sends a tiny request so the conversation cache doesn't expire (and stays ahead of Claude Code's 54-minute idle compaction on large chats), up to 3 times (about 3.5 hours); after that it saves a handoff summary without clearing, so when you return you choose to start fresh from it (`/handoff resume`) or stay where you were (`continue`).
+После примерно 50 минут простоя он отправляет крошечный запрос, чтобы кэш беседы не истёк (и опережает сжатие Claude Code от 54 минут простоя на больших беседах), до 3 раз (примерно 3,5 часа); после этого сохраняет сводку передачи без очистки, чтобы по возвращении вы выбрали начать заново (`/handoff resume`) или остаться где были (`continue`).
 
-To pause away refreshes and away summaries for just this conversation, click the button at the top of the panel or run `/handoff away pause` (`resume` restarts the timer). Notes updates keep running, and other conversations aren't affected. The panel and `/handoff` also show live background activity and the session's reported background token usage since this update (not a bill; requests already sent cannot be cancelled).
+Чтобы приостановить обновления и сводки во время отсутствия только для этой беседы, нажмите кнопку вверху панели или выполните `/handoff away pause` (`resume` перезапускает таймер). Обновления заметок продолжают работать, другие беседы не затрагиваются. Панель и `/handoff` также показывают текущую фоновую активность и сообщённое расходование фоновых токенов в этой сессии с момента обновления (не счёт; уже отправленные запросы отменить нельзя).
 
-<img src="docs/assets/cache.svg" width="900" alt="Animation: after you leave, the cache is refreshed at 55, 110 and 165 minutes; after that a summary is saved, and when you return you choose to resume or continue">
+  <img src="docs/assets/cache.svg" width="900" alt="Анимация: после вашего ухода кэш обновляется на 55, 110 и 165 минутах; после этого сохраняется сводка, а по возвращении вы выбираете возобновление или продолжение">
 
-### Learns your project, then hands it to your repo
+### Изучает ваш проект и передаёт его репозиторию
 
-<img src="docs/assets/memory.svg" width="900" alt="Animation: the same instruction on three days becomes a project rule, then a line in CLAUDE.md for you to review">
+  <img src="docs/assets/memory.svg" width="900" alt="Анимация: одна и та же инструкция в три дня становится правилом проекта, затем строкой в CLAUDE.md на ваш просмотр">
 
-Preferences, corrections and facts become one Markdown notes file per project, loaded into every new conversation. Routines you repeat become project skills. Only the new part of the conversation is read, by Sonnet 5.5 at low effort.
+Предпочтения, поправки и факты превращаются в один Markdown-файл заметок на проект, загружаемый в каждую новую беседу. Повторяющиеся рутины становятся навыками проекта. Читается только новая часть беседы, Sonnet 5.5 с низким уровнем усилий.
 
-If a notes update fails or gets unusable output, that slice of the conversation is kept for the next retry, without counting the same rule or procedure twice. Memories you delete come back only if you bring them up again in a new slice of conversation.
+Если обновление заметок даёт сбой или непригодный результат, этот кусок беседы сохраняется для следующей попытки, без двойного учёта одного правила или процедуры. Удалённые воспоминания возвращаются, только если вы снова упомянете их в новом куске беседы.
 
-### Remembers where you stopped
+### Помнит, где вы остановились
 
-<img src="docs/assets/resume.svg" width="900" alt="Animation: after /clear, the next conversation is told the last task, its state and the next step">
+  <img src="docs/assets/resume.svg" width="900" alt="Анимация: после /clear следующей беседе сообщают последнюю задачу, её состояние и следующий шаг">
 
-### Catches the usual slips
+### Ловит обычные ошибки
 
-<img src="docs/assets/nudges.svg" width="900" alt="Animation: nudges for the same failure twice, for saying done without checking, and for drifting out of your language">
+  <img src="docs/assets/nudges.svg" width="900" alt="Анимация: напоминания при повторе той же ошибки дважды, при словах «готово» без проверки и при уходе от вашего языка">
 
-### Guards you approve, one panel for everything
+### Защиты, которые вы одобряете, и одна панель для всего
 
-When a rule is already written down but keeps getting broken, ctx-handoff drafts a guard: a check on tool calls that reminds or blocks Claude. Claude asks you about it in the next conversation, and nothing applies until you say yes. `/handoff panel` opens a panel above the prompt for guards, memories, rules, the latest notes update and every setting.
+Когда правило уже записано, но постоянно нарушается, ctx-handoff создаёт проект защиты: проверку вызовов инструментов, которая напоминает или блокирует Claude. В следующей беседе Claude спрашивает вас о ней, и ничего не действует, пока вы не скажете «да». `/handoff panel` открывает панель над запросом для защит, воспоминаний, правил, последнего обновления заметок и всех настроек.
 
-<img src="docs/assets/guard.svg" width="900" alt="Animation: a rule in CLAUDE.md that keeps getting broken is drafted into a guard; Claude asks whether to turn it on, you say yes, and the next git push gets a reminder. Beside it, the panel above the prompt steps through its tabs: guards, memory, rules, the last update and settings">
+  <img src="docs/assets/guard.svg" width="900" alt="Анимация: нарушаемое правило в CLAUDE.md превращается в проект защиты; Claude спрашивает, включить ли её, вы соглашаетесь, и следующий git push получает напоминание. Рядом панель над полем ввода проходит по своим вкладкам: защиты, память, правила, последнее обновление и настройки">
 
-## Settings
+## Настройки
 
-Everything is on the panel's Settings tab (`/handoff panel`, then <kbd>5</kbd>), with where each value comes from and a reset button. The defaults are meant to be left alone. The [guide](docs/guide.md#settings) lists every setting.
+Всё находится во вкладке Settings панели (`/handoff panel`, затем <kbd>5</kbd>), с указанием источника каждого значения и кнопкой сброса. Значения по умолчанию лучше не менять. [Руководство](docs/guide.md#settings) перечисляет каждую настройку.
 
-## Cost and privacy
+## Стоимость и конфиденциальность
 
-- **No servers of its own.** It runs on your Claude Code sign-in and sends nothing anywhere but Anthropic, like the conversation itself.
-- **Small, predictable costs.** A handoff is one request; a cache refresh reads from cache at about a tenth of the input price; a notes update sends only the new part of the conversation. The nudges cost nothing.
-- **Plain files you own.** Notes are Markdown in `~/.claude/projects/`. Check what the mod may do with `claude plugin validate`; the [guide](docs/guide.md#cost-privacy-and-permissions) explains every entry.
+- **Собственных серверов нет.** Он работает на вашем входе в Claude Code и никуда не отправляет данные, кроме Anthropic, как и сама беседа.
+- **Небольшие и предсказуемые расходы.** Передача — один запрос; обновление кэша читает из кэша примерно за десятую часть цены ввода; обновление заметок отправляет только новую часть беседы. Напоминания ничего не стоят.
+- **Обычные файлы, которые принадлежат вам.** Заметки — Markdown в `~/.claude/projects/`. Проверьте, что мод может делать, командой `claude plugin validate`; [руководство](docs/guide.md#cost-privacy-and-permissions) объясняет каждую запись.
 
-## Documentation
+## Документация
 
-- [Руководство](docs/guide.md): every feature in detail, settings, commands, permissions, supported environments, limitations, troubleshooting and uninstalling.
-- [Журнал изменений](CHANGELOG.md): what changed in each version and why it's worth upgrading.
-- [Contributing](CONTRIBUTING.md): how to run it from source and send changes. Bug reports and ideas go in [issues](https://github.com/cablate/ctx-handoff-mod/issues/new/choose).
-- [Security](SECURITY.md): how to report a vulnerability privately.
+- [Руководство](docs/guide.md): каждая возможность подробно, настройки, команды, разрешения, поддерживаемые среды, ограничения, устранение неполадок и удаление.
+- [Журнал изменений](CHANGELOG.md): что изменилось в каждой версии и зачем стоит обновляться.
+- [Участие в разработке](CONTRIBUTING.md): как запускать из исходников и отправлять изменения. Отчёты об ошибках и идеи — в [issues](https://github.com/cablate/ctx-handoff-mod/issues/new/choose).
+- [Безопасность](SECURITY.md): как приватно сообщить об уязвимости.
 
-## Star history
+## История звёзд
 
 <a href="https://star-history.com/#cablate/ctx-handoff-mod&Date">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=cablate/ctx-handoff-mod&type=Date&theme=dark" />
     <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=cablate/ctx-handoff-mod&type=Date" />
-    <img alt="Star history chart" src="https://api.star-history.com/svg?repos=cablate/ctx-handoff-mod&type=Date" />
+    <img alt="График истории звёзд" src="https://api.star-history.com/svg?repos=cablate/ctx-handoff-mod&type=Date" />
   </picture>
 </a>
 
-## License
+## Лицензия
 
 [MIT](LICENSE)
 

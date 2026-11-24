@@ -56,7 +56,7 @@ built-in compaction summary with the original messages.
 Jev failures, malformed answers, a missing key, or a history that cannot be
 fitted throw; the caller (or the Claude Code hook) decides what to fall back to.
 
-## Установка and usage
+## Установка и использование
 
 ```sh
 npm install fast-jev-compaction
@@ -133,7 +133,7 @@ falls back to Claude Code's built-in summary on errors or insufficient
 reduction. See [`hooks/README.md`](hooks/README.md) for configuration and the
 Claude Code 2.1.274 type reference.
 
-### Установка in Claude Code
+### Установка в Claude Code
 
 Function hooks are an early-access Claude Code feature (2.1.274+), so the
 opt-in flag must be set wherever Claude Code runs, e.g. in `~/.claude/settings.json`:

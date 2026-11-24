@@ -1,6 +1,6 @@
 {
   "name": "hellosverre-mods",
-  "description": "Mods for Claude Code: how it looks, and what it shows you.",
+  "description": "Моды для Claude Code: как они выглядят и что вам показывают.",
   "owner": {
     "name": "hellosverre",
     "url": "https://github.com/hellosverre"
@@ -9,7 +9,7 @@
     {
       "name": "skins",
       "source": "./",
-      "description": "Skins for Claude Code: tool rows with icons, diff, table and Mermaid chart cards, a usage band and fifteen themes. /skin swaps them live."
+      "description": "Скины для Claude Code: строки инструментов с иконками, карточки diff, таблиц и диаграмм Mermaid, полоса использования и пятнадцать тем. /skin переключает их на ходу."
     },
     {
       "name": "redgreen",
@@ -17,7 +17,7 @@
         "source": "github",
         "repo": "hellosverre/redgreen"
       },
-      "description": "Test results in a pane: failures from Claude's vitest, jest, pytest, cargo, go, bun and deno runs, their detail and run history."
+      "description": "Результаты тестов в панели: ошибки из запусков Claude — vitest, jest, pytest, cargo, go, bun и deno, — их детали и история запусков."
     },
     {
       "name": "smart-compact",
@@ -25,7 +25,7 @@
         "source": "github",
         "repo": "hellosverre/smart-compact"
       },
-      "description": "Compacts at the right moment: after a commit or green tests, before the prompt cache expires, or when Claude asks for it."
+      "description": "Сжимает в нужный момент: после коммита или зеленых тестов, до истечения срока запросного кэша или когда Claude просит об этом."
     },
     {
       "name": "mod-store",
@@ -33,7 +33,7 @@
         "source": "github",
         "repo": "hellosverre/mod-store"
       },
-      "description": "An app store for Claude Code mods in a pane: /mods to browse, search and install 2,700 community mods, with what each can access shown before you install."
+      "description": "Магазин приложений для модов Claude Code в панели: /mods для просмотра, поиска и установки 2700 модов сообщества, при этом до установки показывается, к чему каждый может получить доступ."
     }
   ]
 }

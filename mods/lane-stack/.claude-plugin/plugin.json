@@ -1,7 +1,7 @@
 {
   "name": "lane-stack",
   "version": "1.67.4",
-  "description": "Конвейер Solo PM для кода Claude: агенты оркестратора, руководства по полосам, команды подключения и возобновления.",
+  "description": "Конвейер Solo PM для Claude Code: агенты оркестратора, руководства по полосам, команды подключения и возобновления.",
   "author": {
     "name": "VKirill",
     "url": "https://github.com/VKirill/claude-lane-stack"

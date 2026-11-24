@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "mazyos",
-  "description": "MazyOS: o sistema operacional do seu negócio no Claude Code. Plugin em português com memória da empresa, identidade visual e skills de marketing, SEO, Google Ads e prospecção de clientes.",
+  "description": "MazyOS — операционная система вашего бизнеса в Claude Code. Плагин на португальском языке: память компании, фирменный стиль и 17 skills по маркетингу, SEO, Google Ads и поиску клиентов.",
   "owner": {
     "name": "Mazzeo",
     "url": "https://github.com/mazzeoia"
@@ -10,7 +10,7 @@
     {
       "name": "mazyos",
       "source": "./",
-      "description": "Memória da sua empresa em toda sessão, identidade visual em tudo que o Claude gera e 17 skills de marketing, SEO, Google Ads, carrossel pro Instagram e prospecção de clientes pelo Google Maps. Painel, linha de status e freio no git.",
+      "description": "Память вашей компании в каждом сеансе, фирменный стиль во всем, что создает Claude, и 17 skills по маркетингу, SEO, Google Ads, каруселям для Instagram и поиску клиентов через Google Карты. Панель, строка состояния и блокировка Git.",
       "category": "productivity",
       "tags": ["claude-code", "negocio", "marketing", "seo", "google-ads", "prospeccao", "agente-de-ia", "pt-br"]
     }

@@ -1,24 +1,24 @@
-# jevmem pane
+# Панель jevmem
 
-A side pane for Claude Code, beside your chat, that shows what [jevmem](https://github.com/Avinash-jetwani/jevmem) did for the prompt you just sent and the turn that just ended:
+Боковая панель для Claude Code рядом с вашим чатом: она показывает, что [jevmem](https://github.com/Avinash-jetwani/jevmem) сделал для только что отправленного запроса и завершившегося хода:
 
-1. **Recalled for this prompt**: each memory line served to Claude (its id, kind and text) and how many were withheld.
-2. **The guard**: the last call the guard asked about or denied, with the rule and its score, matched to the call.
-3. **Saved last turn**: the line jevmem saved from the turn and its kind, or why the turn was skipped.
+1. **Вспомнено для этого запроса**: каждая строка памяти, переданная Claude (ее идентификатор, вид и текст), и сколько строк было удержано.
+2. **Защитник**: последний вызов, о котором защитник спросил или который отклонил, с правилом, его оценкой и совпадением с вызовом.
+3. **Сохранено в прошлом ходе**: строка, сохраненная jevmem из хода, и ее вид либо причина, по которой ход был пропущен.
 
-Each line has `why`, `wrong` and `forget` buttons. `forget` and `wrong` change `JEVMEM.md` (the line is kept as `[retired]`), so they ask first; a rule is retired in a terminal only, as `jevmem trust` works. The pane reads three local files under `.jevmem/` and runs the `jevmem` command by argument vector; it sends nothing anywhere and reads no key.
+У каждой строки есть кнопки `why`, `wrong` и `forget`. `forget` и `wrong` меняют `JEVMEM.md` (строка сохраняется как `[retired]`), поэтому сначала запрашивается подтверждение; в терминале правило деактивируется, поскольку работает `jevmem trust`. Панель читает три локальных файла в `.jevmem/` и запускает команду `jevmem` через вектор аргументов; она ничего никуда не отправляет и не читает ключи.
 
 ## Установка
 
-In Claude Code, with the jevmem marketplace added (`claude plugin marketplace add Avinash-jetwani/jevmem`):
+В Claude Code с добавленным маркетплейсом jevmem (`claude plugin marketplace add Avinash-jetwani/jevmem`):
 
 ```
 /plugin install jevmem-pane@jevmem
 ```
 
-It needs the jevmem command (`npm install -g jevmem`) and a project that is turned on (`jevmem setup`). The pane opens on its own in a terminal 144 columns wide or wider; `/jevmem` opens or closes it at any width (docked beside the chat from 110 columns in the fullscreen terminal, above the prompt below that). Claude Code only: Cursor has no pane.
+Нужна команда jevmem (`npm install -g jevmem`) и включенный проект (`jevmem setup`). Панель открывается сама в терминале шириной от 144 колонок; `/jevmem` открывает или закрывает ее при любой ширине (закреплена рядом с чатом от 110 колонок в полноэкранном терминале, выше строки ввода при меньшей ширине). Только Claude Code: в Cursor панели нет.
 
-The whole description, with what each state means, is in [docs/pane.md](https://avinash-jetwani.github.io/jevmem/pane/).
+Полное описание и значения всех состояний — в [docs/pane.md](https://avinash-jetwani.github.io/jevmem/pane/).
 
 ## Источник и лицензия
 

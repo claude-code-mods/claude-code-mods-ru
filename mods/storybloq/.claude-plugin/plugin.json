@@ -3,7 +3,7 @@
   "name": "storybloq",
   "displayName": "Storybloq",
   "version": "1.16.0",
-  "description": "Память проекта для кода и кодекса Claude. Storybloq хранит тикеты, проблемы, передачи дел и уроки в папке .story/ внутри вашего репозитория.",
+  "description": "Память проекта для Claude Code и Codex. Storybloq хранит тикеты, проблемы, передачи дел и уроки в папке .story/ внутри вашего репозитория.",
   "author": {
     "name": "Amir Shayegh",
     "url": "https://storybloq.com"
@@ -21,28 +21,28 @@
   "hooks": "./hooks/hooks.json",
   "userConfig": {
     "sidebar": {
-      "title": "Ledger dashboard",
+      "title": "Панель реестра",
       "type": "boolean",
       "default": true,
-      "description": "Draw the .story/ ledger in a pane beside the transcript. On by default; turn it off with /plugin configure storybloq. Projects with no .story/ directory show nothing either way (T-508, T-516)."
+      "description": "Выводить реестр .story/ в панели рядом с транскриптом. По умолчанию включено; отключение — через /plugin configure storybloq. В проектах без каталога .story/ панель ничего не показывает в любом режиме (T-508, T-516)."
     },
     "startupLogo": {
-      "title": "Storyfield startup logo",
+      "title": "Логотип при запуске Storyfield",
       "type": "boolean",
       "default": true,
-      "description": "Show a brief copper dot-wave logo before the dashboard. Turn off to show the board immediately."
+      "description": "Показывать короткий логотип из медной точечной волны перед панелью. Отключите, чтобы панель появлялась сразу."
     },
     "motion": {
-      "title": "Dashboard motion",
+      "title": "Анимация панели",
       "type": "boolean",
       "default": true,
-      "description": "Animate startup, phase progress, story updates, activity, and the context meter. Turn off for a static dashboard that still shows current status and activity."
+      "description": "Анимировать запуск, прогресс фаз, обновления историй, активность и индикатор контекста. Отключите для статичной панели, которая по-прежнему показывает текущее состояние и активность."
     },
     "changeHighlights": {
-      "title": "Story status highlights",
+      "title": "Подсветка статусов историй",
       "type": "boolean",
       "default": true,
-      "description": "Briefly highlight changed stories and destination counts, and show Ready when a blocker clears. Requires Dashboard motion."
+      "description": "Кратко подсвечивать измененные истории и счетчики пунктов назначения, а также показывать Ready, когда блокировка снимается. Требуется включенная анимация панели."
     }
   },
   "metadata": {

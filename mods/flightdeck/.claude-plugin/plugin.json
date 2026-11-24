@@ -1,7 +1,7 @@
 {
   "name": "flightdeck",
   "version": "0.6.2",
-  "description": "Flightdeck: панель управления для операторов в режиме реального времени для Claude Code. Основные показатели модели, дежурный архитектор, все проверки разрешений, карточки субагентов и дорожки, квитанция об очереди и журнал сеанса — всё это на основе реальных событий сеанса",
+  "description": "Flightdeck: панель управления для операторов в режиме реального времени для Claude Code. Основные показатели модели, дежурный архитектор, все проверки разрешений, карточки субагентов и дорожки, квитанция об очереди и журнал сеанса — всё это на основе реальных событий сеанса",
   "author": {
     "name": "Stephen Casella",
     "url": "https://github.com/scasella"
@@ -22,32 +22,32 @@
   "types": "./types/index.d.ts",
   "userConfig": {
     "architectPattern": {
-      "title": "Architect pattern",
-      "description": "Regular expression (case-insensitive) for the agent types and server tools that count as the on-call architect, e.g. advisor|architect|reviewer",
+      "title": "Шаблон архитектора",
+      "description": "Регулярное выражение (без учета регистра) для типов агентов и серверных инструментов, которые считаются дежурным архитектором, например advisor|architect|reviewer",
       "type": "string",
       "default": "advisor|architect"
     },
     "architectLabel": {
-      "title": "Architect label",
-      "description": "Name shown for the architect role",
+      "title": "Подпись архитектора",
+      "description": "Имя, отображаемое для роли архитектора",
       "type": "string",
       "default": "ARCHITECT"
     },
     "gateLabel": {
-      "title": "Gate label",
-      "description": "Name shown for the permission panel",
+      "title": "Подпись шлюза",
+      "description": "Имя, отображаемое для панели разрешений",
       "type": "string",
       "default": "GATE"
     },
     "panels": {
-      "title": "Panels",
-      "description": "Comma-separated panels in display order: main, architect, gate, agents, loops, receipt, log. Leave one out to hide it.",
+      "title": "Панели",
+      "description": "Панели через запятую в порядке отображения: main, architect, gate, agents, loops, receipt, log. Уберите одну, чтобы скрыть.",
       "type": "string",
       "default": "main,architect,gate,agents,loops,receipt,log"
     },
     "motion": {
-      "title": "Motion",
-      "description": "Animate the connectors while real work flows, or keep them still",
+      "title": "Анимация",
+      "description": "Анимировать соединения, когда идет реальная работа, или оставить их неподвижными",
       "type": "string",
       "options": [
         "while-active",
@@ -56,32 +56,32 @@
       "default": "while-active"
     },
     "moments": {
-      "title": "Architect moments",
-      "description": "Show the inferred moment of each consult (before a plan, error repeats, before done)",
+      "title": "Моменты архитектора",
+      "description": "Показывать предположение о моменте каждого обращения (до плана, при повторе ошибки, до завершения)",
       "type": "boolean",
       "default": true
     },
     "matchDescriptions": {
-      "title": "Match agent descriptions",
-      "description": "Also count an agent type as the architect when its description (not just its name) matches the pattern",
+      "title": "Сопоставлять описания агентов",
+      "description": "Также считать тип агента архитектором, если его описание (не только имя) совпадает с шаблоном",
       "type": "boolean",
       "default": false
     },
     "maxCards": {
-      "title": "Cards before swimlanes",
-      "description": "Agent cards drawn side by side; more agents than this switch to swimlanes (1-6)",
+      "title": "Карточки до дорожек",
+      "description": "Карточки агентов рисуются рядом; если агентов больше этого числа, используется представление в виде дорожек (1–6)",
       "type": "number",
       "default": 3
     },
     "paneColumns": {
-      "title": "Pane width",
-      "description": "Columns the pane asks for when docked beside a fullscreen transcript, 40 or more. Claude Code caps the dock at 45% of the terminal, and a width you dragged it to wins.",
+      "title": "Ширина панели",
+      "description": "Сколько колонок запрашивает панель при закреплении рядом с полноэкранным транскриптом — 40 или больше. Claude Code ограничивает закрепление 45% терминала, а ширина, которую вы перетащили, имеет приоритет.",
       "type": "number",
       "default": 66
     },
     "layout": {
-      "title": "Layout",
-      "description": "auto: a summary of at most 8 rows when the pane sits inline above the prompt, two columns from 110 columns when docked, one column otherwise",
+      "title": "Раскладка",
+      "description": "auto: сводка не более 8 строк, когда панель расположена в строке над полем ввода, два столбца при ширине от 110 колонок в закрепленном режиме, один столбец в остальных случаях",
       "type": "string",
       "options": [
         "auto",
@@ -92,8 +92,8 @@
       "default": "auto"
     },
     "palette": {
-      "title": "Palette",
-      "description": "theme follows your Claude Code theme (light, dark, colour-blind); pastel is fixed colours tuned for dark terminals",
+      "title": "Палитра",
+      "description": "theme следует вашей теме Claude Code (светлая, темная, для дальтоников); pastel — фиксированные цвета, подобранные для темных терминалов",
       "type": "string",
       "options": [
         "theme",
@@ -102,14 +102,14 @@
       "default": "theme"
     },
     "openOnStart": {
-      "title": "Open on start",
-      "description": "Open the pane when a session starts",
+      "title": "Открывать при запуске",
+      "description": "Открывать панель при запуске сеанса",
       "type": "boolean",
       "default": true
     },
     "statusLine": {
-      "title": "Status line",
-      "description": "Show context, agents, consults and denials in the status line",
+      "title": "Строка состояния",
+      "description": "Показывать контекст, агентов, обращения и отказы в строке состояния",
       "type": "boolean",
       "default": true
     }

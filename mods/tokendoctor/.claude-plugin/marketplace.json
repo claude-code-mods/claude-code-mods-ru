@@ -3,12 +3,12 @@
   "owner": {
     "name": "rsaryev"
   },
-  "description": "The same Claude Code for up to 38% less. Replays your own past sessions to show what each change would have saved, then changes only what you pick.",
+  "description": "Тот же Claude Code, но до 38% дешевле. Воспроизводит ваши прошлые сессии, чтобы показать, что сэкономило бы каждое изменение, а затем изменяет только то, что вы выберете.",
   "plugins": [
     {
       "name": "tokendoctor",
       "source": "./",
-      "description": "The same Claude Code for up to 38% less. Replays your own past sessions to show what each change would have saved, then changes only what you pick."
+      "description": "Тот же Claude Code, но до 38% дешевле. Воспроизводит ваши прошлые сессии, чтобы показать, что сэкономило бы каждое изменение, а затем изменяет только то, что вы выберете."
     }
   ]
 }

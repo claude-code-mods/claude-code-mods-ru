@@ -17,7 +17,7 @@ session with `claude --plugin-dir mods/agentctl`.
 Type what you are doing — you do not need any other command:
 
 ```text
-/agentctl 測試一下這個新功能
+/agentctl проверь эту новую функцию
 ```
 
 1. The mod puts a request for Claude in your prompt box (it never sends it). Press **Enter**.
@@ -180,7 +180,7 @@ Signal 13, walked on 2.1.289 (steps 1–3) and again from the start on 2.1.292:
 
 | Step | Result |
 |---|---|
-| `/agentctl 幫 …/README 加一行測試說明` | The request filled the empty box in Traditional Chinese with the helper path from `$.plugin.root`; nothing was sent or bound |
+| `/agentctl добавь строку тестового описания в …/README` | Запрос заполнил пустую строку ввода на традиционном китайском путем помощника из `$.plugin.root`; nothing was sent or bound |
 | Enter | Claude ran the helper's `--help`, read the project, found the file missing and **asked** instead of inventing scope; after the answer it wrote the proposal through the helper |
 | Preview | Shown at the turn's end with its digest and "binds the scope only; starts no work"; the band named the waiting proposal |
 | Tab + Enter | Accepted from the suggestion; the reply named the next step |
@@ -188,7 +188,7 @@ Signal 13, walked on 2.1.289 (steps 1–3) and again from the start on 2.1.292:
 | `/agentctl`, `handoff`, reopen, `last` | Status led with the next step; the hand-over listed the check as verified with its reading time; reopening pointed at it, `last` printed it |
 | A second goal with the task bound | The helper delivered under the bound task; the preview said "Replaces: task …"; Tab + Enter replaced it |
 
-Found and fixed during the walk: on 2.1.292 the host's own next-prompt guess ("確認") took the box, so
+Found and fixed during the walk: on 2.1.292 the host's own подсказка следующего запроса ("Подтвердить") took the box, so
 Tab + Enter would have sent that word to Claude — the mod now replaces the host's guess with the accept
 line while a proposal waits, and offers it again at each turn's end; the accept reply's last line stayed
 English in a Chinese session; with a task bound, the fill reply said "nothing is bound". Hesitations

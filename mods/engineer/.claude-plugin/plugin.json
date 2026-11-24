@@ -1,7 +1,7 @@
 {
   "name": "engineer",
   "version": "0.40.2",
-  "description": "Disciplined Agentic Engineering (DAE) — набор методологий для кода Claude. Навыки, необходимые для реализации пайплайна DAE: сбор информации о функциях, определение критериев приемки (AC), составление спецификаций, планирование, реализация, верификация, повышение надежности.",
+  "description": "Дисциплинированная агентная инженерия (DAE) — набор методологий для Claude Code. Навыки, необходимые для реализации конвейера DAE: сбор информации о функциях, определение критериев приемки (AC), составление спецификаций, планирование, реализация, верификация, повышение надежности.",
   "author": {
     "name": "Miklos"
   },
@@ -28,14 +28,14 @@
   "userConfig": {
     "economyModel": {
       "type": "string",
-      "title": "Economy model alias",
-      "description": "The model alias the economy class resolves to for the mod's own dispatches (model-classes.md). Change it when the lineup changes.",
+      "title": "Псевдоним экономной модели",
+      "description": "Псевдоним модели, к которому класс economy обращается для внутренних запусков мода (model-classes.md). Измените его, если состав моделей изменился.",
       "default": "sonnet"
     },
     "frontierModels": {
       "type": "string",
-      "title": "Frontier model aliases",
-      "description": "Comma-separated aliases (or id fragments) that count as the frontier class for the loop guard.",
+      "title": "Псевдонимы моделей frontier",
+      "description": "Псевдонимы (или фрагменты идентификаторов) через запятую, которые считаются моделью класса frontier для защиты от циклов.",
       "default": "fable"
     }
   }

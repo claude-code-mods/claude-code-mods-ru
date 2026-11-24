@@ -4,7 +4,7 @@
     "name": "Umer Ansari"
   },
   "metadata": {
-    "description": "show-your-work: Claude shows screenshots and videos of its work inline in your terminal"
+    "description": "show-your-work: Claude показывает снимки экрана и видео своей работы прямо в вашем терминале"
   },
   "plugins": [
     {

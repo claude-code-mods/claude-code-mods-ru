@@ -1,7 +1,7 @@
 {
   "name": "terminal-browser",
   "version": "0.0.2",
-  "description": "Браузер, работающий непосредственно внутри кода Claude. Просматривайте веб-сайты, просматривайте документы HTML и позвольте вашему агенту управлять встроенным браузером.",
+  "description": "Браузер, работающий непосредственно внутри Claude Code. Просматривайте веб-сайты, просматривайте HTML-документы и позвольте вашему агенту управлять встроенным браузером.",
   "author": {
     "name": "zenbu-labs"
   },
@@ -16,8 +16,8 @@
   "userConfig": {
     "agentTool": {
       "type": "boolean",
-      "title": "Give the agent a tool to open/close terminal-browser inside claude code",
-      "description": "Adds an open/close tool the model can call to show a page in the browser pane. Off by default.",
+      "title": "Дать агенту инструмент открытия/закрытия terminal-browser внутри Claude Code",
+      "description": "Добавляет инструмент открытия/закрытия, который модель может вызвать, чтобы показать страницу в панели браузера. По умолчанию выключено.",
       "default": false
     }
   }

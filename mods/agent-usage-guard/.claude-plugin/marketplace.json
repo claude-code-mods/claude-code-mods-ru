@@ -1,12 +1,12 @@
 {
   "name": "agent-usage-guard",
   "owner": { "name": "Riccardo Bartoli" },
-  "description": "agent-usage-guard: a Claude Code mod that guards your usage window against agent fan-out, heavy context and retry loops.",
+  "description": "agent-usage-guard: мод Claude Code, который защищает окно использования от разветвления агентов, тяжелого контекста и циклов повторных попыток.",
   "plugins": [
     {
       "name": "agent-usage-guard",
       "source": "./",
-      "description": "A Claude Code mod that holds subagent fan-out, heavy-context prompts and retry loops before they spend your usage window. It reads your plan's usage, counts agents across every session, and asks in Claude Code's own dialog."
+      "description": "Мод Claude Code, который удерживает разветвление субагентов, запросы с большим контекстом и циклы повторных попыток до того, как они израсходуют ваше окно использования. Он считывает использование из вашего плана, подсчитывает агентов во всех сессиях и запрашивает подтверждение в собственном диалоге Claude Code."
     }
   ]
 }

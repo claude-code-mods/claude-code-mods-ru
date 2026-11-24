@@ -1,6 +1,6 @@
 {
   "name": "lot-map",
-  "description": "A live map of Claude Code's work, drawn beside the chat",
+  "description": "Карта работы Claude Code в реальном времени рядом с чатом",
   "owner": {
     "name": "alexeyw"
   },

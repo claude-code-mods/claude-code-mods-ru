@@ -2,7 +2,7 @@
   "name": "compact-adviser",
   "version": "0.1.14",
   "license": "MIT",
-  "description": "Предлагает (или, при согласии, выполняет) команду /compact на завершенной контрольной точке, что определяется TypeSafe Jev. Его модуль hooks активируется только тогда, когда CLAUDE_CODE_ENABLE_FUNCTION_HOOKS равен ровно 1, а в противном случае представляет собой полную бездействие.",
+  "description": "Предлагает (или, при согласии, выполняет) команду /compact на завершенной контрольной точке, что определяется TypeSafe Jev. Его модуль hooks активируется только тогда, когда CLAUDE_CODE_ENABLE_FUNCTION_HOOKS равен ровно 1, а в противном случае представляет собой полное бездействие.",
   "author": {
     "name": "Kun Chen"
   },
@@ -18,8 +18,8 @@
   "userConfig": {
     "mode": {
       "type": "string",
-      "title": "Mode",
-      "description": "hint shows advice; auto compacts at eligible checkpoints after a first-use confirmation from /compact-adviser; off disables the adviser (Claude Code's own auto-compact is unaffected).",
+      "title": "Режим",
+      "description": "hint показывает рекомендации; auto выполняет сжатие на подходящих контрольных точках после первого подтверждения из /compact-adviser; off отключает помощник (собственное автосжатие Claude Code не затрагивается).",
       "options": [
         "hint",
         "auto",
@@ -29,40 +29,40 @@
     },
     "minContextTokens": {
       "type": "number",
-      "title": "Minimum context (tokens)",
-      "description": "A constant token count, not a percentage; no judgment below it.",
+      "title": "Минимальный контекст (токены)",
+      "description": "Постоянное число токенов, не процент; ниже этого порога оценка не выполняется.",
       "default": 40000,
       "min": 1
     },
     "contextBudgetTokens": {
       "type": "number",
-      "title": "Context budget (tokens)",
-      "description": "Optional. The context size you want compacted by: the hint floor relaxes as the context approaches the smaller of it and Claude Code's auto-compact point (or the window). 0 turns it off.",
+      "title": "Бюджет контекста (токены)",
+      "description": "Необязательно. Размер контекста, при котором нужно сжимать: нижняя граница подсказки смягчается по мере приближения контекста к меньшему из этого значения и точки автосжатия Claude Code (или окна контекста). 0 отключает.",
       "default": 0,
       "min": 0
     },
     "logRequests": {
       "type": "boolean",
-      "title": "Log TypeSafe requests",
-      "description": "When on, each TypeSafe/Jev request and sanitized Jev outcome is appended to ~/.claude/compact-adviser-requests-<session-id>.jsonl. Off by default. Never logs the API key.",
+      "title": "Записывать запросы TypeSafe",
+      "description": "Если включено, каждый запрос TypeSafe/Jev и обезличенный результат Jev добавляются в ~/.claude/compact-adviser-requests-<session-id>.jsonl. По умолчанию выключено. Ключ API никогда не записывается.",
       "default": false
     },
     "profile": {
       "type": "string",
-      "title": "Judge profile JSON",
-      "description": "Optional version-1 judge profile JSON. Empty uses shipped defaults. Invalid profiles disable advice. This does not grant auto consent.",
+      "title": "JSON профиля оценки",
+      "description": "Необязательный JSON профиля оценки версии 1. Пустое значение использует встроенные настройки. Некорректный профиль отключает рекомендации. Это не дает согласия на автосжатие.",
       "default": ""
     },
     "beforeCompactPrompt": {
       "type": "string",
-      "title": "Before-compact prompt",
-      "description": "Optional. Empty keeps automatic compaction immediate. In confirmed auto mode, a non-empty value runs as one turn, then compaction runs if that turn ends in a settled answer. A value that starts with / is a slash command (for example /stow); Claude Code does not expand slash commands or @file mentions in a plugin prompt, and it rejects a plugin prompt that starts with /. If you send your own prompt or run a command in between, or that turn is interrupted, errors, or does not finish within 5 minutes, nothing is compacted.",
+      "title": "Запрос перед сжатием",
+      "description": "Необязательно. Пустое значение оставляет автоматическое сжатие немедленным. В подтвержденном авторежиме непустое значение выполняется как один ход, после чего выполняется сжатие, если этот ход завершился окончательным ответом. Значение, начинающееся с /, является слеш-командой (например /stow); Claude Code не раскрывает слеш-команды и упоминания @file в запросе плагина и отклоняет запрос плагина, начинающийся с /. Если вы между тем отправите свой запрос или выполните команду, либо ход будет прерван, завершится ошибкой или не завершится за 5 минут, сжатия не произойдет.",
       "default": ""
     },
     "typesafeApiKey": {
       "type": "string",
-      "title": "TypeSafe API key",
-      "description": "Saved from /compact-adviser. Hidden in /config so the value is never shown. A non-empty TYPESAFE_API_KEY in the launch environment wins. Do not commit this value.",
+      "title": "Ключ TypeSafe API",
+      "description": "Сохранено из /compact-adviser. Скрыто в /config, чтобы значение никогда не отображалось. Непустой TYPESAFE_API_KEY в окружении запуска имеет приоритет. Не фиксируйте это значение в репозитории.",
       "default": ""
     }
   }

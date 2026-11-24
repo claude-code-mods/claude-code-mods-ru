@@ -3,7 +3,7 @@
   "name": "shunt",
   "displayName": "shunt · gateway",
   "version": "0.1.0",
-  "description": "Мод Claude для шлюза shunt: полоса над строкой ввода показывает, какая часть каждого окна используется, и время до сброса — для общего пула учетных записей (считывается из GET /usage шлюза shunt) или для собственных ограничений скорости Claude сессии вне шлюза shunt — а /shunt:usage выводит полную разбивку пула.",
+  "description": "Мод для шлюза shunt: полоса над строкой ввода показывает, какая часть каждого окна используется, и время до сброса — для общего пула учетных записей (считывается из GET /usage шлюза shunt) или для собственных ограничений скорости Claude сеанса вне шлюза shunt — а /shunt:usage выводит полную разбивку пула.",
   "author": {
     "name": "Minsu Lee",
     "email": "minsu.lee@pleaseai.dev",
@@ -25,8 +25,8 @@
   "userConfig": {
     "usageBand": {
       "type": "boolean",
-      "title": "Usage band",
-      "description": "Show usage above the prompt: the shunt pool's, refreshed every minute and after each turn, or the session's own rate limits off shunt. Off, the mod polls nothing and /shunt:usage still answers.",
+      "title": "Полоса использования",
+      "description": "Показывать использование над полем ввода: пула shunt, обновляемого каждую минуту и после каждого хода, или собственных ограничений скорости сеанса вне shunt. Если выключено, мод ничего не опрашивает, но /shunt:usage по-прежнему отвечает.",
       "default": true
     }
   }

@@ -5,7 +5,7 @@
     {
       "name": "inbox",
       "source": "./omp",
-      "description": "The inbox for omp: a band above the prompt and an /inbox panel for the questions, tasks and findings the agent leaves for you"
+      "description": "Входящие для omp: полоса над полем ввода и панель /inbox с вопросами, задачами и находками, которые агент оставляет для вас"
     }
   ]
 }

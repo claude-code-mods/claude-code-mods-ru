@@ -571,7 +571,7 @@ flowchart TD
 
 ---
 
-### Установкаation
+### Установка
 
 Install The Agentic Startup framework with the interactive installer:
 

@@ -4,12 +4,12 @@
     "name": "Kurt Buhler"
   },
   "metadata": {
-    "description": "An IDE-style file tree for Claude Code that shows what Claude is doing and where in files"
+    "description": "Дерево файлов в стиле IDE для Claude Code, показывающее, что делает Claude и где именно в файлах"
   },
   "plugins": [
     {
       "name": "filetree",
-      "description": "File tree of the session cwd with git status, lines changed, shimmer on files Claude touches and its git activity",
+      "description": "Дерево файлов рабочей директории сеанса с git-статусом, измененными строками, подсветкой файлов, к которым обращается Claude, и его git-активностью",
       "source": "./"
     }
   ]

@@ -3,12 +3,12 @@
   "owner": {
     "name": "chipfighter"
   },
-  "description": "Context Attachment Manager for Claude Code: earlier images go out as short placeholders instead of being sent again with every message, and the model fetches the original back by its ID.",
+  "description": "Context Attachment Manager для Claude Code: более ранние изображения отправляются короткими заполнителями вместо повторной отправки с каждым сообщением, а модель получает оригинал по его идентификатору.",
   "plugins": [
     {
       "name": "codex-attachment-manager",
       "source": "./",
-      "description": "In Claude Code sessions with many images, earlier images go out as short placeholders instead of being sent again with every message; the model fetches the original back by its ID, also after compaction, and the prompt cache keeps working."
+      "description": "В сессиях Claude Code со множеством изображений более ранние изображения отправляются короткими заполнителями вместо повторной отправки с каждым сообщением; модель получает оригинал по идентификатору, в том числе после сжатия, и prompt cache продолжает работать."
     }
   ]
 }

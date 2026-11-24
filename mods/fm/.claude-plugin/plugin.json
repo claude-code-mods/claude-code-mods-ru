@@ -1,7 +1,7 @@
 {
   "name": "fm",
   "version": "1.0.0",
-  "description": "Firstmate Calm для кода Claude: рабочая анимация парусной яхты и представление транскрипта только с диалогами, с передачей настроек для каждого дома/предпочтений Calm расширению Pi Calm. Его модуль hooks может загружаться через флаг развертывания tengu_plugin_hooks_modules кода CLAUDE_CODE_ENABLE_FUNCTION_HOOKS или Claude, но мод активируется только тогда, когда CLAUDE_CODE_ENABLE_FUNCTION_HOOKS равен ровно 1, а в противном случае полностью бездействует.",
+  "description": "Firstmate Calm для Claude Code: рабочая анимация парусной яхты и представление транскрипта только с диалогами, с передачей настроек для каждого дома/предпочтений Calm расширению Pi Calm. Его модуль hooks может загружаться через флаг развертывания tengu_plugin_hooks_modules кода CLAUDE_CODE_ENABLE_FUNCTION_HOOKS или Claude, но мод активируется только тогда, когда CLAUDE_CODE_ENABLE_FUNCTION_HOOKS равен ровно 1, а в противном случае полностью бездействует.",
   "author": {
     "name": "Firstmate",
     "url": "https://github.com/kunchenguid/firstmate"

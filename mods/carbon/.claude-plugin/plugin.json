@@ -24,14 +24,14 @@
   "userConfig": {
     "showPerTurn": {
       "type": "boolean",
-      "title": "CO2 of each answer",
-      "description": "Show the CO2 of each answer at the end of the turn duration line. Off: only the session total stays.",
+      "title": "CO2 каждого ответа",
+      "description": "Показывать CO2 каждого ответа в конце строки длительности хода. Выключено: остается только итог за сессию.",
       "default": true
     },
     "showSessionTotal": {
       "type": "boolean",
-      "title": "CO2 session total in the terminal",
-      "description": "Pin the session's CO2 total and its API-price cost under the prompt in a terminal. Turn it off when your status line already shows it, such as ccstatusline with the claude-carbon segment. The desktop app keeps it.",
+      "title": "Итог CO2 за сессию в терминале",
+      "description": "Закреплять под полем ввода в терминале итоговый CO2 сессии и его стоимость по ценам API. Выключите, если строка состояния уже показывает это, например ccstatusline с сегментом claude-carbon. В десктопном приложении индикатор сохраняется.",
       "default": true
     }
   }

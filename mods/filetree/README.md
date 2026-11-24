@@ -41,7 +41,7 @@
 
 ---
 
-## Установкаation
+## Установка
 
 The repo is its own plugin marketplace. Run this in the terminal:
 

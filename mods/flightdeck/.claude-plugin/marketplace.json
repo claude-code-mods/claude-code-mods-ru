@@ -1,7 +1,7 @@
 {
   "name": "claude-flightdeck",
   "metadata": {
-    "description": "Flightdeck: a live agent dashboard for Claude Code. Main model vitals, an on-call architect, every permission check, subagent cards and swimlanes, a turn receipt and a session log."
+    "description": "Flightdeck: панель мониторинга агента в реальном времени для Claude Code. Основные показатели модели, дежурный архитектор, все проверки разрешений, карточки субагентов и дорожки, квитанция хода и журнал сеанса."
   },
   "owner": {
     "name": "Stephen Casella",
@@ -11,7 +11,7 @@
     {
       "name": "flightdeck",
       "source": "./",
-      "description": "A live pane showing what your session's agents are doing, drawn only from real session events."
+      "description": "Панель в реальном времени, показывающая, что делают агенты вашего сеанса, построенная только на реальных событиях сеанса."
     }
   ]
 }

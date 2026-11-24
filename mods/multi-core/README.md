@@ -1,8 +1,8 @@
 # multi-core
 
-> This English reference text was assembled from the upstream plugin manifest and catalogue metadata; the pinned upstream commit did not ship a README.
+> Этот справочный текст на английском языке составлен из манифеста плагина и метаданных каталога; в закрепленном коммите upstream README не поставлялся.
 
-Use ChatGPT, Cursor, OpenCode and Antigravity models inside one session, switching with /model.
+Используйте модели ChatGPT, Cursor, OpenCode и Antigravity в одном сеансе, переключаясь через /model.
 
 ## Установка
 

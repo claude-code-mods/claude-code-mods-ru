@@ -26,7 +26,7 @@
   "userConfig": {
     "language": {
       "type": "string",
-      "title": "Language",
+      "title": "Язык",
       "options": [
         "en",
         "ru",
@@ -37,195 +37,195 @@
         "pt"
       ],
       "default": "en",
-      "description": "The language of the labels on the map."
+      "description": "Язык подписей на карте."
     },
     "coreName": {
       "type": "string",
-      "title": "Name at the centre",
+      "title": "Название в центре",
       "default": "CLAUDE",
-      "description": "What the circle in the middle of the map says, up to ten characters."
+      "description": "Что написано в круге в центре карты, не более десяти символов."
     },
     "memoryServers": {
       "type": "string",
       "multiple": true,
-      "title": "Memory servers",
+      "title": "Серверы памяти",
       "default": [
         "memory"
       ],
-      "description": "MCP servers whose tools light the Memory station."
+      "description": "MCP-серверы, инструменты которых подсвечивают станцию «Память»."
     },
     "memoryCommands": {
       "type": "string",
       "multiple": true,
-      "title": "Memory commands",
+      "title": "Команды памяти",
       "default": [],
-      "description": "Shell commands or scripts that light the Memory station. A name counts when it is the command itself or begins with it and a hyphen, an underscore or a dot."
+      "description": "Команды оболочки или сценарии, которые подсвечивают станцию «Память». Имя учитывается, если это сама команда или она начинается с нее и дефиса, подчеркивания или точки."
     },
     "memorySubcommands": {
       "type": "string",
       "multiple": true,
-      "title": "Memory subcommands",
+      "title": "Подкоманды памяти",
       "default": [],
-      "description": "Words after a memory command that the map may show, such as add or search. Without them a memory command goes by its own name, because the word after it may be content."
+      "description": "Слова после команды памяти, которые карта может показывать, например add или search. Без них команда памяти идет под своим именем, потому что слово после нее может быть содержимым."
     },
     "memoryPaths": {
       "type": "string",
       "multiple": true,
-      "title": "Memory paths",
+      "title": "Пути памяти",
       "default": [],
-      "description": "Parts of a path that make a file a memory. Claude Code's own memory folder always counts."
+      "description": "Части пути, которые делают файл памятью. Папка памяти самого Claude Code всегда учитывается."
     },
     "memoryLabels": {
       "type": "string",
       "multiple": true,
-      "title": "Memory labels",
+      "title": "Подписи памяти",
       "default": [],
-      "description": "Short names for memory tools, each written as tool=name. A tool without one goes by its own name."
+      "description": "Короткие имена инструментов памяти, каждое в формате tool=name. У инструмента без такого имени используется его собственное."
     },
     "serverStations": {
       "type": "string",
       "multiple": true,
-      "title": "Servers on a station",
+      "title": "Серверы на станции",
       "default": [],
-      "description": "Put an MCP server's tools on a station of the map, each written as server=station. The stations are files, shell, web, browser, agents, skills and you. Memory keeps memoryServers, which wins if a server is in both. A server without an entry, or with an unknown station, goes where the mod puts it."
+      "description": "Поместить инструменты MCP-сервера на станцию карты, каждое в формате server=station. Станции: files, shell, web, browser, agents, skills и you. Для памяти учитывается memoryServers, которая имеет приоритет, если сервер указан в обоих местах. У сервера без записи или с неизвестной станцией используется размещение по умолчанию."
     },
     "hookRecords": {
       "type": "boolean",
-      "title": "Hooks add numbered records",
+      "title": "Хуки добавляют нумерованные записи",
       "default": false,
-      "description": "Turn on if a hook of yours adds memory records numbered like [#123]: the map then shows them on the Memory station, by number only. It counts such numbers in the text of any hook, not only a memory one."
+      "description": "Включайте, если один из ваших хуков добавляет записи памяти с номерами вида [#123]: карта показывает их на станции «Память» только по номеру. Такие числа учитываются в тексте любого хука, не только хука памяти."
     },
     "hookReasons": {
       "type": "boolean",
-      "title": "Show why a hook refused",
+      "title": "Показывать причину отказа хука",
       "default": false,
-      "description": "Show the first line of a hook's refusal, up to 72 characters. Off, the map says only which tool was stopped: a refusal may quote what the hook found."
+      "description": "Показывать первую строку отказа хука, не более 72 символов. Если выключено, карта сообщает только, какой инструмент был остановлен: отказ может цитировать то, что нашел хук."
     },
     "guardedHooks": {
       "type": "boolean",
-      "title": "Hooks a guard skips",
+      "title": "Хуки, которые пропускает защита",
       "default": true,
-      "description": "Turn off on a Team or Enterprise login where the transcript gets notices that a lot-map hook was skipped. The map then loses the Hooks station, the records a hook adds, the row of a typed slash command and the mark of a compaction; everything else stays."
+      "description": "Отключайте на аккаунте Team или Enterprise, если в транскрипте появляются уведомления о пропуске хука lot-map. Тогда карта теряет станцию Hooks, записи, добавляемые хуком, строку введенной слеш-команды и метку сжатия; все остальное сохраняется."
     },
     "openAtStart": {
       "type": "boolean",
-      "title": "Open the pane when a session starts",
+      "title": "Открывать панель при запуске сеанса",
       "default": true,
-      "description": "Off, the pane stays closed until you type /lot-map. The map is kept from the session's first call all the same, so it is whole when you open it."
+      "description": "Если выключено, панель остается закрытой, пока вы не введете /lot-map. Карта при этом ведется с первого вызова сеанса, поэтому при открытии она уже полная."
     },
     "subagentNames": {
       "type": "boolean",
-      "title": "Name subagents in the rows",
+      "title": "Имена субагентов в строках",
       "default": false,
-      "description": "A subagent's model step says which subagent it is, by the few words it was started with, up to 40 characters. Off, it says only that it is a subagent."
+      "description": "Шаг модели субагента показывает, какой это субагент, по нескольким словам, с которых он был запущен, не более 40 символов. Если выключено, говорится только, что это субагент."
     },
     "contextCost": {
       "type": "boolean",
-      "title": "What each call adds to the context",
+      "title": "Что каждый вызов добавляет в контекст",
       "default": false,
-      "description": "Each row says about how many tokens the context grew by with its call's answer, and the map adds each station's sum to its count. An estimate: the growth of one model step, which also holds the model's own words, what hooks added and, at the start of a turn, the message, shared among that step's calls. It shows one step late, and a call whose step was the last of a turn gets none."
+      "description": "Каждая строка показывает примерно, сколько токенов добавил в контекст ответ вызова, и карта прибавляет сумму каждой станции к их счетчику. Это оценка: прирост одного шага модели, который включает собственные слова модели, то, что добавили хуки, и, в начале хода, сообщение, разделенное между вызовами этого шага. Показано с опозданием на один шаг; для вызова, чей шаг был последним в ходе, значение отсутствует."
     },
     "contextWindow": {
       "type": "string",
-      "title": "What the ring measures against",
+      "title": "Относительно чего измеряется кольцо",
       "options": [
         "model",
         "compaction"
       ],
       "default": "model",
-      "description": "What the ring around the centre and its percentage measure the context against: model, the model's whole window, as the status line does; or compaction, the auto-compact window, such as one set with autoCompactWindow, where it is smaller than the model's. Without one, or with auto-compaction off, compaction shows the same as model."
+      "description": "Относительно чего кольцо вокруг центра и его процент измеряют контекст: model — все окно модели, как в строке состояния; compaction — окно автосжатия, например заданное autoCompactWindow, если оно меньше окна модели. Без него или при выключенном автосжатии compaction показывает то же, что model."
     },
     "theme": {
       "type": "string",
-      "title": "Colours",
+      "title": "Цвета",
       "options": [
         "auto",
         "dark",
         "light"
       ],
       "default": "auto",
-      "description": "The map's colours: dark, light, or auto, which is dark on a dark surface and light on a light one."
+      "description": "Цвета карты: dark, light или auto — dark на темной поверхности и light на светлой."
     },
     "background": {
       "type": "string",
-      "title": "Background",
+      "title": "Фон",
       "options": [
         "solid",
         "transparent"
       ],
       "default": "solid",
-      "description": "The map's own background, or transparent, which lets the pane behind it show through."
+      "description": "Собственный фон карты или transparent — сквозь него видна панель позади."
     },
     "paneBackground": {
       "type": "string",
-      "title": "Pane background",
+      "title": "Фон панели",
       "default": "theme",
-      "description": "What the pane is painted with: theme, Claude Code's own; transparent, which lets the terminal behind it show through; or a colour written as #rrggbb."
+      "description": "Чем окрашена панель: theme — собственная тема Claude Code; transparent — сквозь нее виден терминал позади; либо цвет в формате #rrggbb."
     },
     "colors": {
       "type": "string",
       "multiple": true,
-      "title": "Colours of your own",
+      "title": "Свои цвета",
       "default": [],
-      "description": "Colours that replace the map's own, each written as name=#rrggbb. Names: background, node, line, spoke, text, label, faint, accent, active, error, memory, memoryActive, route. Set theme to dark or light with them."
+      "description": "Цвета, заменяющие собственные цвета карты, каждый в формате name=#rrggbb. Имена: background, node, line, spoke, text, label, faint, accent, active, error, memory, memoryActive, route. Вместе с ними задайте тему dark или light."
     },
     "layout": {
       "type": "string",
-      "title": "Layout",
+      "title": "Раскладка",
       "options": [
         "you-top",
         "you-bottom"
       ],
       "default": "you-top",
-      "description": "Where you are on the map: at the top, or at the bottom with the network and the browser at the top."
+      "description": "Где вы находитесь на карте: вверху или внизу, с сетью и браузером вверху."
     },
     "motion": {
       "type": "string",
-      "title": "Motion",
+      "title": "Анимация",
       "options": [
         "full",
         "reduced"
       ],
       "default": "full",
-      "description": "With reduced, nothing on the map flies, spreads or spins: a call lights its station and its spoke, and what changes only fades."
+      "description": "При reduced ничего на карте не летает, не расширяется и не вращается: вызов подсвечивает свою станцию и спицу, а изменения только проявляются."
     },
     "textSize": {
       "type": "string",
-      "title": "Text size",
+      "title": "Размер текста",
       "options": [
         "caption",
         "footnote",
         "body"
       ],
       "default": "footnote",
-      "description": "The size of the rows under the map: caption is smaller, body larger. A terminal has one size and ignores it."
+      "description": "Размер строк под картой: caption — меньше, body — больше. Терминал использует один размер и игнорирует настройку."
     },
     "logRows": {
       "type": "string",
-      "title": "Rows under the map",
+      "title": "Строки под картой",
       "options": [
         "16",
         "fill"
       ],
       "default": "16",
-      "description": "How many rows the list under the map shows: 16, or fill, as many as the pane has room for below the map, never fewer than 16. Fill is for the desktop app's docked pane; a terminal, the editor and the mobile app keep 16."
+      "description": "Сколько строк показывает список под картой: 16 или fill — столько, сколько места под картой в панели, но не меньше 16. Fill предназначен для закрепленной панели десктопного приложения; терминал, редактор и мобильное приложение сохраняют 16."
     },
     "terminalView": {
       "type": "string",
-      "title": "Terminal view",
+      "title": "Вид в терминале",
       "options": [
         "text",
         "picture",
         "braille"
       ],
       "default": "text",
-      "description": "How the map looks in a terminal: text, the rows alone; picture, the map itself above them, painted by the mod, in a terminal that shows pictures such as kitty, Ghostty or iTerm2 from 3.7.8, not in an earlier iTerm2, which keeps every frame in memory; or braille, the map above them in braille dots and letters, in any terminal whose font has braille, such as Windows Terminal."
+      "description": "Как карта выглядит в терминале: text — только строки; picture — сама карта над строками, нарисованная модом, в терминале, который показывает изображения (kitty, Ghostty или iTerm2 от 3.7.8), но не в более старом iTerm2, который держит каждый кадр в памяти; braille — карта над строками из точек и букв шрифта Брайля в любом терминале с поддержкой Брайля, например Windows Terminal."
     },
     "cellShape": {
       "type": "number",
-      "title": "Terminal cell shape",
+      "title": "Форма ячейки терминала",
       "default": 2.4,
-      "description": "For the terminal picture: how many times taller a terminal cell is than it is wide, so that the picture fills its box. About 2.4 for iTerm2's Monaco 12, about 2 for Menlo in kitty. Raise it if the map leaves an empty band below it or looks stretched tall; lower it if the band is at its right or the map looks squashed. From 1.2 to 4."
+      "description": "Для изображения в терминале: во сколько раз ячейка терминала выше, чем шире, чтобы карта заполняла свою область. Около 2.4 для Monaco 12 в iTerm2, около 2 для Menlo в kitty. Увеличьте, если под картой остается пустая полоса или она выглядит вытянутой; уменьшите, если полоса справа или карта выглядит сплющенной. От 1.2 до 4."
     }
   }
 }

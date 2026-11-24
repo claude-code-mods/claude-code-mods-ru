@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-  <b>English</b> · <a href="README.zh-TW.md">繁體中文</a> · <a href="#install">Install</a> · <a href="#whats-inside">Features</a> · <a href="docs/guide.md">Guide</a> · <a href="CHANGELOG.md">Changelog</a>
+  <b>English</b> · <a href="README.zh-TW.md">Китайский (традиционный)</a> · <a href="#install">Установка</a> · <a href="#whats-inside">Возможности</a> · <a href="docs/guide.md">Руководство</a> · <a href="CHANGELOG.md">Журнал изменений</a>
 </p>
 
 <p align="center">
@@ -107,8 +107,8 @@ Everything is on the panel's Settings tab (`/handoff panel`, then <kbd>5</kbd>),
 
 ## Documentation
 
-- [Guide](docs/guide.md): every feature in detail, settings, commands, permissions, supported environments, limitations, troubleshooting and uninstalling.
-- [Changelog](CHANGELOG.md): what changed in each version and why it's worth upgrading.
+- [Руководство](docs/guide.md): every feature in detail, settings, commands, permissions, supported environments, limitations, troubleshooting and uninstalling.
+- [Журнал изменений](CHANGELOG.md): what changed in each version and why it's worth upgrading.
 - [Contributing](CONTRIBUTING.md): how to run it from source and send changes. Bug reports and ideas go in [issues](https://github.com/cablate/ctx-handoff-mod/issues/new/choose).
 - [Security](SECURITY.md): how to report a vulnerability privately.
 

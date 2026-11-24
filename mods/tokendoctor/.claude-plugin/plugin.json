@@ -2,7 +2,7 @@
   "name": "tokendoctor",
   "displayName": "tokendoctor",
   "version": "0.6.1",
-  "description": "Тот же код Claude, но со скидкой до 38%. Воспроизводит ваши прошлые сессии, чтобы показать, какую экономию принесло бы каждое изменение, а затем изменяет только то, что вы выберете.",
+  "description": "Тот же Claude Code, но со скидкой до 38%. Воспроизводит ваши прошлые сессии, чтобы показать, какую экономию принесло бы каждое изменение, а затем изменяет только то, что вы выберете.",
   "author": {
     "name": "rsaryev"
   },
@@ -20,14 +20,14 @@
   "userConfig": {
     "slide": {
       "type": "boolean",
-      "title": "Slide the window instead of compacting",
-      "description": "Where Claude Code would summarize the conversation, elide old tool outputs instead (they can be read again): no summary request, every prompt and answer kept word for word. /compact still summarizes.",
+      "title": "Сдвигать окно вместо сжатия",
+      "description": "Там, где Claude Code обобщил бы беседу, вместо этого скрывать старые выводы инструментов (их можно прочитать снова): без запроса обобщения, каждый запрос и ответ сохраняются дословно. /compact по-прежнему выполняет обобщение.",
       "default": false
     },
     "slideTo": {
       "type": "number",
-      "title": "Slide down to (% of where Claude Code compacts)",
-      "description": "How far a slide frees the context, as a percent of the point where Claude Code compacts (20 to 90). Lower leaves less behind and more turns before the next slide.",
+      "title": "Сдвиг вниз (в процентах от точки сжатия Claude Code)",
+      "description": "Насколько далеко сдвиг освобождает контекст, в процентах от точки сжатия Claude Code (20–90). Меньше — остается меньше старого контекста и больше ходов до следующего сдвига.",
       "default": 25
     }
   }

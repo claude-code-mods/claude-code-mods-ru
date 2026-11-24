@@ -51,7 +51,7 @@ External diagnostic adapters remain pending. The installed `hook-doctor` skill d
 
 The pane reads authoritative bridge state at session start, turn completion, commands and manual refresh. It lists individual outcome criteria/evidence counts, phase, next action and the last successful refresh. A failed read explicitly marks the retained snapshot stale. It does not poll; changes made externally remain visible at the next refresh. Counts never establish coverage or completion.
 
-## Установкаer safety
+## Безопасность установщика
 
 `../install.sh install|update|uninstall` uses the native user-scoped plugin CLI. Existing marketplaces without `.ops-jdi-owner.json` are refused; do not manufacture a marker for a legacy installation. Unknown files/runtime remain preserved, with collision checks, private backups and conflict-aware rollback. `rollback <backup>` requires the matching owned installation. No live installer was run for this candidate.
 

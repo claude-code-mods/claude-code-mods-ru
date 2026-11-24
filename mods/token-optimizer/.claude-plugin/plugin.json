@@ -1,6 +1,6 @@
 {
   "name": "token-optimizer",
-  "description": "Отдельная строка состояния Token Optimizer для его тестов. Она поставляется внутри оптимизатора токенов plugin.",
+  "description": "Отдельная строка состояния Token Optimizer для его тестов. Она поставляется внутри плагина token-optimizer.",
   "author": {
     "name": "Alex Greenshpun",
     "url": "https://linkedin.com/in/alexgreensh"

@@ -44,7 +44,7 @@ export function prPageEffect(pr: PrView): Effect {
 }
 
 export function logEffect(pr: PrView, check: PrCheck): Effect {
-  return { kind: 'open', target: check.url ?? pr.url, name: check.url ? 'the log' : `PR #${pr.number}` }
+  return { kind: 'open', target: check.url ?? pr.url, name: check.url ? 'журнал' : `PR #${pr.number}` }
 }
 
 export const RERUN_LABEL = 'Re-run'
@@ -87,7 +87,7 @@ export type PrReadFirstPress = PrFixPress | { action: 'check-rerun'; ref: string
 /** The labels of the buttons that hand a PR's fix to the agent. */
 export const PR_FIX_LABELS: Record<PrFixPress['action'], string> = {
   'pr-conflicts': 'Resolve conflicts',
-  'check-fix': 'Fix',
+  'check-fix': 'Исправить',
 }
 
 /** A hand-off press that reads the PR first only while the saved view predates the reply to its earlier press. */
@@ -98,9 +98,9 @@ export type PrStaleReadPress =
 export const PR_READ_FIRST_LABELS: Record<PrReadFirstPress['action'] | PrStaleReadPress['action'], string> = {
   ...PR_FIX_LABELS,
   'check-rerun': RERUN_LABEL,
-  'pr-address-all': 'Address all',
+  'pr-address-all': 'Ответить на все',
   'pr-merge': 'Merge',
-  'thread-address': 'Address',
+  'thread-address': 'Ответить',
 }
 
 export function isPrStaleReadPress(p: PrPress): p is PrStaleReadPress {

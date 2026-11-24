@@ -241,7 +241,7 @@ export function readPrNode(
 
 /** The plain words for a GraphQL error on one PR or its repo. GitHub answers NOT_FOUND both for a missing PR and for a repo the viewer cannot see. */
 function errorWords(e: GraphQlError, repo: string): string {
-  if (e.type === 'NOT_FOUND') return `not found on GitHub, or no access to ${repo}`
+  if (e.type === 'NOT_FOUND') return `не найдено на GitHub или нет доступа к ${repo}`
 
   return (e.message ?? e.type ?? 'GitHub could not read it').trim()
 }
@@ -346,7 +346,7 @@ export function runFailureOf(
     ?.replace(/^gh:\s*/, '')
     .replace(/\s*\(https?:\/\/\S+\)\s*$/, '')
     .trim()
-  const text = line || (r.exitCode === 0 ? "GitHub's answer could not be read" : `gh exited with ${r.exitCode}`)
+  const text = line || (r.exitCode === 0 ? "Ответ GitHub не удалось прочитать" : `gh завершился с кодом ${r.exitCode}`)
 
   return { kind: 'error', at, text }
 }

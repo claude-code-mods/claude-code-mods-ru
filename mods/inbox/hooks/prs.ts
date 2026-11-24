@@ -118,7 +118,7 @@ export function readiness(
   const onOthers = [
     row(sent > 0 ? `${plural(sent, 'thread', 'threads')} sent to ${agent}` : null),
     row(changed > 0 ? `${plural(changed, 'thread', 'threads')} on changed lines` : null),
-    pr.reviewDecision === 'REVIEW_REQUIRED' ? 'needs approval' : null,
+    pr.reviewDecision === 'REVIEW_REQUIRED' ? 'требуется одобрение' : null,
     pending > 0 ? `${pending} ${pending === 1 ? 'check' : 'checks'} running` : null,
     pr.mergeable === 'UNKNOWN' ? 'GitHub is still checking for conflicts' : null,
   ].filter(isPresent)
@@ -132,8 +132,8 @@ export function readiness(
 
   return result(
     'ready',
-    'Ready to merge',
-    [...(isApproved ? ['approved'] : []), passing > 0 ? 'checks pass' : 'no checks ran', 'no threads waiting on you'],
+    'Готово к слиянию',
+    [...(isApproved ? ['одобрено'] : []), passing > 0 ? 'проверки пройдены' : 'проверки не запускались', 'нет обсуждений, ждущих вас'],
     isApproved ? ': ' : ', ',
   )
 }
@@ -227,7 +227,7 @@ function threadText(t: PrThread): string {
       .map(line => `> ${line}`)
       .join(NL)
   const opening = [`${where}, from @${t.author}${t.isOutdated ? ' (on an outdated diff)' : ''}:`, quoted(t.body), t.url]
-  const reply = t.reply ? ['', `Latest reply, from @${t.reply.author}:`, quoted(t.reply.body), t.reply.url] : []
+  const reply = t.reply ? ['', `Последний ответ от @${t.reply.author}:`, quoted(t.reply.body), t.reply.url] : []
 
   return [...opening, ...reply].join(NL)
 }
@@ -271,7 +271,7 @@ export const prompts = {
     ].join(NL),
   rankAgain: (order: { label: string | null; repo: string }, changed: PrView[], open: PrView[]) =>
     [
-      `The PR order you set for the PRs tab${order.label ? `, "${order.label}",` : ''} is out of date: ${numberList(changed)} changed since you set it.`,
+      `Порядок PR, который вы задали для вкладки PR${order.label ? `, «${order.label}»,` : ''}, устарел: ${numberList(changed)} изменились с момента задания.`,
       `Rank its open PRs in ${order.repo} again (${open.map(pr => `#${pr.number}`).join(', ')}), and set the new order with order_prs.`,
     ].join(NL),
 }

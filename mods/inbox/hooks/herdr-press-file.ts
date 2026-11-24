@@ -209,7 +209,7 @@ export function pressFile(text: string): { ok: true; file: HerdrFile } | { ok: f
   if ('collapse' in file) {
     const c = file.collapse
     const isCollapse = isRecord(c) && typeof c.row === 'string' && typeof c.isCollapsed === 'boolean' && isTime(c.at)
-    return isCollapse ? { ok: true, file: file as CollapseFile } : { ok: false, reason: 'collapse without row or time' }
+    return isCollapse ? { ok: true, file: file as CollapseFile } : { ok: false, reason: 'сворачивание без строки или времени' }
   }
   if (typeof file.pressedAt !== 'number' || !Number.isFinite(file.pressedAt))
     return { ok: false, reason: 'no pressedAt' }

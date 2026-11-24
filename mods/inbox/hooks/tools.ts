@@ -148,7 +148,7 @@ export function recordItem(
       ledger,
       'title' in r.record
         ? `Not recorded: the user dismissed the finding "${r.record.title}", which this raises. Ask about it only if they bring it up.`
-        : `Not recorded: ${closedHow(r.record)}. Ask it again only if they bring it up.`,
+        : `Не записано: ${closedHow(r.record)}. Спрашивайте снова, только если пользователь поднимет тему.`,
     )
   const before = r.ledger.items.find(i => i.id === r.id)
   const after = before && withBody(before, body)
@@ -167,24 +167,24 @@ export function recordItem(
     ]
     const updated = changes.length > 0 ? ` and ${changes.join(' and ')}` : ''
 
-    return unchanged(recorded, `Already open, so this record updated it${updated}.${leftOut}`)
+    return unchanged(recorded, `Уже открыто, поэтому запись обновила его${updated}.${leftOut}`)
   }
 
   return {
     ledger: recorded,
     result:
-      `Recorded. The user sees it in ${host.surface}.` +
+      `Записано. Пользователь видит это в ${host.surface}.` +
       leftOut +
       missingText(after, fields.record) +
-      (r.expired ? ` The list was full, so the oldest item closed: ${r.expired.ask}.` : ''),
-    personLine: `${input.kind === 'question' ? 'Question' : 'Task'}: ${ask}`,
+      (r.expired ? ` Список был полон, поэтому старейший пункт закрыт: ${r.expired.ask}.` : ''),
+    personLine: `${input.kind === 'question' ? 'Вопрос' : 'Задача'}: ${ask}`,
   }
 }
 
 function recordFinding(host: Host, ledger: Ledger, input: Record<string, unknown>, now: number): ToolAnswer {
   const title = cut(input.title, 120)
   const detail = cut(input.detail, 600)
-  if (title === '' || detail === '') return unchanged(ledger, 'Not recorded: a finding needs a title and a detail.')
+  if (title === '' || detail === '') return unchanged(ledger, 'Не записано: у замечания должны быть заголовок и описание.')
   const path = cut(input.path, 300)
   const kind = input.finding_kind === 'opportunity' ? 'opportunity' : 'issue'
   const r = addFinding(ledger, { kind, title, detail, path: path || null, at: now })
@@ -192,33 +192,33 @@ function recordFinding(host: Host, ledger: Ledger, input: Record<string, unknown
   if (r.dismissed)
     return unchanged(
       ledger,
-      `Not recorded: the user already closed this (${r.dismissed.outcome}). Record it again only if they bring it up.`,
+      `Не записано: пользователь уже закрыл это (${r.dismissed.outcome}). Записывайте снова, только если пользователь поднимет тему.`,
     )
-  if (!r.isAdded) return unchanged(r.ledger, 'Already recorded.')
+  if (!r.isAdded) return unchanged(r.ledger, 'Уже записано.')
 
   return {
     ledger: r.ledger,
     result:
-      `Recorded. The user sees it in ${host.findingsIn}.` +
-      (r.expired ? ` The list was full, so the oldest finding closed: ${r.expired.title}.` : ''),
-    personLine: `${kind === 'opportunity' ? 'Opportunity' : 'Issue'}: ${title}`,
+      `Записано. Пользователь видит это в ${host.findingsIn}.` +
+      (r.expired ? ` Список был полон, поэтому старейшее замечание закрыто: ${r.expired.title}.` : ''),
+    personLine: `${kind === 'opportunity' ? 'Возможность' : 'Проблема'}: ${title}`,
   }
 }
 
 function closedHow(c: Pick<Closed, 'how' | 'outcome'>): string {
   switch (c.how) {
     case 'answered':
-      return `the user answered it (${c.outcome})`
+      return `пользователь ответил (${c.outcome})`
     case 'done':
-      return 'the user marked it done'
+      return 'пользователь отметил его выполненным'
     case 'dismissed':
-      return 'the user dismissed it'
+      return 'пользователь отклонил его'
     case 'expired':
-      return 'it expired'
+      return 'срок истёк'
     case 'claude':
-      return 'you closed it earlier'
+      return 'вы закрыли его ранее'
     case 'update':
-      return `the inbox closed it (${c.outcome})`
+      return `inbox закрыл его (${c.outcome})`
   }
 }
 
@@ -273,34 +273,34 @@ export function recordClose(
   const answer = cut(input.answer, 80)
   const reason = cut(input.reason, 80)
   if (id === '' || (answer === '' && reason === ''))
-    return unchanged(ledger, "Not closed: give the id, and the user's answer or a reason.")
+    return unchanged(ledger, "Не закрыто: укажите id и ответ пользователя или причину.")
   if (answer === '' && isRecordedAfterCompare(ledger, id, presses))
-    return unchanged(ledger, 'Not closed: your record updated this question, and it stays open for the user.')
+    return unchanged(ledger, 'Не закрыто: ваша запись обновила этот вопрос, и он остаётся открытым для пользователя.')
   const item = ledger.items.find(i => i.id === id)
   if (item?.kind === 'question' && answer !== '' && isQuestionBack(answer, item.options))
     return unchanged(
       ledger,
-      'Not closed: the user asked a question back, so it stays open. Answer them in your reply, and close it when they decide.',
+      'Не закрыто: пользователь задал встречный вопрос, поэтому пункт остаётся открытым. Ответьте в своём ответе и закройте его, когда пользователь решит.',
     )
   const r = closeByAgent(host, ledger, id, answer ? { answer } : { reason }, now)
   if (r.closed && 'item' in r.closed)
     return {
       ledger: r.ledger,
-      result: `Closed. The user sees it in ${host.surface} with its outcome. ${NAME_BY_CONTENT}`,
+      result: `Закрыто. Пользователь видит это в ${host.surface} с результатом. ${NAME_BY_CONTENT}`,
       personLine: `Closed: ${r.closed.item.ask}`,
     }
   if (r.closed)
     return {
       ledger: r.ledger,
-      result: `Closed the finding. ${NAME_BY_CONTENT}`,
+      result: `Замечание закрыто. ${NAME_BY_CONTENT}`,
       personLine: `Closed: ${r.closed.finding.title}`,
     }
   const earlier = [...ledger.closed, ...ledger.closedFindings].findLast(c => c.id === id)
-  if (earlier) return unchanged(ledger, `Already closed: ${closedHow(earlier)}.`)
+  if (earlier) return unchanged(ledger, `Уже закрыто: ${closedHow(earlier)}.`)
 
   return unchanged(
     ledger,
-    `Not closed: no open item or finding has the id ${id}. The open ones are listed beside the user's latest message.`,
+    `Не закрыто: ни у одного открытого пункта или замечания нет id ${id}. Открытые перечислены рядом с последним сообщением пользователя.`,
   )
 }
 
@@ -327,26 +327,26 @@ function orderPrs(
   now: number,
   lastActions: Record<string, LastAction>,
 ): ToolAnswer {
-  if (!Array.isArray(input.numbers)) return unchanged(ledger, 'Not set: numbers must be a list of PR numbers.')
+  if (!Array.isArray(input.numbers)) return unchanged(ledger, 'Не задано: numbers должен быть списком номеров PR.')
   if (input.numbers.length === 0) {
-    if (ledger.prOrder === null) return unchanged(ledger, 'No order was set.')
+    if (ledger.prOrder === null) return unchanged(ledger, 'Порядок не был задан.')
 
     return {
       ledger: { ...ledger, prOrder: null },
-      result: `Cleared. The PRs show in their usual order in ${host.prsIn}.`,
-      personLine: 'PR order cleared',
+      result: `Сброшено. PR показываются в обычном порядке в ${host.prsIn}.`,
+      personLine: 'Порядок PR сброшен',
     }
   }
   const numbers = input.numbers.map(prNumber)
-  if (numbers.includes(null)) return unchanged(ledger, 'Not set: numbers must be PR numbers, such as 3401.')
+  if (numbers.includes(null)) return unchanged(ledger, 'Не задано: numbers должны быть номерами PR, например 3401.')
   const repo = cut(input.repo, 200)
-  if (!REPO.test(repo)) return unchanged(ledger, 'Not set: give repo as owner/name.')
+  if (!REPO.test(repo)) return unchanged(ledger, 'Не задано: укажите repo в формате owner/name.')
   const refs = [...new Set(numbers.map(n => `${repo}#${n}`))]
   if (refs.length > MAX_ORDERED_PRS) return unchanged(ledger, `Not set: an order ranks at most ${MAX_ORDERED_PRS} PRs.`)
   const label = cut(input.label, MAX_ORDER_LABEL)
-  if (!label) return unchanged(ledger, 'Not set: give label, what the user does with the order.')
+  if (!label) return unchanged(ledger, 'Не задано: укажите label — для чего пользователю этот порядок.')
   const why = cut(input.why, MAX_ORDER_WHY)
-  if (!why) return unchanged(ledger, 'Not set: give why, the reason for this order.')
+  if (!why) return unchanged(ledger, 'Не задано: укажите why — причину этого порядка.')
   const dismissed = refs.filter(ref => isDismissed(lastActions, ref) || ledger.prOrder?.dismissed.includes(ref))
   const onTab = tabPrs(ledger)
   const added = refs.filter(ref => !onTab.includes(ref))
@@ -362,7 +362,7 @@ function orderPrs(
       ...ledger,
       prOrder: { refs, label, why, statuses: {}, dismissed, by: host.agent, at: now },
     },
-    result: `Set. These ${refs.length} PRs show first in ${host.prsIn}, in this order.${addedText}`,
-    personLine: `PR order: ${label}, ${refs.length} ${refs.length === 1 ? 'PR' : 'PRs'}`,
+    result: `Задано. Эти ${refs.length} PR показываются первыми в ${host.prsIn} в этом порядке.${addedText}`,
+    personLine: `Порядок PR: ${label}, ${refs.length} PR`,
   }
 }

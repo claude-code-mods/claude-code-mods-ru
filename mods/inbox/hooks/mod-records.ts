@@ -65,14 +65,14 @@ export function permissionText(tool: string, input: Record<string, unknown>): st
     case 'Edit':
     case 'MultiEdit':
     case 'Write':
-      return `edit ${file('file_path')}`
+      return `правка ${file('file_path')}`
     case 'NotebookEdit':
-      return `edit ${file('notebook_path')}`
+      return `правка ${file('notebook_path')}`
     case 'Read':
-      return `read ${file('file_path')}`
+      return `чтение ${file('file_path')}`
     case 'Glob':
     case 'Grep':
-      return `search ${text('path') ? `${file('path')} ` : ''}for ${clipLabel(text('pattern'), 30)}`
+      return `поиск ${text('path') ? `в ${file('path')} ` : ''}: ${clipLabel(text('pattern'), 30)}`
     case 'WebFetch':
       return `fetch ${
         text('url')
@@ -80,12 +80,12 @@ export function permissionText(tool: string, input: Record<string, unknown>): st
           .split('/')[0]
       }`
     case 'WebSearch':
-      return `search the web for ${clipLabel(text('query'), 30)}`
+      return `поиск в сети: ${clipLabel(text('query'), 30)}`
     case 'Skill':
-      return `use the ${text('skill')} skill`
+      return `использовать навык ${text('skill')}`
     case 'Agent':
     case 'Task':
-      return text('description') ? `run an agent: ${text('description')}` : 'run an agent'
+      return text('description') ? `запустить агента: ${text('description')}` : 'запустить агента'
     default:
       return tool.startsWith('mcp__') ? tool.slice(5).replace(/__/g, ' ') : tool
   }

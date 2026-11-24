@@ -156,14 +156,14 @@ function parse(src: string, ci: boolean): Node {
 function compile(node: Node): Op[] {
   const prog: Op[] = []
   const emit = (op: Op) => {
-    if (prog.length >= MAX_PROGRAM) throw new Unsupported('too large')
+    if (prog.length >= MAX_PROGRAM) throw new Unsupported('слишком велико')
     prog.push(op)
     return prog.length - 1
   }
   let work = 0
   const empty = (n: Node): boolean => n.t === 'cat' ? n.a.every(empty) : n.t === 'alt' ? n.a.every(empty) : n.t === 'rep' ? n.max === 0 || empty(n.n) : false
   const gen = (n: Node): void => {
-    if (++work > MAX_WORK) throw new Unsupported('too complex')
+    if (++work > MAX_WORK) throw new Unsupported('слишком сложно')
     if (n.t === 'rep' && (n.max === 0 || (empty(n.n) && n.n.t !== 'bol' && n.n.t !== 'eol'))) return
     if (n.t === 'char') emit({ op: 'char', test: n.test })
     else if (n.t === 'bol') emit({ op: 'bol' })

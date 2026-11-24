@@ -2837,7 +2837,7 @@ export const register: Register = on => {
             )}
           </Text>
         </Box>
-        {showsDemoNotices ? <Button key="hide-demo" label="Hide demo" onPress={() => void setDemo($, false)} /> : null}
+        {showsDemoNotices ? <Button key="hide-demo" label="Скрыть пример" onPress={() => void setDemo($, false)} /> : null}
         <Button key="open-inbox" label="Open inbox" onPress={() => void openInbox($, isDemo)} />
       </Box>
     )
@@ -3437,7 +3437,7 @@ export const register: Register = on => {
       },
       {
         key: 'fold-all',
-        label: 'Fold all',
+        label: 'Свернуть всё',
         hotkey: FOLD_ALL_KEY,
         kind: 'view',
         onPress: () => !isHelpShown && foldAll($, null),
@@ -3506,7 +3506,7 @@ export const register: Register = on => {
         {showsDemoNotices ? (
           <Box flexDirection="column" paddingX={isInline ? 2 : 1} marginBottom={blankLine}>
             {banner(bannerOf('demo', DEMO_NOTICE), {
-              action: <Button key="hide-demo" label="Hide demo" onPress={() => void setDemo($, false)} />,
+              action: <Button key="hide-demo" label="Скрыть пример" onPress={() => void setDemo($, false)} />,
             })}
           </Box>
         ) : null}

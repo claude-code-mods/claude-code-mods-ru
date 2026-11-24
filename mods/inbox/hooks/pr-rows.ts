@@ -20,12 +20,12 @@ export function prCheckId(pr: PrView, check: PrCheck): string {
 }
 
 export function threadRowId(ref: string, thread: string): string {
-  return `${ref} thread ${thread}`
+  return `${ref}: обсуждение ${thread}`
 }
 
 /** `check` is the check's `checkKey`. */
 export function checkRowId(ref: string, check: string): string {
-  return `${ref} check ${check}`
+  return `${ref}: проверка ${check}`
 }
 
 export function prMarkId(ref: string): string {
@@ -48,7 +48,7 @@ export function isBlockPressShown(pr: PrView, lastActions: Record<string, LastAc
 
 export const GH_MISSING_TEXT = 'The inbox could not find gh. It needs gh to read your PRs.'
 
-export const GH_SIGNED_OUT_TEXT = 'gh is not signed in to GitHub. Run gh auth login so the inbox can read your PRs.'
+export const GH_SIGNED_OUT_TEXT = 'gh не авторизован в GitHub. Выполните gh auth login, чтобы inbox мог читать ваши PR.'
 
 /**
  * Why the PRs cannot be read, as the PRs tab says it once at the top, or null when nothing stops it. A missing gh
@@ -69,7 +69,7 @@ export function ghNoticeOf(gh: {
 
 /** The line a PR block shows when its last refresh failed. */
 export function prRefreshFailedText(error: string): string {
-  return `Last refresh failed: ${error}`
+  return `Последнее обновление не удалось: ${error}`
 }
 
 /** The row ids of the tab's own presses. Each starts with `pr:`, as a PR's mark id does, so no host takes it for an Asks row. */
@@ -77,7 +77,7 @@ export const RANK_AGAIN_ID = 'pr:order'
 export const PR_REFRESH_ID = 'pr:refresh'
 export const CLEAR_FINISHED_ID = 'pr:finished'
 
-export const PR_GROUP_TITLES = { threads: 'Review threads', checks: 'Failing checks', cancelled: 'Cancelled checks' }
+export const PR_GROUP_TITLES = { threads: 'Обсуждения', checks: 'Неудачные проверки', cancelled: 'Отменённые проверки' }
 
 /** A PR block's rows by group, and all of them in drawn order. A settled block draws none. */
 export function prBlockRows<R>(

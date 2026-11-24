@@ -23,7 +23,7 @@ export function undoSvg(fraction: number, leftMs: number): string {
     `<animate attributeName="width" from="${left}" to="0" dur="${leftMs}ms" fill="freeze"/></rect></g>` +
     `<rect class="edge" x="0.5" y="0.5" width="${width - 1}" height="${height - 1}" rx="5.5"/>` +
     `<text x="${width / 2}" y="${height / 2}" dominant-baseline="central" text-anchor="middle" ` +
-    `font-family="-apple-system, system-ui, sans-serif" font-size="14">↺ Undo</text></svg>`
+    `font-family="-apple-system, system-ui, sans-serif" font-size="14">↺ Отменить</text></svg>`
   )
 }
 /**

@@ -219,13 +219,13 @@ export function pressDrainer(
       }))
       if (read.ok) waiting.push({ path, taken, file: read.file })
       else {
-        log(`Herdr press ${logged(name)} refused: ${logged(read.reason)}`)
+        log(`Нажатие Herdr ${logged(name)} отклонено: ${logged(read.reason)}`)
         await files.remove(taken).catch(() => undefined)
       }
     }
     for (const { path, taken, file } of waiting.sort((a, b) => fileTime(a.file) - fileTime(b.file))) {
       const isTaken = await apply(sessionId, file).catch((err: unknown) => {
-        log(`Herdr press ${logged(file.id)} failed: ${message(err)}`)
+        log(`Нажатие Herdr ${logged(file.id)} не удалось: ${message(err)}`)
         return file.format !== 2
       })
       if (isTaken) {

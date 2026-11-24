@@ -26,14 +26,14 @@ document.addEventListener('DOMContentLoaded', () => {
   function fail(message) {
     page.replaceChildren(h('p', { class: 'problems' }, message))
   }
-  if (!raw) return fail('This page has no comparison data. Add it as JSON after the last line of this file.')
+  if (!raw) return fail('На этой странице нет данных сравнения. Добавьте их как JSON после последней строки файла.')
   let data
   try {
     data = JSON.parse(raw)
   } catch (e) {
-    return fail(`The comparison data is not valid JSON: ${e.message}`)
+    return fail(`Данные сравнения не являются корректным JSON: ${e.message}`)
   }
-  if (!data || typeof data !== 'object') return fail('The comparison data is not a JSON object.')
+  if (!data || typeof data !== 'object') return fail('Данные сравнения не являются объектом JSON.')
 
   const problems = []
   const measures = list(data.measures).filter(m => m && typeof m === 'object')
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     .map(c => ({ name: text(c.name), summary: text(c.summary) }))
     .filter(c => c.name)
   if (choices.length === 0) {
-    problems.push('The data lists no choices.')
+    problems.push('В данных не перечислены варианты.')
     const seen = new Map()
     for (const m of measures)
       for (const name of Object.keys(m.values || {})) if (!seen.has(keyOf(name))) seen.set(keyOf(name), name)
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const byKey = new Map(choices.map(c => [keyOf(c.name), c]))
   function choiceNamed(name, where) {
     const choice = byKey.get(keyOf(name))
-    if (!choice && text(name)) problems.push(`“${text(name)}”, ${where}, is not one of the choices.`)
+    if (!choice && text(name)) problems.push(`«${text(name)}», ${where}, не является одним из вариантов.`)
     return choice
   }
 
@@ -62,11 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const before = text(data.pickBefore)
   const isSamePick = before && keyOf(before) === keyOf(pickName)
   const isPick = choice => keyOf(choice.name) === keyOf(pickName)
-  document.title = question.replace(/`/g, '') || 'Comparison'
+  document.title = question.replace(/`/g, '') || 'Сравнение'
 
-  const measureName = (m, i) => text(m.name) || `Measure ${i + 1}`
+  const measureName = (m, i) => text(m.name) || `Показатель ${i + 1}`
   const bestSets = measures.map((m, i) => {
-    const where = `named as best on “${measureName(m, i)}”`
+    const where = `назван лучшим по «${measureName(m, i)}»`
     return new Set(
       list(m.best)
         .map(name => choiceNamed(name, where))
@@ -75,19 +75,19 @@ document.addEventListener('DOMContentLoaded', () => {
     )
   })
   measures.forEach((m, i) => {
-    for (const name of Object.keys(m.values || {})) choiceNamed(name, `named in the values of “${measureName(m, i)}”`)
+    for (const name of Object.keys(m.values || {})) choiceNamed(name, `упомянут в значениях «${measureName(m, i)}»`)
   })
   previews.forEach((p, i) => {
-    for (const name of Object.keys(p.texts || {})) choiceNamed(name, `named in the preview “${text(p.title) || i + 1}”`)
+    for (const name of Object.keys(p.texts || {})) choiceNamed(name, `упомянут в предпросмотре «${text(p.title) || i + 1}»`)
   })
   const judgedSets = bestSets.filter(s => s.size > 0)
 
-  const tag = () => h('span', { class: 'tag' }, 'Pick')
+  const tag = () => h('span', { class: 'tag' }, 'Выбор')
   const better = m => text(m.better) && h('span', { class: 'better' }, ` (${text(m.better)})`)
   function tally(choice) {
     if (judgedSets.length === 0) return null
     const won = judgedSets.filter(s => s.has(keyOf(choice.name))).length
-    return h('p', { class: 'tally' }, 'Best on ', h('b', null, won), ` of ${judgedSets.length} measures`)
+    return h('p', { class: 'tally' }, 'Лучший по ', h('b', null, won), ` из ${judgedSets.length} показателей`)
   }
   function result(m, i, choice) {
     const entry = Object.entries(m.values || {}).find(([name]) => keyOf(name) === keyOf(choice.name))
@@ -102,9 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
             'p',
             { class: isBest ? 'value is-best' : 'value' },
             inline(value),
-            isBest && h('span', { class: 'best' }, 'Best'),
+            isBest && h('span', { class: 'best' }, 'Лучший'),
           )
-        : h('p', { class: 'value is-empty' }, 'Not measured'),
+        : h('p', { class: 'value is-empty' }, 'Не измерено'),
       note && h('p', { class: 'note' }, inline(note)),
     ]
   }
@@ -113,16 +113,16 @@ document.addEventListener('DOMContentLoaded', () => {
     'header',
     { class: 'verdict' },
     question && h('h1', { class: 'question' }, inline(question)),
-    pickName ? h('p', { class: 'pick' }, pickName, tag()) : h('p', { class: 'pick is-missing' }, 'No pick'),
+    pickName ? h('p', { class: 'pick' }, pickName, tag()) : h('p', { class: 'pick is-missing' }, 'Нет выбора'),
     before &&
       pickName &&
       h(
         'p',
         { class: 'change' },
-        isSamePick ? 'Same pick as before the comparison.' : `Before the comparison, the pick was ${before}.`,
+        isSamePick ? 'Тот же выбор, что и до сравнения.' : `До сравнения выбором был ${before}.`,
       ),
     text(data.reason) && h('p', { class: 'reason' }, inline(text(data.reason))),
-    text(data.unexpected) && h('p', { class: 'odd' }, h('strong', null, 'Unexpected: '), inline(text(data.unexpected))),
+    text(data.unexpected) && h('p', { class: 'odd' }, h('strong', null, 'Неожиданно: '), inline(text(data.unexpected))),
   )
 
   const headRows = 3
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'section',
     {
       class: 'matrix',
-      'aria-label': 'Choices',
+      'aria-label': 'Варианты',
       style: `grid-template-columns: repeat(${choices.length}, minmax(0, 1fr)); grid-template-rows: repeat(${headRows + 2 * measures.length}, auto)`,
     },
     pickColumn > 0 && h('div', { class: 'band', style: `grid-column: ${pickColumn}; grid-row: 1 / ${headRows + 1}` }),
@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const cards = h(
     'section',
-    { class: 'cards', 'aria-label': 'Choices' },
+    { class: 'cards', 'aria-label': 'Варианты' },
     choices.map(choice =>
       h(
         'article',
@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
     previews.length > 0 &&
     h(
       'section',
-      { class: 'previews', 'aria-label': 'Previews' },
+      { class: 'previews', 'aria-label': 'Предпросмотры' },
       previews.map((p, i) => {
         const blocks = choices
           .map(choice => {
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return h(
           'div',
           { class: 'preview-group', id: `preview-${i}` },
-          h('h2', null, inline(text(p.title) || 'Preview')),
+          h('h2', null, inline(text(p.title) || 'Предпросмотр')),
           text(p.note) && h('p', null, inline(text(p.note))),
           h(
             'div',
@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
         h(
           'details',
           null,
-          h('summary', null, 'Caveats', h('span', { class: 'count' }, caveats.length)),
+          h('summary', null, 'Оговорки', h('span', { class: 'count' }, caveats.length)),
           h(
             'ul',
             null,
@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
         h(
           'details',
           null,
-          h('summary', null, 'How the choices were compared'),
+          h('summary', null, 'Как сравнивались варианты'),
           method.map(p => h('p', null, inline(p))),
         ),
     )
@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
     h(
       'div',
       { class: 'problems', role: 'note' },
-      h('p', null, 'Problems in the comparison data:'),
+      h('p', null, 'Проблемы в данных сравнения:'),
       h(
         'ul',
         null,

@@ -79,13 +79,13 @@ export const GOAL_HEADING = 'Goal'
 /** The dim line under the goal's heading while no goal is set. */
 export const NO_GOAL_TEXT = "No goal yet. The inbox sets one when the work shows where it's headed."
 /** The suggested goal as an offer in the goal text's style, in the line where "No goal yet" would draw, with its buttons after it. */
-export const suggestedGoalOffer = (text: string): string => `Next goal: “${text}”?`
+export const suggestedGoalOffer = (text: string): string => `Следующая цель: «${text}»?`
 /** What starts the id of the fold a met goal's milestones start in, apart from row and milestone ids. */
 const MILESTONES_FOLD_PREFIX = 'goal-milestones'
 
 export const isMilestonesFold = (id: string) => id.startsWith(`${MILESTONES_FOLD_PREFIX}-`)
 
-const MET_LABEL = 'Goal met'
+const MET_LABEL = 'Цель достигнута'
 
 /** The milestones a look draws: none while the met goal's milestones fold is shut. */
 export function shownMilestones(g: GoalBlock | null, isUnfolded: (id: string) => boolean): MilestoneRow[] {

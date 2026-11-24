@@ -46,7 +46,7 @@ export function toolActivity(tool: string, input: Record<string, unknown>): stri
     case 'Write':
       return `edited ${text('file_path')}`
     case 'Skill':
-      return `used skill ${text('skill')}`
+      return `использован навык ${text('skill')}`
     case 'Agent':
       return `started agent: ${text('description')}`
   }

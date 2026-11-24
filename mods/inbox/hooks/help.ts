@@ -6,8 +6,8 @@ import { versionLabel } from './banners'
 import { shownTabs } from './tabs'
 
 export const FINDING_GROUPS: Record<Finding['kind'], { title: string; mark: string; tone: 'issue' | 'opportunity' }> = {
-  issue: { title: 'Issues', mark: '▲', tone: 'issue' },
-  opportunity: { title: 'Opportunities', mark: '✦', tone: 'opportunity' },
+  issue: { title: 'Проблемы', mark: '▲', tone: 'issue' },
+  opportunity: { title: 'Возможности', mark: '✦', tone: 'opportunity' },
 }
 
 /** The mark a group title on the Asks tab leads with, as a Finds group title leads with its kind's mark. */
@@ -59,7 +59,7 @@ export type LegendEntry = { mark: string; tone: ToneName | null; isRunning: bool
  * The words of the two marks that mean a thing stopped before it finished. The terminal and omp draw both as ⊘, so
  * their Help lines start alike.
  */
-const stoppedWords = (what: string) => `Stopped before it finished: ${what}`
+const stoppedWords = (what: string) => `Остановлено до завершения: ${what}`
 
 /** Every mark a look draws on a row or a group title, once each, with what it means wherever it appears. */
 export const MARK_LEGEND: readonly LegendEntry[] = [
@@ -67,49 +67,49 @@ export const MARK_LEGEND: readonly LegendEntry[] = [
     mark: RUNNING_MARK,
     tone: 'working',
     isRunning: true,
-    words: 'Working. It moves while the work runs or your message is on its way.',
+    words: 'Работает. Двигается, пока идёт работа или отправляется ваше сообщение.',
   },
-  { mark: IDLE_MARK.mark, tone: IDLE_MARK.tone, isRunning: false, words: 'Working, with nothing running right now' },
-  { mark: SUBJECT_MARKS.queued.mark, tone: null, isRunning: false, words: 'Queued: not started yet' },
+  { mark: IDLE_MARK.mark, tone: IDLE_MARK.tone, isRunning: false, words: 'Работает, но сейчас ничего не выполняется' },
+  { mark: SUBJECT_MARKS.queued.mark, tone: null, isRunning: false, words: 'В очереди: ещё не начато' },
   {
     mark: SUBJECT_MARKS['waits-on-other'].mark,
     tone: null,
     isRunning: false,
-    words: 'Waits on something other than you, such as a build or a review',
+    words: 'Ждёт не вас, например сборки или проверки',
   },
-  { mark: HELD_MARK.mark, tone: HELD_MARK.tone, isRunning: false, words: 'Waits on you' },
+  { mark: HELD_MARK.mark, tone: HELD_MARK.tone, isRunning: false, words: 'Ждёт вас' },
   {
     mark: NEEDS_YOU_MARKS.question.mark,
     tone: NEEDS_YOU_MARKS.question.tone,
     isRunning: false,
-    words: 'A question the agent asked you',
+    words: 'Вопрос, который задал вам агент',
   },
   {
     mark: NEEDS_YOU_MARKS.task.mark,
     tone: NEEDS_YOU_MARKS.task.tone,
     isRunning: false,
-    words: 'A step only you can do',
+    words: 'Шаг, который можете выполнить только вы',
   },
-  { mark: SUBJECT_MARKS.done.mark, tone: 'done', isRunning: false, words: 'Done, or handed to the agent' },
-  { mark: SUBJECT_MARKS.dropped.mark, tone: null, isRunning: false, words: stoppedWords('dropped work') },
-  { mark: CLOSED_MARKS.dismissed, tone: null, isRunning: false, words: 'Dismissed by you' },
+  { mark: SUBJECT_MARKS.done.mark, tone: 'done', isRunning: false, words: 'Готово или передано агенту' },
+  { mark: SUBJECT_MARKS.dropped.mark, tone: null, isRunning: false, words: stoppedWords('отброшенная работа') },
+  { mark: CLOSED_MARKS.dismissed, tone: null, isRunning: false, words: 'Отклонено вами' },
   {
     mark: FINDING_GROUPS.issue.mark,
     tone: FINDING_GROUPS.issue.tone,
     isRunning: false,
-    words: 'Something is wrong: an issue or a failing check',
+    words: 'Что-то не так: проблема или неудачная проверка',
   },
   {
     mark: PR_MARKS.cancelled.text,
     tone: PR_MARKS.cancelled.tone,
     isRunning: false,
-    words: stoppedWords('a cancelled check, which needs another run'),
+    words: stoppedWords('отменённая проверка, которую нужно запустить снова'),
   },
   {
     mark: FINDING_GROUPS.opportunity.mark,
     tone: FINDING_GROUPS.opportunity.tone,
     isRunning: false,
-    words: 'Opportunity: something that could be better',
+    words: 'Возможность: что можно улучшить',
   },
 ]
 
@@ -118,10 +118,10 @@ export const MARK_LEGEND: readonly LegendEntry[] = [
  * every look. `icon` is that mark where a look draws only text. `close` is the control's text while Help shows.
  */
 export const HELP_COPY = {
-  name: 'Help',
+  name: 'Справка',
   icon: '?',
-  keys: 'Keys',
-  indicators: 'Indicators',
+  keys: 'Клавиши',
+  indicators: 'Обозначения',
   version: 'Inbox',
 } as const
 
@@ -143,8 +143,8 @@ export const FOLD_ALL_KEY = 'w'
 
 /** The PRs tab's own keys, which `hooks/pr-order.ts:prOrderActions` and `hooks/pr-tab.ts:prClearActions` bind from any row of the tab. */
 const PR_TAB_HELP_KEYS: HelpKey[] = [
-  { keys: 'g', does: 'On PRs, rank the PRs again, once a ranked PR changed' },
-  { keys: 'm', does: 'On PRs, clear the merged and closed PRs' },
+  { keys: 'g', does: 'Во вкладке PR повторно упорядочить PR после изменения одного из них' },
+  { keys: 'm', does: 'Во вкладке PR убрать слитые и закрытые PR' },
 ]
 
 /**
@@ -155,57 +155,57 @@ export function helpKeys(look: Look): HelpKey[] {
   const tabKeys = shownTabs()
     .map(t => t.hotkey)
     .join(' ')
-  const switchTabs = { keys: tabKeys, does: 'Switch tabs' }
-  const undoKey = { keys: UNDO_KEY, does: 'Undo the last close' }
-  const collapseKey = { keys: COLLAPSE_KEY, does: 'Collapse or expand the selected row' }
-  const foldAllKey = { keys: FOLD_ALL_KEY, does: 'Fold every fold on the tab, or open them all' }
+  const switchTabs = { keys: tabKeys, does: 'Переключать вкладки' }
+  const undoKey = { keys: UNDO_KEY, does: 'Отменить последнее закрытие' }
+  const collapseKey = { keys: COLLAPSE_KEY, does: 'Свернуть или развернуть выбранную строку' }
+  const foldAllKey = { keys: FOLD_ALL_KEY, does: 'Свернуть все группы во вкладке или раскрыть их' }
   switch (look) {
     case 'desktop':
       return []
     case 'terminal':
       return [
         switchTabs,
-        { keys: 'j k', does: 'Select the next or previous row' },
+        { keys: 'j k', does: 'Выбрать следующую или предыдущую строку' },
         collapseKey,
         foldAllKey,
         undoKey,
         ...PR_TAB_HELP_KEYS,
-        { keys: 'ctrl+x tab', does: 'Move focus to the line above the prompt, then the pane, then the prompt' },
+        { keys: 'ctrl+x tab', does: 'Переместить фокус на строку над полем ввода, затем на панель, затем обратно' },
       ]
     case 'codex':
       return [
         switchTabs,
-        { keys: 'j k ↑ ↓', does: 'Select the next or previous row' },
+        { keys: 'j k ↑ ↓', does: 'Выбрать следующую или предыдущую строку' },
         collapseKey,
         foldAllKey,
         undoKey,
         ...PR_TAB_HELP_KEYS,
-        { keys: '?', does: 'Open or close help' },
-        { keys: 'esc', does: 'Close help, or leave a reply field' },
+        { keys: '?', does: 'Открыть или закрыть справку' },
+        { keys: 'esc', does: 'Закрыть справку или выйти из поля ответа' },
       ]
     case 'omp':
       return [
-        { keys: `tab ${tabKeys}`, does: 'Switch tabs' },
-        { keys: '↑ ↓ j k', does: 'Move between rows, or scroll a page' },
-        { keys: '← →', does: 'Pick a button' },
-        { keys: '↵', does: 'Press the picked button' },
-        { keys: 't', does: 'Reply to the selected row' },
+        { keys: `tab ${tabKeys}`, does: 'Переключать вкладки' },
+        { keys: '↑ ↓ j k', does: 'Перемещаться между строками или прокручивать страницу' },
+        { keys: '← →', does: 'Выбрать кнопку' },
+        { keys: '↵', does: 'Нажать выбранную кнопку' },
+        { keys: 't', does: 'Ответить на выбранную строку' },
         collapseKey,
         foldAllKey,
         undoKey,
         ...PR_TAB_HELP_KEYS,
-        { keys: '?', does: 'Open or close help' },
-        { keys: 'esc', does: 'Close help, then the panel' },
+        { keys: '?', does: 'Открыть или закрыть справку' },
+        { keys: 'esc', does: 'Закрыть справку, затем панель' },
       ]
     case 'herdr':
       return [
-        { keys: '← →', does: 'Switch tabs' },
-        { keys: 'j k', does: 'Select the next or previous row' },
+        { keys: '← →', does: 'Переключать вкладки' },
+        { keys: 'j k', does: 'Выбрать следующую или предыдущую строку' },
         collapseKey,
         foldAllKey,
         undoKey,
         ...PR_TAB_HELP_KEYS,
-        { keys: 'esc', does: "Move focus back to the agent's terminal" },
+        { keys: 'esc', does: 'Вернуть фокус в терминал агента' },
       ]
   }
 }

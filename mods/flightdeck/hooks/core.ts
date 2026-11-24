@@ -477,7 +477,7 @@ export const afterCall = (t: Turn, c: { inSubagent: boolean; hasFailed: boolean;
 
 /** Which of the architect's three moments a consult falls at: an inference over this turn so far. */
 export const momentOf = (t: Pick<Turn, 'edits' | 'errorStreak'>): Moment =>
-  t.errorStreak >= 2 ? 'error repeats' : t.edits === 0 ? 'before a plan' : 'before done'
+  t.errorStreak >= 2 ? 'ошибки повторяются' : t.edits === 0 ? 'до плана' : 'до завершения'
 
 export const startConsult = (a: Architect, c: { id: string; at: number; moment: Moment; via: string }): Architect =>
   a.consults.some(x => x.id === c.id) ? a : { ...a, consults: [...a.consults, { ...c, endAt: null }].slice(-40) }

@@ -91,7 +91,7 @@ function subjectStall(x: Subject, isHeld: boolean, isWorkRunning: boolean, now: 
   const idleMs = now - x.changedAt
   const isIdle = isOpen(x) && !isWorkRunning && idleMs >= IDLE_AFTER_MS
 
-  return isIdle ? { text: `idle ${Math.floor(idleMs / DAY_MS)}d`, tone: 'muted' } : null
+  return isIdle ? { text: `простой ${Math.floor(idleMs / DAY_MS)} дн`, tone: 'muted' } : null
 }
 
 /** Whether `c` runs and waits on no one: not a delegate at a question or an approval, and not one that finished. */

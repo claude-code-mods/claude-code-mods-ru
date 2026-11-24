@@ -87,7 +87,7 @@ const message = (err: unknown) => (err instanceof Error ? err.message : String(e
 function herdrFiles(calls: HerdrCalls): PublishFiles & PressFiles & ModFiles & SweepFiles {
   const runOrThrow = async (argv: string[]) => {
     const r = await calls.run(argv, { cwd: '/', timeoutMs: FILE_TIMEOUT_MS })
-    if (r.code !== 0) throw new Error(`${argv[0]} exited ${r.code}: ${r.stderr.trim()}`)
+    if (r.code !== 0) throw new Error(`${argv[0]} завершился с кодом ${r.code}: ${r.stderr.trim()}`)
   }
 
   return {
@@ -245,7 +245,7 @@ export async function publishToHerdr(
   isExit = false,
 ): Promise<boolean> {
   const files = herdrFiles(calls)
-  const logFailure = (err: unknown) => calls.log(`Herdr publish failed: ${message(err)}`)
+  const logFailure = (err: unknown) => calls.log(`Публикация Herdr не удалась: ${message(err)}`)
   logReport = calls.log
   if (isExit) isExiting = true
   let removal: Promise<unknown> = Promise.resolve()

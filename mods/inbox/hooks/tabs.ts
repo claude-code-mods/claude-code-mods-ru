@@ -12,9 +12,9 @@ type TabName = { id: ShownTab; label: string; symbol: string }
 type DrawnTab = TabName & { hotkey: string }
 
 const TAB_NAMES: readonly TabName[] = [
-  { id: 'overview', label: 'Status', symbol: '\u{1F9ED}' },
-  { id: 'needsYou', label: 'Asks', symbol: '\u{1F64B}' },
-  { id: 'findings', label: 'Finds', symbol: '\u{1F50D}' },
+  { id: 'overview', label: 'Статус', symbol: '\u{1F9ED}' },
+  { id: 'needsYou', label: 'Вопросы', symbol: '\u{1F64B}' },
+  { id: 'findings', label: 'Замечания', symbol: '\u{1F50D}' },
   { id: 'prs', label: 'PRs', symbol: '\u{1F500}' },
 ]
 
@@ -29,7 +29,7 @@ export function shownTabs(): readonly DrawnTab[] {
 }
 
 /** The `/inbox` command's description: what the tabs show. */
-export const INBOX_COMMAND_TEXT = 'Show where this session stands and what waits on you'
+export const INBOX_COMMAND_TEXT = 'Показать состояние сессии и то, что ждёт вас'
 
 /** How a look names its tabs: by their words, or by their symbols. */
 export type TabNaming = 'words' | 'symbols'

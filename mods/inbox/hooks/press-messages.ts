@@ -46,7 +46,7 @@ const compareRequest = (texts: Pick<PressTexts, 'comparePage' | 'compareInBackgr
 
 /** A question or task as a message quotes it: its ask, then its options when it has some. */
 function quotedAsk(item: Item): string {
-  return `"${item.ask}"${item.options.length > 0 ? `\nOptions: ${item.options.join(' / ')}` : ''}`
+  return `"${item.ask}"${item.options.length > 0 ? `\nВарианты: ${item.options.join(' / ')}` : ''}`
 }
 
 export const messages = {
@@ -54,7 +54,7 @@ export const messages = {
   answer: (item: Item, answer: string) =>
     isQuestionBack(answer, item.options)
       ? `About this question you asked me: ${answer}\n${quotedAsk(item)}`
-      : `Re "${item.ask}": ${answer}`,
+      : `Ответ на "${item.ask}": ${answer}`,
   explain: (item: Item) => {
     const what =
       item.kind === 'task'
@@ -65,8 +65,8 @@ export const messages = {
   },
   compare: (item: Item, texts: Pick<PressTexts, 'comparePage' | 'compareInBackground'>) =>
     `${compareRequest(texts)}\n${quotedAsk(item)}`,
-  run: (item: Item, command: string) => `For "${item.ask}", run this:\n\`\`\`\n${command}\n\`\`\``,
-  taskReply: (item: Item, words: string) => `Re the task you left for me, "${item.ask}": ${words}`,
+  run: (item: Item, command: string) => `Для "${item.ask}" выполните:\n\`\`\`\n${command}\n\`\`\``,
+  taskReply: (item: Item, words: string) => `По задаче, которую вы мне оставили, "${item.ask}": ${words}`,
   done: (asks: string[]) => (asks.length === 1 ? `Done: ${asks[0]}` : `Done:\n${asks.map(a => `- ${a}`).join('\n')}`),
   /**
    * A close reason is cut at 80 characters, so filing asks for the issue's key there.

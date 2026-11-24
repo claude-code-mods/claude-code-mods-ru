@@ -227,9 +227,9 @@ export async function fetchTracked(
 export function fetchFailureWords(f: PrFetchFailure): string {
   switch (f.kind) {
     case 'limit':
-      return f.resetsAt === null ? "GitHub's limit is used up" : `GitHub's limit resets at ${clockTime(f.resetsAt)}`
+      return f.resetsAt === null ? "Лимит GitHub исчерпан" : `Лимит GitHub сбросится в ${clockTime(f.resetsAt)}`
     case 'unreachable':
-      return 'could not reach GitHub'
+      return 'не удалось связаться с GitHub'
     case 'timed-out':
       return GH_TIMED_OUT_TEXT
     case 'error':

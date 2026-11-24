@@ -80,7 +80,7 @@ const DOUBLE_MS = 450
 const FIND_LIMIT = 200
 const GREP_LIMIT = 200
 const MARK_LIMIT = 100
-const MARKS_FULL = `at most ${MARK_LIMIT} marks; press "${MARK_LIMIT} marked" in the footer to clear them`
+const MARKS_FULL = `не более ${MARK_LIMIT} отметок; нажмите "${MARK_LIMIT} отмечено" в нижней строке, чтобы снять их`
 const GREP_MS = 15_000
 const GREP_WAIT_MS = 150
 const GREP_TEXT = 300
@@ -126,7 +126,7 @@ const SIZE_WALK_LIMIT = 50_000
 const AGE_TICK_MS = 60_000
 const GUARDS = 'guards'
 const SHIMMER_KEY = /^filetree(@[^.]+)?\.shimmer$/
-const OUTSIDE = 'writes outside the repo'
+const OUTSIDE = 'записи вне репозитория'
 
 let blink: Timer | null = null
 let cached: FileTree | null = null
@@ -412,7 +412,7 @@ async function list($: EngineInterface, dir: string): Promise<FileNode[] | null>
     if (!(await exists($, dir))) return []
     if (!unreadable.has(dir)) {
       unreadable.add(dir)
-      $.ui.toast(`could not list ${shortPath(dir)}: ${err instanceof Error ? err.message : String(err)}`)
+      $.ui.toast(`не удалось перечислить ${shortPath(dir)}: ${err instanceof Error ? err.message : String(err)}`)
     }
     return null
   }
@@ -588,7 +588,7 @@ async function reset($: EngineInterface, root: string, focus = false, ready?: Pr
   sizeEpoch += 1
   sizeQueue = []
   await put($, () => ({ ...emptyTree(root), showHidden: prev.showHidden, column: prev.root ? prev.column : columnDefault, split: prev.split, searchCase: Boolean(prev.searchCase), searchRegex: Boolean(prev.searchRegex), searchContent: Boolean(prev.searchContent) }))
-  const title = `Files: ${root.split('/').pop() || root}`
+  const title = `Файлы: ${root.split('/').pop() || root}`
   const listed = loadDirs($, [root])
   const repo = detectRepo($)
   await ready
@@ -1151,10 +1151,10 @@ async function outcomes($: EngineInterface, p: Pending, ok: boolean, op: GitOper
   return p.actions.map(a => {
     if (a.verb === 'commit') {
       const sha = op?.commit?.sha || (after && after !== p.head ? after : '')
-      return sha ? { state: 'done', label: a.done, detail: sha.slice(0, 7) } : { state: 'failed', label: `${a.verb} failed`, detail: '' }
+      return sha ? { state: 'done', label: a.done, detail: sha.slice(0, 7) } : { state: 'failed', label: `${a.verb}: ошибка`, detail: '' }
     }
     if ((op && PROOF[a.verb]?.(op)) || (ok && chain.and)) return { state: 'done', label: a.done, detail: '' }
-    if (!ok && chain.and && chain.size === 1) return { state: 'failed', label: `${a.verb} failed`, detail: '' }
+    if (!ok && chain.and && chain.size === 1) return { state: 'failed', label: `${a.verb}: ошибка`, detail: '' }
     return { state: 'done', label: `ran ${a.kind}`, detail: '' }
   })
 }
@@ -1172,7 +1172,7 @@ async function finishGit($: EngineInterface, p: Pending, results: Outcome[]): Pr
 }
 
 function failAll(p: Pending): Outcome[] {
-  return p.actions.map(a => ({ state: 'failed', label: `${a.verb} failed`, detail: '' }))
+  return p.actions.map(a => ({ state: 'failed', label: `${a.verb}: ошибка`, detail: '' }))
 }
 
 function proven(p: Pending | null, results: Outcome[]): GitAction[] {
@@ -1236,7 +1236,7 @@ async function applyStart($: EngineInterface): Promise<void> {
   }
   if (noDock || shown) return
   const t = await get($)
-  if (t.root) await $.ui.open({ id: PANE, title: `Files: ${t.root.split('/').pop() || t.root}` })
+  if (t.root) await $.ui.open({ id: PANE, title: `Файлы: ${t.root.split('/').pop() || t.root}` })
 }
 
 async function settleRoot($: EngineInterface): Promise<void> {
@@ -1336,7 +1336,7 @@ async function classifyLink($: EngineInterface, id: string): Promise<void> {
 function linkNote(state: LinkState | null | undefined): string {
   if (!state) return ' →'
   const to = state.target ? ` ${shortPath(state.target)}` : ''
-  return ` →${to}${state.kind === 'outside' ? ' (outside the tree)' : state.kind === 'broken' ? ' (broken: target missing)' : state.kind === 'circular' ? ' (circular link)' : ''}`
+  return ` →${to}${state.kind === 'outside' ? ' (вне дерева)' : state.kind === 'broken' ? ' (битая: цель отсутствует)' : state.kind === 'circular' ? ' (циклическая ссылка)' : ''}`
 }
 
 function picks(t: FileTree): { ids: string[]; marked: boolean } {
@@ -1668,7 +1668,7 @@ async function search($: EngineInterface, query: string): Promise<string[]> {
   const scope = t.searchScope ? `${t.searchScope.replace(/\/$/, '')}/` : ''
   for (let i = 0; i < index.rel.length && hits.length < SEARCH_REVEAL_LIMIT; i++) if ((!scope || (index.paths[i] ?? '').startsWith(scope)) && match(index.rel[i] ?? '')) hits.push(index.paths[i] ?? '')
   if ((await get($)).query !== query) return []
-  if (match.partial) void $.ui.toast(`regex search stopped after ${hits.length} match${hits.length === 1 ? '' : 'es'}; the pattern is too slow to check every path`)
+  if (match.partial) void $.ui.toast(`поиск по регулярному выражению остановлен после ${hits.length} ${hits.length === 1 ? 'совпадения' : 'совпадений'}; шаблон слишком медленный, чтобы проверить все пути`)
   await revealPaths($, hits)
   const shown = await get($)
   const ids = new Set(shown.nodes.map(n => n.id))
@@ -1875,7 +1875,7 @@ async function openRef($: EngineInterface, href: string, surface: RenderSurface)
   if (!ref) return
   const t = await get($)
   if (!inside(t.root, ref.path)) return
-  void $.ui.open({ id: PANE, title: `Files: ${t.root.split('/').pop() || t.root}` }).catch(() => undefined)
+  void $.ui.open({ id: PANE, title: `Файлы: ${t.root.split('/').pop() || t.root}` }).catch(() => undefined)
   await openHit($, { path: ref.path, line: ref.line, text: '' }, surface)
 }
 
@@ -2149,10 +2149,10 @@ async function considerWork($: EngineInterface): Promise<void> {
     $.clock.after(0, async () => {
       try {
         await $.command.run({ command: 'cd', args: repo })
-        void $.ui.toast(`filetree moved to the cwd`)
+        void $.ui.toast(`filetree перемещён в текущий каталог`)
         $.clock.after(400, () => void (follow ? followCwd($) : reset($, repo)))
       } catch (error) {
-        void $.ui.toast(`could not move Claude to ${shortPath(repo)}: ${error instanceof Error ? error.message : String(error)}`)
+        void $.ui.toast(`не удалось переместить Claude в ${shortPath(repo)}: ${error instanceof Error ? error.message : String(error)}`)
       }
     })
   } finally {
@@ -2167,7 +2167,7 @@ async function canCd($: EngineInterface): Promise<boolean> {
 async function jumpTo($: EngineInterface, dir: string): Promise<void> {
   if (!(await $.fs.exists(dir).catch(() => false))) {
     await forgetVisits($, [dir])
-    void $.ui.toast(`${shortPath(dir)} no longer exists`)
+    void $.ui.toast(`${shortPath(dir)} больше не существует`)
     void jumpRefresh($)
     return
   }
@@ -2326,7 +2326,7 @@ async function readPreview($: EngineInterface, path: string, page = 1, line?: nu
         note = 'encrypted'
       } else if (!text) note = kind === 'pdf' && docCounts.has(path) ? `no text on page ${page}` : `${path.split('/').pop()}, ${formatSize(stat.size)}`
     }
-    else if (stat.size > 4_000_000) note = `${formatSize(stat.size)}, too large to preview`
+    else if (stat.size > 4_000_000) note = `${formatSize(stat.size)}, слишком велико для предпросмотра`
     else {
       text = await $.fs.read(path)
       if (text.slice(0, 8000).includes('\0')) {
@@ -2518,7 +2518,7 @@ async function picture($: EngineInterface, path: string, page = 0, px = 0): Prom
   const pdf = kind === 'office' ? cacheName(path, stat.mtimeMs, stat.size, 0, 0, 'pdf') : ''
   const known = pictures.get(key)
   const gone = known?.sig === sig && known.picture.state === 'ready' && known.picture.file !== path && !(await $.fs.stat(known.picture.file).then(f => f.kind === 'file', () => false))
-  if (gone && known.retried) known.picture = { state: 'failed', note: 'the preview cache was cleared' }
+  if (gone && known.retried) known.picture = { state: 'failed', note: 'кэш предпросмотра очищен' }
   if (gone && !known.retried) pictures.delete(key)
   else if (known?.sig === sig) {
     pictures.delete(key)
@@ -2689,7 +2689,7 @@ async function mapKey($: EngineInterface, key: string): Promise<boolean> {
 }
 
 function focusPane($: EngineInterface, root: string, key: string): void {
-  void $.ui.open({ id: PANE, title: `Files: ${root.split('/').pop() || root}`, focus: true }).then(() => (key ? $.ui.focus({ requestId: PANE, key }) : undefined)).catch(() => {})
+  void $.ui.open({ id: PANE, title: `Файлы: ${root.split('/').pop() || root}`, focus: true }).then(() => (key ? $.ui.focus({ requestId: PANE, key }) : undefined)).catch(() => {})
 }
 
 function toggleShortcuts($: EngineInterface, open = !shortcutsShown): void {
@@ -2863,7 +2863,7 @@ async function openFile($: EngineInterface, path: string, how: { mode?: string; 
     const run = await $.process.run(argv, init)
     if (run.exitCode !== 0) $.ui.toast(`could not open ${path} with ${editor ?? custom?.[0] ?? argv[0]}: ${run.stderr.trim().split('\n')[0] || `exit ${run.exitCode}`}`)
   } catch {
-    $.ui.toast(`could not open ${path} with ${editor ?? custom?.[0] ?? 'the default app'}`)
+    $.ui.toast(`не удалось открыть ${path} через ${editor ?? custom?.[0] ?? 'приложение по умолчанию'}`)
   }
 }
 
@@ -3149,7 +3149,7 @@ async function toggleGuard($: EngineInterface, path: string): Promise<void> {
   const t = await get($)
   const over = guardOver(allGuards(guards), path)
   if (over && over !== path) {
-    $.ui.toast(`${shortPath(path)} is already guarded by ${shortPath(over)}`)
+    $.ui.toast(`${shortPath(path)} уже защищено ${shortPath(over)}`)
     return
   }
   const owner = over === path ? Object.keys(guards).find(k => guards[k]?.includes(path)) : undefined
@@ -3189,7 +3189,7 @@ async function noteOutside($: EngineInterface, file: string): Promise<void> {
   const abs = resolve(await cwdOf($), posix(file), home)
   if (!outsideOf(t.top || t.root, abs) || outside.includes(abs)) return
   outside = [...outside, abs]
-  if (outside.length === 1) $.ui.toast(`Claude wrote outside ${shortPath(t.top || t.root)}: ${shortPath(abs)}. w lists these writes.`)
+  if (outside.length === 1) $.ui.toast(`Claude записал файл вне ${shortPath(t.top || t.root)}: ${shortPath(abs)}. Клавиша w показывает такие записи.`)
   if (previewed?.path === OUTSIDE) previewed = null
   void $.ui.invalidate('ui.render')
 }
@@ -3283,7 +3283,7 @@ export const register: Register = (on, options) => {
       if (t.preview) await patch($, () => ({ preview: '', previewTop: 0 }))
       await setActivities($, cur => cur.map(a => (a.state === 'running' ? { ...a, state: 'failed', label: `${a.kind} interrupted` } : a)))
       const cwd = await cwdOf($)
-      const shown = !t.root || t.nodes.length === 0 || (follow && t.root !== cwd) ? reset($, cwd, false, ready) : ready.then(() => (noDock ? undefined : $.ui.open({ id: PANE, title: `Files: ${t.root.split('/').pop() || t.root}` })))
+      const shown = !t.root || t.nodes.length === 0 || (follow && t.root !== cwd) ? reset($, cwd, false, ready) : ready.then(() => (noDock ? undefined : $.ui.open({ id: PANE, title: `Файлы: ${t.root.split('/').pop() || t.root}` })))
       await ready
       ageTick?.cancel()
       ageTick = showAge ? $.clock.every(AGE_TICK_MS, () => $.ui.invalidate('ui.render')) : null
@@ -3309,7 +3309,7 @@ export const register: Register = (on, options) => {
       noDock = true
       if (zjump.on) jumpClose($)
       await $.ui.close({ id: PANE }).catch(() => undefined)
-      return { text: 'File tree closed.' }
+      return { text: 'Дерево файлов закрыто.' }
     }
     const terminal = await $.session.surfaces().then(s => s.includes('terminal'), () => true)
     if (terminal && !e.presentation.isFullscreen) return { text: 'filetree shows in the sidebar, which needs the fullscreen layout. Run /tui fullscreen, then /filetree.' }
@@ -3320,7 +3320,7 @@ export const register: Register = (on, options) => {
     follow = !arg
     const root = arg ? resolve(cwd, arg, home) : cwd
     await reset($, root, focusOnOpen || given !== '' || mine?.isPlaced === true)
-    return { text: `File tree on ${shortPath(root)}${follow ? ' (moves with the cwd)' : ''}.` }
+    return { text: `Дерево файлов: ${shortPath(root)}${follow ? ' (следует за текущим каталогом)' : ''}.` }
   })
 
   on('tool.call', async ($, e, next) => {
@@ -3649,7 +3649,7 @@ export const register: Register = (on, options) => {
     return (
       <Box flexDirection="column">
         {drawn}
-        <Markdown key="filetree-refs" dimColor text={`in the file tree: ${links.map(l => `[${l.label.replace(/[[\]]/g, '\\$&')}](${l.href})`).join('  ')}`} pressableLinks={links.map(l => l.href)} onLinkPress={(link, p) => void openRef($, link.href, p.surface)} />
+        <Markdown key="filetree-refs" dimColor text={`в дереве файлов: ${links.map(l => `[${l.label.replace(/[[\]]/g, '\\$&')}](${l.href})`).join('  ')}`} pressableLinks={links.map(l => l.href)} onLinkPress={(link, p) => void openRef($, link.href, p.surface)} />
       </Box>
     )
   })
@@ -3749,7 +3749,7 @@ export const register: Register = (on, options) => {
       return desk ? (
         <Box key={`tool-${id}`} position="relative" flexShrink={0} flexDirection="row" alignItems="center">
           {id === 'content' && Svg
-            ? <Svg key={`search-${id}-icon-${active ? 'on' : 'off'}`} source={iconSvg('file-text', glow(color, id), 16)} alt={`search file contents ${active ? 'on' : 'off'}`} width={16} height={16} />
+            ? <Svg key={`search-${id}-icon-${active ? 'on' : 'off'}`} source={iconSvg('file-text', glow(color, id), 16)} alt={`поиск по содержимому файлов: ${active ? 'включён' : 'выключен'}`} width={16} height={16} />
             : <Text color={glow(color, id)} hover={{ color: lighten(color) }} weight={active ? 'semibold' : 'regular'}>{label}</Text>}
           <Box position="absolute" top={0} left={0} right={0} bottom={0}>
             <Client key={`button-${id}`} module="./button.tsx" props={{ id, label: '', dim: !active } satisfies ButtonProps} width="100%" height="100%" />
@@ -3802,11 +3802,11 @@ export const register: Register = (on, options) => {
         const edits = !listing && (editWithSetting || inTmux || inHerdr)
         previewDesk = true
         const acts: { id: string; key: string; icon: IconName; hint: string; run: () => Promise<void> }[] = [
-          { id: 'pv-k', key: 'k', icon: 'arrow-up', hint: step ? `previous ${step}` : 'up a line', run: () => (step ? jumpDiff($, -1) : scrollPreview($, -1)) },
+          { id: 'pv-k', key: 'k', icon: 'arrow-up', hint: step ? `предыдущий ${step}` : 'на строку выше', run: () => (step ? jumpDiff($, -1) : scrollPreview($, -1)) },
           { id: 'pv-j', key: 'j', icon: 'arrow-down', hint: step ? `next ${step}` : 'down a line', run: () => (step ? jumpDiff($, 1) : scrollPreview($, 1)) },
           { id: 'pv-b', key: 'b', icon: 'page-up', hint: 'page up', run: () => scrollPreview($, 2 - previewRows) },
           { id: 'pv-f', key: 'f', icon: 'page-down', hint: 'page down', run: () => scrollPreview($, previewRows - 2) },
-          ...(listing ? [] : [{ id: 'pv-d', key: 'd', icon: (p?.diff ? (toTree ? 'folder' : 'file') : 'diff') as IconName, hint: p?.diff ? (toTree ? 'back to the tree' : 'back to the file') : 'diff against HEAD', run: () => diffFile($, t.preview) }]),
+          ...(listing ? [] : [{ id: 'pv-d', key: 'd', icon: (p?.diff ? (toTree ? 'folder' : 'file') : 'diff') as IconName, hint: p?.diff ? (toTree ? 'назад к дереву' : 'назад к файлу') : 'сравнить с HEAD', run: () => diffFile($, t.preview) }]),
           ...(edits ? [{ id: 'pv-e', key: 'e', icon: 'pencil' as const, hint: `edit at line ${previewLine}`, run: () => editPreview($, t.preview) }] : []),
           ...(listing ? [] : [{ id: 'external', key: '', icon: 'external-link' as const, hint: 'open in default app', run: () => pressHeader($, 'external') }]),
         ]
@@ -3816,7 +3816,7 @@ export const register: Register = (on, options) => {
           <Box flexDirection="column" minHeight={Math.max(1, e.props.scroll?.bodyRows ?? 1)} backgroundColor={theme.bg || undefined}>
             <Box key="pv-head" flexDirection="row" alignItems="center">
               <Box key="pv-back" flexDirection="row" alignItems="center" flexShrink={0}>
-                <Svg key="pv-back-icon" source={rowSvg(0, null, 'chevron-left', mutedInk, DESK.muted, 0)} alt="back to files" width={STEP_PX * 2} height={ROW_PX} />
+                <Svg key="pv-back-icon" source={rowSvg(0, null, 'chevron-left', mutedInk, DESK.muted, 0)} alt="назад к файлам" width={STEP_PX * 2} height={ROW_PX} />
                 <Button key="back" plain dimColor hover={{ dimColor: false }} hotkey="h" autoFocus label="Files" onPress={() => void closePreview($)} />
               </Box>
               <Text {...mutedText}>{' / '}</Text>
@@ -3984,12 +3984,12 @@ export const register: Register = (on, options) => {
       ...(outside.length ? [{ id: 'outside', label: `${unicode ? '⚠' : '\u{ea6c}'} ${outside.length}`, dim: false, hint: `${outside.length} file${outside.length === 1 ? '' : 's'} written outside the repo`, icon: 'warning' as const }] : []),
       ...(picked.ids.length ? [{ id: 'unselect', label: unicode ? '⊘' : '\u{eabd}', dim: false, hint: 'clear selection', icon: 'ban' as const }] : []),
       { id: 'up', label: unicode ? '↑' : '\u{f19f3}', dim: true, hint: 'parent folder', icon: 'folder-up-line' as const },
-      { id: 'cwd', label: unicode ? '⌂' : '\u{eb46}', dim: !follow, hint: 'go to cwd', icon: 'root-folder' as const },
-      { id: 'hidden', label: unicode ? (t.showHidden ? '⊙' : '○') : t.showHidden ? '\u{ea70}' : '\u{eae7}', dim: !t.showHidden, hint: t.showHidden ? 'hide hidden files' : 'show hidden files', icon: t.showHidden ? ('eye' as const) : ('eye-off' as const) },
-      { id: 'size', label: unicode ? '◫' : '\u{ea90}', dim: t.column === 'date', hint: t.column === 'date' ? 'show sizes' : t.column === 'size' ? 'show lines of code' : t.column === 'loc' ? 'show file counts' : 'show dates', icon: 'columns' as const },
-      { id: 'collapse', label: unicode ? '⊟' : '\u{eac5}', dim: true, hint: t.expanded.length ? 'collapse all' : 'expand all', icon: t.expanded.length ? 'square-minus' as const : 'square-plus' as const },
+      { id: 'cwd', label: unicode ? '⌂' : '\u{eb46}', dim: !follow, hint: 'перейти в текущий каталог', icon: 'root-folder' as const },
+      { id: 'hidden', label: unicode ? (t.showHidden ? '⊙' : '○') : t.showHidden ? '\u{ea70}' : '\u{eae7}', dim: !t.showHidden, hint: t.showHidden ? 'скрыть скрытые файлы' : 'показать скрытые файлы', icon: t.showHidden ? ('eye' as const) : ('eye-off' as const) },
+      { id: 'size', label: unicode ? '◫' : '\u{ea90}', dim: t.column === 'date', hint: t.column === 'date' ? 'показать размеры' : t.column === 'size' ? 'показать строки кода' : t.column === 'loc' ? 'показать количество файлов' : 'показать даты', icon: 'columns' as const },
+      { id: 'collapse', label: unicode ? '⊟' : '\u{eac5}', dim: true, hint: t.expanded.length ? 'свернуть всё' : 'развернуть всё', icon: t.expanded.length ? 'square-minus' as const : 'square-plus' as const },
       { id: 'autocollapse', label: unicode ? '◷' : '\u{ea82}', dim: !autoCollapseOn(t), hint: 'auto-collapse opened folders', icon: 'folder-minus' as const },
-      ...(nativeScroll ? [] : [{ id: 'split', label: unicode ? '⊡' : '\u{eb57}', dim: !t.split, hint: t.split ? 'hide preview' : 'show preview', icon: 'panel' as const }]),
+      ...(nativeScroll ? [] : [{ id: 'split', label: unicode ? '⊡' : '\u{eb57}', dim: !t.split, hint: t.split ? 'скрыть предпросмотр' : 'показать предпросмотр', icon: 'panel' as const }]),
       ...(desk ? [{ id: 'shimmer', label: '', dim: !shimmerOn, hint: shimmerOn ? 'disable agent activity shimmer effect' : 'enable agent activity shimmer effect', icon: 'clawd' as const }] : []),
       { id: 'refresh', label: unicode ? '↻' : '\u{eb37}', dim: !reloading, hint: 'reload tree and git', icon: 'refresh' as const },
     ]
@@ -4128,7 +4128,7 @@ export const register: Register = (on, options) => {
         </Box>
       </Box>
     ) : (
-      <Button key="scope-chip" plain label={`in ${scopeName} × `} onPress={() => void scopeSearch($, '')}>
+      <Button key="scope-chip" plain label={`в ${scopeName} × `} onPress={() => void scopeSearch($, '')}>
         <Text color={theme.accent}>{`in ${scopeName}`}</Text>
         <Text dimColor>{' × '}</Text>
       </Button>
@@ -4157,8 +4157,8 @@ export const register: Register = (on, options) => {
     const jumpDate = zjump.on ? zjump.rows.reduce((m, dir) => Math.max(m, [...jumpWhen(dir)].length), 0) : 0
     const gitSpan = zjump.on ? 0 : GIT_COLS.reduce((w, c) => w + (widths[c] ? (widths[c] ?? 0) + 1 : 0), 0)
     const metricSpan = zjump.on ? (jumpDate ? jumpDate + 1 : 0) : widths.metric ? (widths.metric ?? 0) + 1 : 0
-    const gitLabel = e.props.bodyColumns - Math.max(metricSpan, 11) - 20 >= 12 ? 'Git (LOC)' : 'Git'
-    const metricLabel = zjump.on ? 'Last accessed' : t.column === 'size' ? 'Size' : t.column === 'loc' ? 'LOC' : t.column === 'files' ? '# Files' : 'Modified'
+    const gitLabel = e.props.bodyColumns - Math.max(metricSpan, 11) - 20 >= 12 ? 'Git (строки)' : 'Git'
+    const metricLabel = zjump.on ? 'Последний доступ' : t.column === 'size' ? 'Размер' : t.column === 'loc' ? 'Строки' : t.column === 'files' ? 'Файлов' : 'Изменён'
     const headCell = (col: 'name' | 'git' | 'metric', label: string) => (!zjump.on ? sortCell(col, label) : desk ? <Text key={`head-${col}`} color={mutedInk}>{label}</Text> : <Text key={`head-${col}`} dimColor>{label}</Text>)
     const headerRow = () => (
       <Box key="sort-header" flexDirection="row" alignItems="center" {...(desk ? {} : { width: e.props.bodyColumns, height: 1 })}>
@@ -4171,7 +4171,7 @@ export const register: Register = (on, options) => {
       </Box>
     )
     const headerRule = () => desk && Svg
-      ? <Box key="sort-rule" overflow="hidden"><Svg key="sort-rule-svg" source={lineSvg(DESK.edge, 1)} alt="column header rule" width={4000} height={1} /></Box>
+      ? <Box key="sort-rule" overflow="hidden"><Svg key="sort-rule-svg" source={lineSvg(DESK.edge, 1)} alt="линия заголовка столбца" width={4000} height={1} /></Box>
       : null
     const tailCols = (cells: Partial<Record<Col, Seg>>, key: string, cols: readonly Col[] = COLS) => cols.filter(c => widths[c]).map(c => {
       const seg = cells[c]
@@ -4292,11 +4292,11 @@ export const register: Register = (on, options) => {
           {deskGrep.map((g, k) => (
             <Box key={`grep-row:${grepId(g)}`} position="relative" flexDirection="row" alignItems="center" backgroundColor={k === grep.sel ? deskSel : undefined} hover={{ backgroundColor: k === grep.sel ? deskSel : deskHover }}>
               {g.line ? <Box key={`grep-line:${grepId(g)}`} flexDirection="row" alignItems="center" flexGrow={1} flexShrink={1} overflow="hidden">
-                {Svg ? <Svg key={`grep-guide:${grepId(g)}`} source={rowSvg(1, null, null, mutedInk)} alt={`line ${g.line}`} width={STEP_PX * 3 + GAP_PX} height={ROW_PX} /> : null}
+                {Svg ? <Svg key={`grep-guide:${grepId(g)}`} source={rowSvg(1, null, null, mutedInk)} alt={`строка ${g.line}`} width={STEP_PX * 3 + GAP_PX} height={ROW_PX} /> : null}
                 <Text dimColor tabular mono>{`${String(g.line).padStart(grepDigits)} `}</Text>
                 <Box flexGrow={1} flexShrink={1} overflow="hidden"><Text mono wrap="truncate-end">{g.text}</Text></Box>
               </Box> : <Box key={`grep-file:${grepId(g)}`} flexDirection="row" alignItems="center" flexGrow={1} flexShrink={1} overflow="hidden">
-                {Svg ? <Svg key={`grep-icon:${grepId(g)}`} source={rowSvg(0, null, nodeIcon(grepNode(g.path), false), mutedInk)} alt={`file ${grepName(g.path)}`} width={STEP_PX * 2 + GAP_PX} height={ROW_PX} /> : null}
+                {Svg ? <Svg key={`grep-icon:${grepId(g)}`} source={rowSvg(0, null, nodeIcon(grepNode(g.path), false), mutedInk)} alt={`файл ${grepName(g.path)}`} width={STEP_PX * 2 + GAP_PX} height={ROW_PX} /> : null}
                 <Box flexGrow={1} flexShrink={1} overflow="hidden"><Text weight="semibold" wrap="truncate-start">{grepName(g.path)}</Text></Box>
                 <Text dimColor tabular>{g.text}</Text>
                 <Box width={2} flexShrink={0} />
@@ -4320,7 +4320,7 @@ export const register: Register = (on, options) => {
         <Box key="jump-list" flexDirection="column">
           {zjump.rows.length ? zjump.rows.map((dir, k) => (
             <Box key={`jump:${dir}`} position="relative" flexDirection="row" alignItems="center" overflow="hidden" backgroundColor={k === zjump.sel ? jumpSel : undefined} hover={{ backgroundColor: k === zjump.sel ? jumpSel : deskHover }}>
-              {Svg ? <Svg key={`jump-icon:${dir}`} source={rowSvg(0, null, 'folder', palette.jump ?? DESK.jump)} alt={`folder ${dir}`} width={STEP_PX * 2 + GAP_PX} height={ROW_PX} /> : null}
+              {Svg ? <Svg key={`jump-icon:${dir}`} source={rowSvg(0, null, 'folder', palette.jump ?? DESK.jump)} alt={`папка ${dir}`} width={STEP_PX * 2 + GAP_PX} height={ROW_PX} /> : null}
               <Box flexShrink={1} overflow="hidden"><Text wrap="truncate-end">{dir.split('/').filter(Boolean).pop() ?? dir}</Text></Box>
               <Box flexGrow={1} flexShrink={3} overflow="hidden" marginLeft={1}><Text {...mutedText} wrap="truncate-start">{shortPath(dirname(dir))}</Text></Box>
               {metricSpan ? <Box width={Math.max(metricSpan, metricLabel.length + 3)} flexShrink={0} flexDirection="row" justifyContent="flex-end"><Text {...mutedText}>{jumpWhen(dir)}</Text></Box> : null}
@@ -4341,9 +4341,9 @@ export const register: Register = (on, options) => {
       )
       const out: RenderElement[] = rows.length === 0 ? [<Text key="empty" {...mutedText}>empty</Text>] : []
       for (const p of deskParts) out.push(deskRow(p, deskShimmer))
-      if (deskStart > 0) out.unshift(<Text key="above" {...mutedText}>{`  … ${deskStart} rows above, collapse folders or use search`}</Text>)
+      if (deskStart > 0) out.unshift(<Text key="above" {...mutedText}>{`  … выше ${deskStart} строк, сверните папки или используйте поиск`}</Text>)
       const below = shown.length - deskStart - deskParts.length
-      if (below > 0) out.push(<Text key="more" {...mutedText}>{`  … ${below} more rows, collapse folders or use search`}</Text>)
+      if (below > 0) out.push(<Text key="more" {...mutedText}>{`  … ещё ${below} строк, сверните папки или используйте поиск`}</Text>)
       return <Box key="tree" flexDirection="column">{out}</Box>
     }
     const barSize = Math.max(1, Math.round((specs.length * shown.length) / Math.max(1, rows.length)))
@@ -4375,7 +4375,7 @@ export const register: Register = (on, options) => {
           <Box flexDirection="row" flexShrink={0} alignItems={desk ? 'center' : undefined}>
             {rootCounts.length === 0 && totals[0] === 0 && totals[1] === 0 ? (
               desk && Svg
-                ? <Box key="clean" flexDirection="row" alignItems="center"><Svg key="clean-icon" source={iconSvg('git-commit', mutedInk, 14)} alt="git" width={14} height={14} /><Text {...mutedText}> no changes</Text></Box>
+                ? <Box key="clean" flexDirection="row" alignItems="center"><Svg key="clean-icon" source={iconSvg('git-commit', mutedInk, 14)} alt="git" width={14} height={14} /><Text {...mutedText}> без изменений</Text></Box>
                 : <Text {...mutedText}>{unicode ? '± no changes' : '\u{e702} no changes'}</Text>
             ) : null}
             {desk ? tailCols(branchCells, 'branch', GIT_COLS) : null}
@@ -4565,8 +4565,8 @@ export const register: Register = (on, options) => {
           const raw = await pngOf($, pic)
           const big = Math.floor(raw.length * 3 / 4) > IMAGE_BYTES
           const png = big ? '' : raw
-          content = big ? <Text {...mutedText}>{`${name}: too large to preview here`}</Text> : png ? <Image key="peek-image" source={{ png }} columns={fit.columns} rows={fit.rows} alt={name} /> : <Text {...mutedText}>{name}</Text>
-        } else content = <Text {...mutedText}>{pic.state === 'pending' ? 'decoding…' : pic.state === 'failed' ? pic.note : 'images show in the terminal'}</Text>
+          content = big ? <Text {...mutedText}>{`${name}: слишком велико для предпросмотра здесь`}</Text> : png ? <Image key="peek-image" source={{ png }} columns={fit.columns} rows={fit.rows} alt={name} /> : <Text {...mutedText}>{name}</Text>
+        } else content = <Text {...mutedText}>{pic.state === 'pending' ? 'декодирование…' : pic.state === 'failed' ? pic.note : 'изображения показываются в терминале'}</Text>
       } else {
         if (isDoc && (peeked?.path !== target || (docKind === 'pdf' && peeked.page !== page))) {
           const want = `${target}\0${page}`
@@ -4605,7 +4605,7 @@ export const register: Register = (on, options) => {
         if (!peeked.text) overPeek = false
         content = peeked.text
           ? <Client key="peek" module="./rows.tsx" props={{ rows: [], active: '', ...rowColors, pointer, ...(bar ? { bar } : {}), preview: { text: win.text, path: target, startLine: first + win.top + 1, markdown, rows: peekRows } } satisfies RowsProps} />
-          : <Text {...mutedText}>{raw?.state === 'pending' ? 'converting…' : peeked.note || 'empty file'}</Text>
+          : <Text {...mutedText}>{raw?.state === 'pending' ? 'преобразование…' : peeked.note || 'пустой файл'}</Text>
       }
       const title = (
         <Box key="peek-title" flexDirection="row" height={1} overflow="hidden">
@@ -4638,19 +4638,19 @@ export const register: Register = (on, options) => {
       { key: 'd', label: 'diff', act: () => void navigate($, 'd') },
       { key: 's', label: 'search', act: () => void navigate($, 's', false, e.surface) },
       { key: 'i', label: 'in folder', act: () => void navigate($, 'i', false, e.surface) },
-      { key: 'a', label: 'auto-collapse', act: () => void navigate($, 'a', false, e.surface).then(park) },
+      { key: 'a', label: 'автосворачивание', act: () => void navigate($, 'a', false, e.surface).then(park) },
       { key: 'z', label: 'jump', act: () => void navigate($, 'z', false, e.surface) },
       { key: 'n', label: 'sort name', act: () => void navigate($, 'n', false, e.surface).then(park) },
-      { key: 'g', label: 'sort git', act: () => void navigate($, 'g', false, e.surface).then(park) },
-      { key: 'm', label: 'sort value', act: () => void navigate($, 'm', false, e.surface).then(park) },
+      { key: 'g', label: 'сортировать по git', act: () => void navigate($, 'g', false, e.surface).then(park) },
+      { key: 'm', label: 'сортировать по значению', act: () => void navigate($, 'm', false, e.surface).then(park) },
       ...(e.surface === 'desktop' ? [] : [{ key: 'p', label: 'preview', act: () => void navigate($, 'p', false, e.surface).then(park) }]),
-      { key: 'y', label: 'copy path', act: () => void navigate($, 'y', false, e.surface).then(park) },
+      { key: 'y', label: 'копировать путь', act: () => void navigate($, 'y', false, e.surface).then(park) },
       { key: 'u', label: 'copy name', act: () => void navigate($, 'u', false, e.surface).then(park) },
       { key: 'v', label: 'mark', act: () => void navigate($, 'v', false, e.surface).then(park) },
       { key: 't', label: 'terminal', act: () => void navigate($, 't', false, e.surface) },
       { key: 'x', label: 'guard', act: () => void navigate($, 'x', false, e.surface).then(park) },
-      ...(outside.length ? [{ key: 'w', label: 'outside writes', act: () => void navigate($, 'w', false, e.surface) }] : []),
-      { key: 'c', label: 'match case', act: () => void navigate($, 'c', false, e.surface).then(park) },
+      ...(outside.length ? [{ key: 'w', label: 'внешние записи', act: () => void navigate($, 'w', false, e.surface) }] : []),
+      { key: 'c', label: 'учёт регистра', act: () => void navigate($, 'c', false, e.surface).then(park) },
       { key: 'r', label: 'regex', act: () => void navigate($, 'r', false, e.surface).then(park) },
       { key: 'q', label: 'contents', act: () => void navigate($, 'q', false, e.surface).then(park) },
       ...(paging ? [{ key: '[ ]', label: 'page', act: () => void (turnPage($, 1), park()) }] : []),
@@ -4666,10 +4666,10 @@ export const register: Register = (on, options) => {
       return (
         <Box key="keys-panel" flexDirection="column" marginTop={1} marginX={1} paddingX={1} paddingY={1} backgroundColor={DESK.field}>
           <Box key="keys-head" flexDirection="row" alignItems="center">
-            {Svg ? <Svg key="keys-panel-icon" source={iconSvg('keyboard', accentInk, 16)} alt="keyboard shortcuts" width={16} height={16} /> : null}
+            {Svg ? <Svg key="keys-panel-icon" source={iconSvg('keyboard', accentInk, 16)} alt="горячие клавиши" width={16} height={16} /> : null}
             <Box marginLeft={1} flexShrink={1}><Text bold>Keyboard shortcuts</Text></Box>
             <Box flexGrow={1} />
-            <Button key="keys-close" plain dimColor hover={{ dimColor: false }} label="Close" onPress={() => { toggleShortcuts($, false); park() }} />
+            <Button key="keys-close" plain dimColor hover={{ dimColor: false }} label="Закрыть" onPress={() => { toggleShortcuts($, false); park() }} />
           </Box>
           {groups.map(g => (
             <Box key={`keys-${g.title}`} flexDirection="column" marginTop={1}>
@@ -4696,7 +4696,7 @@ export const register: Register = (on, options) => {
         {desk && Svg ? (
           <Box key="head" flexDirection="row" alignItems="center">
             <Box flexDirection="row" alignItems="center" flexShrink={1} overflow="hidden" position="relative">
-              <Svg key="root-icon" source={rowSvg(0, null, t.top === t.root ? 'folder-git' : 'folder-open', e.props.isFocused ? accentInk : mutedInk)} alt="root folder" width={STEP_PX * 2 + GAP_PX} height={ROW_PX} />
+              <Svg key="root-icon" source={rowSvg(0, null, t.top === t.root ? 'folder-git' : 'folder-open', e.props.isFocused ? accentInk : mutedInk)} alt="корневая папка" width={STEP_PX * 2 + GAP_PX} height={ROW_PX} />
               {e.props.isFocused ? <Text bold color={accentText}>{header}</Text> : <Text {...mutedText}>{header}</Text>}
               <Box position="absolute" top={0} left={0} right={0} bottom={0}>
                 <Client key="hit:root" module="./hit.tsx" props={{ id: ROOT_PRESS, keys: false } satisfies HitProps} width="100%" height="100%" />
@@ -4724,7 +4724,7 @@ export const register: Register = (on, options) => {
         )}
         {splitAt === 'top' ? split : null}
         {branchRow()}
-        {!t.top && showHints && (!hintOn ? (desk && Svg ? <Svg key="git-hint" source={rowSvg(0, null, null, mutedInk)} alt="git status" width={STEP_PX * 2 + GAP_PX} height={ROW_PX} /> : <Text key="git-hint">{' '}</Text>) : desk && Svg ? (
+        {!t.top && showHints && (!hintOn ? (desk && Svg ? <Svg key="git-hint" source={rowSvg(0, null, null, mutedInk)} alt="состояние git" width={STEP_PX * 2 + GAP_PX} height={ROW_PX} /> : <Text key="git-hint">{' '}</Text>) : desk && Svg ? (
           <Box key="git-hint" flexDirection="row" alignItems="center">
             <Svg key="git-hint-icon" source={rowSvg(0, null, 'git-branch', mutedInk)} alt="no git repo" width={STEP_PX * 2 + GAP_PX} height={ROW_PX} />
             <Text {...mutedText}>not a Git repo</Text>
@@ -4735,7 +4735,7 @@ export const register: Register = (on, options) => {
           <Box key="search-bar" flexDirection="row" alignItems="center" backgroundColor={DESK.field} paddingX={1}>
             <Svg key="search-icon" source={iconSvg('search', mutedInk, 14)} alt="search" width={14} height={14} />
             {zjump.on ? (
-              <Box key="jump-chip" flexShrink={0} flexDirection="row" marginLeft={1} paddingX={1} backgroundColor={palette.jump ? `${palette.jump}0f` : DESK.jumpOn}><Text color={palette.jump ?? DESK.jump}>jump</Text></Box>
+              <Box key="jump-chip" flexShrink={0} flexDirection="row" marginLeft={1} paddingX={1} backgroundColor={palette.jump ? `${palette.jump}0f` : DESK.jumpOn}><Text color={palette.jump ?? DESK.jump}>переход</Text></Box>
             ) : scopeChip()}
             <Box flexGrow={1} flexShrink={1} marginLeft={1} flexDirection="column" width={Math.max(10, e.props.bodyColumns - (t.query ? 18 : 16))}>
               {zjump.on ? <>
@@ -4805,7 +4805,7 @@ export const register: Register = (on, options) => {
             {shortcutsSetting === 'auto' ? (
               desk && Svg ? (
                 <Box key="keys" flexShrink={0} flexDirection="row" alignItems="center">
-                  <Svg key="keys-icon" source={rowSvg(0, null, 'keyboard', mutedInk)} alt="keyboard shortcuts" width={STEP_PX * 2 + GAP_PX} height={ROW_PX} />
+                  <Svg key="keys-icon" source={rowSvg(0, null, 'keyboard', mutedInk)} alt="горячие клавиши" width={STEP_PX * 2 + GAP_PX} height={ROW_PX} />
                   <Button key="nav-help" plain dimColor hover={{ dimColor: false }} label="Shortcuts" onPress={() => { toggleShortcuts($); park() }} />
                 </Box>
               ) : (
@@ -4820,7 +4820,7 @@ export const register: Register = (on, options) => {
                 <Text {...tipProps} wrap="truncate-end">{tipText}</Text>
               </Box>
             ) : null}
-            {picked.marked && !tipText ? <Box key="marked" flexShrink={0} marginLeft={2}><Button key="marked-clear" plain label={`${picked.ids.length} marked`} onPress={() => { clearMarks($); park() }}><Text color={desk ? accentInk : theme.accent}>{`${picked.ids.length} marked`}</Text></Button></Box> : null}
+            {picked.marked && !tipText ? <Box key="marked" flexShrink={0} marginLeft={2}><Button key="marked-clear" plain label={`${picked.ids.length} отмечено`} onPress={() => { clearMarks($); park() }}><Text color={desk ? accentInk : theme.accent}>{`${picked.ids.length} отмечено`}</Text></Button></Box> : null}
             {footerName && (desk || !tipText) ? (
               <Box flexShrink={1} marginLeft={2}>
                 <Text {...mutedText} wrap="truncate-start">{footer && links.has(footer) ? footerName + linkNote(footerLink) : footerName}</Text>

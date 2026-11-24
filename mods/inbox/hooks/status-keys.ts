@@ -116,7 +116,7 @@ export function goalKeyPlan(page: StatusPage): StatusKey[] {
   if (g.isMet) return [newGoal('normal'), REMOVE_GOAL]
 
   return [
-    { press: { action: 'type-goal', text: g.text }, label: 'Edit', hotkey: 'e', kind: 'view', emphasis: 'quiet' },
+    { press: { action: 'type-goal', text: g.text }, label: 'Изменить', hotkey: 'e', kind: 'view', emphasis: 'quiet' },
     REMOVE_GOAL,
   ]
 }
@@ -127,8 +127,8 @@ export function goalKeyPlan(page: StatusPage): StatusKey[] {
  */
 function suggestionKeyPlan(suggested: string): StatusKey[] {
   return [
-    { press: { action: 'take-goal' }, label: 'Set goal', hotkey: 's', kind: 'mark', emphasis: 'quiet' },
-    { press: { action: 'type-goal', text: suggested }, label: 'Edit', hotkey: 'e', kind: 'view', emphasis: 'quiet' },
+    { press: { action: 'take-goal' }, label: 'Задать цель', hotkey: 's', kind: 'mark', emphasis: 'quiet' },
+    { press: { action: 'type-goal', text: suggested }, label: 'Изменить', hotkey: 'e', kind: 'view', emphasis: 'quiet' },
   ]
 }
 

@@ -23,7 +23,7 @@ const INSTALLED_TEXT = '✓ Installed the inbox mod in Herdr.'
 
 /** The question's buttons, in the order every look draws them. Install is the answer the inbox recommends. */
 export const HERDR_ASK_BUTTONS = [
-  { id: 'herdr-install', label: 'Install', isYes: true },
+  { id: 'herdr-install', label: 'Установить', isYes: true },
   { id: 'herdr-skip', label: "Don't install", isYes: false },
 ] as const
 
@@ -41,7 +41,7 @@ export function herdrAskBanner(ask: HerdrAsk | null): BannerView | null {
   const isAsking = ask.is === 'asking'
   const lead = ask.is === 'answered' ? ask.text : ask.is === 'asking' ? LEAD : ask.isYes ? INSTALLING_TEXT : SAVING_TEXT
   const body = isAsking
-    ? `It adds the inbox panel to the Herdr app, in ${ask.folder}, and keeps it up to date with the inbox.`
+    ? `Он добавит панель inbox в приложение Herdr в ${ask.folder} и будет поддерживать её в актуальном состоянии.`
     : null
 
   return { kind: 'herdr-mod-ask', tone: 'ask', lead, body }
@@ -108,7 +108,7 @@ export async function askHerdrAgain(
   const state = await herdrModNow(files, appHome).catch((err: unknown) =>
     err instanceof Error ? err : new Error(String(err)),
   )
-  if (state instanceof Error) return `Could not read the Herdr app's mods folder. ${state.message}`
+  if (state instanceof Error) return `Не удалось прочитать папку mods приложения Herdr. ${state.message}`
   const ask = herdrAskOf(appHome, home, state.answeredAt)
   if (state.installed === 'inbox') return 'The inbox mod is already installed in Herdr.'
   if (state.installed === 'own') return `${ask.folder} holds another mod, so the inbox leaves it alone.`

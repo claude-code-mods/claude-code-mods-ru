@@ -25,8 +25,8 @@ export const NEEDS_YOU_GROUPS: {
   list: 'questions' | 'tasks'
   mark: { mark: string; tone: 'needsYou' | 'tasks' }
 }[] = [
-  { kind: 'question', title: 'Questions', list: 'questions', mark: NEEDS_YOU_MARKS.question },
-  { kind: 'task', title: 'Tasks', list: 'tasks', mark: NEEDS_YOU_MARKS.task },
+  { kind: 'question', title: 'Вопросы', list: 'questions', mark: NEEDS_YOU_MARKS.question },
+  { kind: 'task', title: 'Задачи', list: 'tasks', mark: NEEDS_YOU_MARKS.task },
 ]
 
 export const CLOSED_SHOWN = 3
@@ -86,20 +86,20 @@ export type ActionEmphasis = 'primary' | 'normal' | 'quiet'
 export type ActionIcon = 'done' | 'retry' | 'open' | 'copy' | 'run'
 
 export const ROW_COPY = {
-  retry: 'Try again',
-  send: 'Send',
-  cancel: 'Cancel',
-  discard: 'Discard',
-  clickField: 'Click the field to type',
+  retry: 'Повторить',
+  send: 'Отправить',
+  cancel: 'Отмена',
+  discard: 'Отбросить',
+  clickField: 'Нажмите на поле, чтобы ввести текст',
   relevantFile: 'Relevant file: ',
-  allOptions: (count: number) => `All ${count} options`,
-  undo: 'Undo',
-  reopen: 'Reopen',
+  allOptions: (count: number) => `Все ${count} вариантов`,
+  undo: 'Отменить',
+  reopen: 'Открыть снова',
 } as const
 
 /** The stop banner's button: Resume, and Resuming… while its message is on its way. */
 export function resumeLabel(isSending: boolean): string {
-  return isSending ? 'Resuming…' : 'Resume'
+  return isSending ? 'Продолжение…' : 'Продолжить'
 }
 
 /**
@@ -206,7 +206,7 @@ export function optionReasonLine(o: OptionDescription): string | null {
   return o.description === null && o.reason !== null ? recommendedLine(o.reason) : null
 }
 
-const recommendedLine = (reason: string) => `Recommended: ${reason}`
+const recommendedLine = (reason: string) => `Рекомендуется: ${reason}`
 
 /** The line under an answer's button: what it does, then the recommendation's reason, or the reason alone. Null with neither. */
 export function optionNote(o: OptionDescription | undefined): string | null {
@@ -224,7 +224,7 @@ export function rowTitle(row: Pick<RowView, 'number' | 'title'>, look: Look): st
 }
 
 export function replyHint(row: RowView, agent: string): string {
-  return row.replyKind === 'answer' ? 'Your answer' : `Your reply to ${agent}`
+  return row.replyKind === 'answer' ? 'Ваш ответ' : `Ваш ответ ${agent}`
 }
 
 /**
@@ -326,7 +326,7 @@ export function closedTotal(closed: { id: string }[], drawnSettled: ReadonlySet<
 }
 
 export function foldLabel(total: number): string {
-  return `${total} closed`
+  return `${total} закрыто`
 }
 
 /** The button under a Closed list that lists the rest of it, or null when the list shows every line. */
@@ -337,14 +337,14 @@ export function earlierLabel(total: number, shown: number): string | null {
 export function shortAgo(ms: number): string {
   const age = ago(ms)
 
-  return age === 'just now' ? 'now' : age.replace(/ ago$/, '')
+  return age === 'just now' ? 'сейчас' : age.replace(/ ago$/, '')
 }
 
 /** A sent message's step on its way to the agent, as its row reads it. `arrived` covers a message with no delivery record. */
 type SendStep = 'sending' | 'queued' | 'unconfirmed' | 'arrived'
 
 function sendStepOf(delivery: ClosedDelivery): SendStep {
-  return delivery === 'queued' || delivery === 'unconfirmed' ? delivery : delivery === 'sending' ? 'sending' : 'arrived'
+  return delivery === 'queued' || delivery === 'unconfirmed' ? delivery : delivery === 'sending' ? 'отправляется' : 'прибыло'
 }
 
 /** A reply's words on one line: its line breaks and runs of spaces become one space. */
@@ -362,20 +362,20 @@ export function deliveryLabel(step: SendStep, label: string, reply?: string): st
     const words = replyLine(reply)
     switch (step) {
       case 'sending':
-        return `Sending reply: ${words}`
+        return `Отправка ответа: ${words}`
       case 'queued':
-        return `Queued reply: ${words}`
+        return `Ответ в очереди: ${words}`
       case 'unconfirmed':
-        return `Reply not confirmed: ${words}`
+        return `Ответ не подтверждён: ${words}`
       case 'arrived':
-        return `Replied: ${words}`
+        return `Отвечено: ${words}`
     }
   }
   switch (step) {
     case 'queued':
-      return `Queued: ${label}`
+      return `В очереди: ${label}`
     case 'unconfirmed':
-      return `Not confirmed: ${label}`
+      return `Не подтверждено: ${label}`
     default:
       return label
   }
@@ -429,5 +429,5 @@ export function settledLabel(label: string, delivery: ClosedDelivery, reply?: st
 
 /** A closed record's outcome as a look shows it. A finding a question replaced says where it went. */
 export function outcomeLabel(c: { outcome: string; askedAs?: string }): string {
-  return c.askedAs ? 'Now a question in Asks' : capitalized(c.outcome)
+  return c.askedAs ? 'Теперь вопрос во вкладке вопросов' : capitalized(c.outcome)
 }

@@ -391,7 +391,7 @@ export const register: Register = (on) => {
       await $.fs.write(preferencePath ?? "", serializeCalmPreference(active));
     } catch (error) {
       const reason = error instanceof Error ? error.message : String(error);
-      $.ui.toast(`Calm без изменений: не удалось сохранить ${preferencePath ?? "the preference"} (${reason})`);
+      $.ui.toast(`Calm без изменений: не удалось сохранить ${preferencePath ?? "настройку"} (${reason})`);
       return {};
     }
     calm = active;

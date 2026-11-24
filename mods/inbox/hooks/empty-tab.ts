@@ -10,9 +10,9 @@ import { screenTabOf } from './tabs'
 /** Each empty tab's title. The Status tab's is its own name. */
 const EMPTY_TITLES = {
   needsYou: NOTHING_NEEDED_TEXT,
-  findings: 'No findings yet',
-  prs: 'No PRs',
-  prsFetching: 'Checking for PRs…',
+  findings: 'Замечаний пока нет',
+  prs: 'PR нет',
+  prsFetching: 'Проверка PR…',
 } as const
 
 export type EmptyText = { title: string; hint: string | null }
@@ -56,12 +56,12 @@ type EmptyTabLook =
 /** The empty Status tab's text. Its title is the tab's name. */
 export const EMPTY_STATUS_TEXT: { title: string; hint: string } = {
   title: screenTabOf('overview').label,
-  hint: "What this session's work is for, where each part stands, and what changed. It fills in once the work starts.",
+  hint: "Для чего работа этой сессии, на каком этапе каждая часть и что изменилось. Заполнится, когда начнётся работа.",
 }
 
 /** The hint under an empty PRs tab. */
 export function prsEmptyHint(place: string): string {
-  return `Your PRs show here when this ${place} opens or links one, or when your branch has one.`
+  return `Здесь появятся ваши PR, когда ${place} откроет или свяжет PR либо когда он появится в вашей ветке.`
 }
 
 /**

@@ -3,11 +3,11 @@ import { capitalized } from './press-labels'
 import type { BannerTone } from './tones'
 
 export function groupEmptyText(title: string): string {
-  return `No open ${title.toLowerCase()}`
+  return `Нет открытых: ${title.toLowerCase()}`
 }
 
 /** The message Resume sends after an API error stopped a turn. */
-export const RESUME_TEXT = 'Continue'
+export const RESUME_TEXT = 'Продолжить'
 
 /** True when Resume can continue past the stop. */
 export function isResumable(stop: Stop): boolean {
@@ -17,16 +17,16 @@ export function isResumable(stop: Stop): boolean {
 export function stopText(stop: Stop): string {
   switch (stop.kind) {
     case 'sign-in':
-      return 'sign-in expired'
+      return 'срок входа истёк'
     case 'billing':
-      return 'billing problem'
+      return 'проблема с оплатой'
     case 'usage-limit':
-      return 'usage limit reached'
+      return 'достигнут предел использования'
     default:
       return stop.detail === 'rate_limit'
-        ? 'the API is limiting requests'
+        ? 'API ограничивает запросы'
         : stop.detail === 'overloaded'
-          ? 'the API is overloaded'
+          ? 'API перегружен'
           : `API error (${stop.detail})`
   }
 }
@@ -34,13 +34,13 @@ export function stopText(stop: Stop): string {
 export function stopFix(stop: Stop): string {
   switch (stop.kind) {
     case 'sign-in':
-      return 'Run /login, then send a message to resume.'
+      return 'Выполните /login, затем отправьте сообщение, чтобы продолжить.'
     case 'billing':
-      return 'Check billing in the Claude console, then resume.'
+      return 'Проверьте оплату в консоли Claude, затем продолжите.'
     case 'usage-limit':
-      return stop.resets ? `Resume after ${stop.resets}.` : 'Resume when the limit resets.'
+      return stop.resets ? `Продолжите после ${stop.resets}.` : 'Продолжите, когда предел сбросится.'
     default:
-      return 'Send a message to resume.'
+      return 'Отправьте сообщение, чтобы продолжить.'
   }
 }
 
@@ -110,7 +110,7 @@ export function stopBanner(stop: Stop): BannerView {
   return {
     kind: 'stopped',
     tone: BANNER_TONES.stopped,
-    lead: 'Stopped',
+    lead: 'Остановлено',
     body: isResumable(stop) ? why : `${why} ${stopFix(stop)}`,
   }
 }
@@ -131,8 +131,8 @@ export function tabBarBanners(
   ]
 }
 
-export const DEMO_NOTICE = 'Sample entries. Buttons here send nothing.'
-export const READING_TEXT = 'Reading the inbox…'
+export const DEMO_NOTICE = 'Примеры записей. Кнопки здесь ничего не отправляют.'
+export const READING_TEXT = 'Чтение inbox…'
 
 /**
  * A checkout that follows the `next` branch can hold this file in each folder a host installs or loads: the repo root,
@@ -145,7 +145,7 @@ export function versionLabel(version: string, isNextBuild: boolean): string {
 }
 
 /** What the band and an empty Asks tab read when nothing waits on the person. */
-export const NOTHING_NEEDED_TEXT = 'Nothing needed'
+export const NOTHING_NEEDED_TEXT = 'Ничего не требуется'
 
 /** What the band, the Herdr line and an empty tab read in place of "Nothing needed" while rows may be missing. */
-export const MAYBE_STALE_TEXT = 'May be out of date'
+export const MAYBE_STALE_TEXT = 'Может быть устарело'

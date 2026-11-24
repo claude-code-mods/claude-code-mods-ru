@@ -22,7 +22,7 @@ export function pressText(p: RowPress): string {
     case 'restore-goal':
       return 'Undo'
     case 'take-goal':
-      return 'Set goal'
+      return 'Задать цель'
     default:
       return capitalized(p.action)
   }
@@ -32,5 +32,5 @@ export function capitalized(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1)
 }
 
-export const ISSUE_LABEL = 'File issue'
+export const ISSUE_LABEL = 'Записать проблему'
 export const SHOW_EXPLANATION_LABEL = 'Show explanation'

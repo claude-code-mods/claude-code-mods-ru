@@ -201,7 +201,7 @@ export function demoView(now: number, agent: string): DemoCopy {
             id: 'm5',
             name: 'Beta build sent',
             status: 'queued',
-            text: 'after the glasses trial',
+            text: 'после испытания очков',
             was: null,
             changedAt: now - 60 * MIN,
             closedAt: null,

@@ -37,14 +37,14 @@ export function threadActions(pr: PrView, t: PrThread, presses: PressState): PrA
     ...retryAction(prRetryOf(row.last, pr.ref, t.id)),
     {
       press: { action: 'thread-address', ...on },
-      label: again(row, 'thread-address', 'Address'),
+      label: again(row, 'thread-address', 'Ответить'),
       kind: 'handoff',
       emphasis: 'primary',
       hotkey: 'a',
     },
     {
       press: { action: 'thread-draft', ...on },
-      label: again(row, 'thread-draft', 'Draft reply'),
+      label: again(row, 'thread-draft', 'Черновик ответа'),
       kind: 'talk',
       emphasis: 'normal',
       hotkey: 'r',
@@ -59,7 +59,7 @@ export function threadActions(pr: PrView, t: PrThread, presses: PressState): PrA
     },
     {
       press: { action: 'thread-discuss', ...on },
-      label: again(row, 'thread-discuss', 'Discuss'),
+      label: again(row, 'thread-discuss', 'Обсудить'),
       kind: 'talk',
       emphasis: 'quiet',
       hotkey: 'd',
@@ -150,7 +150,7 @@ export function prBlockActions(
       ? [
           {
             press: { action: 'pr-address-all' as const, ref: pr.ref },
-            label: again(row, 'pr-address-all', `Address all ${waitingOn} threads`),
+            label: again(row, 'pr-address-all', `Ответить на все ${waitingOn} обсуждений`),
             kind: 'handoff' as const,
           },
         ]
@@ -160,7 +160,7 @@ export function prBlockActions(
   return withOut(row, [
     ...retryAction(prRetryOf(row.last, pr.ref, null)),
     ...moves.map((m, n): PlannedPrAction => ({ ...m, emphasis: n === 0 ? 'primary' : 'normal' })),
-    { press: { action: 'pr-open', ref: pr.ref }, label: 'Open PR', kind: 'local', emphasis: 'normal', icon: 'open' },
+    { press: { action: 'pr-open', ref: pr.ref }, label: 'Открыть PR', kind: 'local', emphasis: 'normal', icon: 'open' },
     ...(pr.ref === branchRef
       ? []
       : [
@@ -388,7 +388,7 @@ export function applyPrPress(
         })
       if (p.action === 'thread-draft')
         return applied({
-          lasts: { [id]: record(id, 'talk', p.action, 'Draft reply') },
+          lasts: { [id]: record(id, 'talk', p.action, 'Черновик ответа') },
           effects: [send(prompts.draft(pr, t))],
         })
       return applied({

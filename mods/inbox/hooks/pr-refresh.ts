@@ -11,21 +11,21 @@ import { clockTime } from './text'
 import { isShownSince } from './timing'
 
 /** The button at the top of the PRs tab while a PR could not be read. It is not "Try again", since a failed send draws that. */
-export const PR_REFRESH_LABEL = 'Refresh PRs'
+export const PR_REFRESH_LABEL = 'Обновить PR'
 
 /** The notice at the top of the PRs tab for a cause that stopped the whole fetch. Its first sentence is the lead. */
 export function fetchFailureNotice(f: PrFetchFailure): string {
   switch (f.kind) {
     case 'limit':
       return f.resetsAt === null
-        ? "GitHub's limit is used up. The PRs refresh once it resets."
-        : `GitHub's limit is used up. The PRs refresh after it resets at ${clockTime(f.resetsAt)}.`
+        ? "Лимит GitHub исчерпан. PR обновятся после его сброса."
+        : `Лимит GitHub исчерпан. PR обновятся после сброса в ${clockTime(f.resetsAt)}.`
     case 'unreachable':
-      return 'Could not reach GitHub. The PRs show as last read.'
+      return 'Не удалось связаться с GitHub. Показаны последние прочитанные данные о PR.'
     case 'timed-out':
-      return `${GH_TIMED_OUT_TEXT}. The PRs show as last read.`
+      return `${GH_TIMED_OUT_TEXT}. Показаны последние прочитанные данные о PR.`
     case 'error':
-      return `Could not read the PRs: ${f.text}. They show as last read.`
+      return `Не удалось прочитать PR: ${f.text}. Показаны последние прочитанные данные.`
   }
 }
 
@@ -36,8 +36,8 @@ type PrReadState = Pick<PrViews, 'views' | 'branchRef' | 'failure' | 'unread' | 
 
 /** A cause that stopped the whole fetch, in a few words, or null. A missing gh comes first, then a sign-in, then GitHub's answer. */
 function tabWideProblem(prs: PrReadState): string | null {
-  if (prs.isGhMissing) return 'gh was not found'
-  if (prs.isGhSignedOut) return 'gh is not signed in'
+  if (prs.isGhMissing) return 'gh не найден'
+  if (prs.isGhSignedOut) return 'gh не авторизован'
 
   return prs.failure ? fetchFailureWords(prs.failure) : null
 }

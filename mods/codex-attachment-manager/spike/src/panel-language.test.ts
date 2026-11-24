@@ -34,6 +34,16 @@ test("Claude's fallback pane also has a complete Japanese interface", () => {
   assert.equal(words.ja.copy, "リンクをコピー");
 });
 
+test("Claude's fallback pane also has a complete Russian interface", () => {
+  const mod = readFileSync(new URL("../../hooks/register.js", import.meta.url), "utf8");
+  const words = new Function(`return (${/const WORDS = (\{[\s\S]*?\n\})/.exec(mod)![1]})`)();
+  const w = words["ru"];
+  assert.ok(w, "the fallback pane must not fall back to English for Russian users");
+  assert.deepEqual(Object.keys(w).sort(), Object.keys(words.en).sort());
+  assert.deepEqual(Object.keys(w.routing).sort(), Object.keys(words.en.routing).sort());
+  assert.equal(w.title, "Контекстные материалы");
+});
+
 test("Claude uses its own locale, rereads changes, and leaves the settings read-only", async () => {
   const { claudePanelLanguage } = await import("../../plugin/src/panel/panel-language.ts");
   const root = mkdtempSync(join(tmpdir(), "cam-panel-locale-"));
@@ -46,7 +56,7 @@ test("Claude uses its own locale, rereads changes, and leaves the settings read-
   assert.equal(readFileSync(config, "utf8"), original);
   set("zh-CN"); assert.equal(claudePanelLanguage(options), "zh");
   set("en-US"); assert.equal(claudePanelLanguage(options), "en");
-  set("fr-FR"); assert.equal(claudePanelLanguage(options), "en");
+  set("ru-RU"); assert.equal(claudePanelLanguage(options), "ru");
   writeFileSync(config, "{partial"); assert.equal(claudePanelLanguage(options), "en");
   set(null); assert.equal(claudePanelLanguage(options), "en");
 });

@@ -5,14 +5,17 @@ import { readFileSync, readdirSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-export type PanelLang = "en" | "zh" | "ja";
+export type PanelLang = "en" | "zh" | "ja" | "ru";
 type Options = { settingsFiles?: readonly string[]; env?: NodeJS.ProcessEnv; platform?: NodeJS.Platform; home?: string };
 
 function panelLangOf(tag: unknown): PanelLang | null {
   if (typeof tag !== "string" || !tag.trim()) return null;
   const value = tag.trim().toLowerCase();
   if (value === "c" || value === "posix" || value.startsWith("c.")) return null;
-  return value.startsWith("zh") ? "zh" : value.startsWith("ja") ? "ja" : "en";
+  if (value.startsWith("zh")) return "zh";
+  if (value.startsWith("ja")) return "ja";
+  if (value.startsWith("ru") || /русск/.test(value)) return "ru";
+  return "en";
 }
 
 function settingsFiles(env: NodeJS.ProcessEnv, platform: NodeJS.Platform, home: string): string[] {

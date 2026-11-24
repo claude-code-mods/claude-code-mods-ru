@@ -1,8 +1,8 @@
 # engineer
 
-> This English reference text was assembled from the upstream plugin manifest and catalogue metadata; the pinned upstream commit did not ship a README.
+> Этот справочный текст на английском языке составлен из манифеста плагина и метаданных каталога; в закреплённом коммите upstream README не поставлялся.
 
-A disciplined agentic-engineering methodology kit: intake, AC discovery, spec, planning, implementation, verification, hardening.
+Набор方法论 disciplined agentic engineering: сбор требований, выявление критериев приемки, спецификация, планирование, реализация, верификация, укрепление.
 
 Disciplined Agentic Engineering (DAE) — набор методологий для кода Claude. Навыки, необходимые для реализации пайплайна DAE: сбор информации о функциях, определение критериев приемки (AC), составление спецификаций, планирование, реализация, верификация, повышение надежности.
 

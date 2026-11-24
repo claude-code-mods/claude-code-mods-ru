@@ -1,10 +1,10 @@
 # ripple
 
-> This English reference text was assembled from the upstream plugin manifest and catalogue metadata; the pinned upstream commit did not ship a README.
+> Этот справочный текст на английском языке составлен из манифеста плагина и метаданных каталога; в закреплённом коммите upstream README не поставлялся.
 
-Picks reasoning effort per prompt and a worker per delegated task, keeps the cache warm and shows where each request went.
+Выбирает уровень рассуждений для каждого запроса и исполнителя для каждой делегированной задачи, поддерживает кэш тёплым и показывает, куда ушёл каждый запрос.
 
-Picks the reasoning effort for every prompt and the worker for every delegated task, can keep the prompt cache warm, and shows where ClaudeRipple sent each request.
+Выбирает уровень рассуждений для каждого запроса и исполнителя для каждой делегированной задачи, может поддерживать кэш подсказок тёплым и показывает, куда ClaudeRipple отправил каждый запрос.
 
 ## Установка
 

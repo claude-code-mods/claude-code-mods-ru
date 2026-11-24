@@ -1,6 +1,6 @@
 # jev-auto-compact
 
-> This English reference text was assembled from the upstream plugin manifest and catalogue metadata; the pinned upstream commit did not ship a README.
+> Этот справочный текст на английском языке составлен из манифеста плагина и метаданных каталога; в закреплённом коммите upstream README не поставлялся.
 
 При 60%-ном контексте удаляет устаревшие вызовы инструментов с нулевой генерацией; пропускает их вместо того, чтобы переходить к сводке LLM.
 

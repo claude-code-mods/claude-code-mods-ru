@@ -1,6 +1,6 @@
 # caliber-jev-compaction
 
-> This English reference text was assembled from the upstream plugin manifest and catalogue metadata; the pinned upstream commit did not ship a README.
+> Этот справочный текст на английском языке составлен из манифеста плагина и метаданных каталога; в закреплённом коммите upstream README не поставлялся.
 
 Точное сжатие под руководством Jev для сеансов кода Claude.
 

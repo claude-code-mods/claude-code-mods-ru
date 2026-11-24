@@ -1,8 +1,8 @@
 # work-mode
 
-> This English reference text was assembled from the upstream plugin manifest and catalogue metadata; the pinned upstream commit did not ship a README.
+> Этот справочный текст на английском языке составлен из манифеста плагина и метаданных каталога; в закреплённом коммите upstream README не поставлялся.
 
-Session modes: auto (no mid-task questions), out (delegate batch work) and wrap (converge and finish).
+Режимы сессии: auto (без вопросов посреди задачи), out (делегирование пакетной работы) и wrap (свёртывание и завершение).
 
 /work-mode режимы сессии для Claude Код: auto (без вопросов в середине задачи), out (делегирование пакетной работы), wrap (объединение и завершение), а также подсказка по делегированию
 

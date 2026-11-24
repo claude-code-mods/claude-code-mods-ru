@@ -1,11 +1,11 @@
 # shunt
 
-A **Claude Mod** — a Claude Code plugin whose behaviour is a
-[function hooks](https://github.com/anthropics/claude-code/issues/91870) module —
-that shows usage in a band above the prompt — the
-[shunt](https://github.com/pleaseai/shunt) gateway's shared account pool on
-shunt, the session's own Claude rate limits otherwise — and answers
-`/shunt:usage` with the pool's full breakdown.
+**Мод Claude** — плагин Claude Code, чьё поведение — модуль
+[function hooks](https://github.com/anthropics/claude-code/issues/91870), —
+который показывает расход в полосе над запросом — пул общих аккаунтов
+[shunt](https://github.com/pleaseai/shunt)-шлюза на shunt, а в остальном — собственные лимиты Claude сессии — и отвечает
+на `/shunt:usage` полным разбором пула.
+
 
 ```
 shunt · 5H 5% ↻1h 41m · WK 46% ↻1d 7h · Fable 31% ↻1d 7h ⚠ anthropic degraded
@@ -26,88 +26,88 @@ shunt: pool — degraded   http://127.0.0.1:3001
   headroom left, averaged over the pool's accounts; a shared figure, not a promise about your next request
 ```
 
-The mod reads the gateway's [`GET /usage`](https://shunt.sh/reference/endpoints/)
-endpoint and prints it. It answers the command itself — the hook returns without
-calling `next`, so nothing is sent to the model and the answer costs no tokens.
+Мод читает эндпоинт шлюза [`GET /usage`](https://shunt.sh/reference/endpoints/)
+и печатает его. На команду он отвечает сам — хук возвращается без
+вызова `next`, поэтому модели ничего не отправляется и ответ не стоит токенов.
 
-## The usage band
+## Полоса расхода
 
-On a shunt gateway the band shows the pool, tagged `shunt ·`. Each figure is
-how much of the window is **used** — `1 - remaining`, the same pool-wide mean
-the command reports as headroom — followed by the time to that window's
-earliest reset. Used rather than left, so it reads the same way as Claude
-Code's own `/usage` and as the band reads off shunt. A figure turns amber from
-70% and red from 90%. Each pooled provider whose status is not `ok` is flagged
-at the end (`⚠ anthropic degraded`: amber for `degraded`, red for `exhausted`
-or `capped`), or the pool itself when no provider is listed. A window no
-account reports is left out.
+На шлюзе shunt полоса показывает пул с меткой `shunt ·`. Каждая цифра —
+какая доля окна **использована** — `1 - remaining`, то же среднее по пулу,
+что команда называет headroom, — за ней следует время до ближайшего сброса окна. Использовано, а не осталось, чтобы читалось так же, как собственный `/usage` Claude
+Code и как полоса читается вне shunt. Цифра становится янтарной от
+70% и красной от 90%. Каждый провайдер пула со статусом не `ok` помечается
+в конце (`⚠ anthropic degraded`: янтарный для `degraded`, красный для `exhausted`
+или `capped`), либо сам пул, если провайдеры не перечислены. Окно, о котором не
+сообщает ни один аккаунт, убирается.
 
-Off shunt — no gateway set, a gateway that answers `GET /usage` with 404, a
-successful response that is not a pool report, or one that pools no provider — the
-band shows the session's own rate limits instead, untagged, as
-`$.session.usage()` and `session.measure` report them:
+
+Вне shunt — нет шлюза, шлюз отвечает на `GET /usage` с 404, успешный ответ не является отчётом пула или в пуле нет провайдеров —
+полоса показывает собственные лимиты скорости сессии без метки, как их
+сообщают `$.session.usage()` и `session.measure`:
+
 
 ```
 5H 5% ↻1h 41m · WK 46% ↻1d 7h
 ```
 
-On shunt it reads `GET /usage` when the session starts, every minute after,
-and after each turn — the moment the pool has just been spent from — and
-ignores the session's own limits, which come from whichever pool account
-answered last. A refused token (401 or 403), an unreachable gateway, another
-error status, or a `shunt gateway token` helper that fails is a fault on shunt,
-so it is flagged rather than replaced: `shunt · ⚠ credential refused`, or
-`shunt · ⚠ gateway login unavailable` for the helper. With neither a gateway nor rate limits (an
-API key sent straight to Anthropic) the band draws nothing. Whatever another
-plugin draws in the band stays on its left.
+На shunt он читает `GET /usage` при начале сессии, затем каждую минуту
+и после каждого хода — в момент, когда пул только что потрачен, — и
+игнорирует собственные лимиты сессии, которые приходят от того аккаунта пула, что ответил последним. Отклонённый токен (401 или 403), недостижимый шлюз, другой
+код ошибки или неработающий помощник `shunt gateway token` — это неисправность на shunt,
+поэтому она помечается, а не заменяется: `shunt · ⚠ credential refused` или
+`shunt · ⚠ gateway login unavailable` для помощника. Ни шлюза, ни лимитов (API-ключ отправляется прямо в Anthropic) — полоса ничего не рисует. Что бы ни рисовал в полосе другой
+плагин, остаётся слева.
+Сверните полосу для сессии через её `[-]` (ctrl+x ctrl+a) или выключите
+опцией `usageBand` ниже.
 
-Collapse the band for the session with its `[-]` (ctrl+x ctrl+a), or turn it
-off with the `usageBand` option below.
+## Чтение чисел
+`remaining` — доля суммарной ёмкости пула, которая ещё **пригодна**, так что
 
-## Reading the numbers
+`62%` означает, что осталось 62% headroom, а не что 62% потрачено. Это
 
-`remaining` is the fraction of the pool's combined capacity still **usable**, so
-`62%` means 62% of the headroom is left, not that 62% is spent. It is
-`mean(clamp(cap - utilization, 0, 1))` over the non-disabled accounts that report
-the window, where `cap` is the account's `max_utilization` hard cap for that
-window (`100%` when none is set): nine exhausted accounts plus one fresh uncapped
-one read `10%`, not `100%`, and an account at 44% under a 50% cap counts only `6%`.
-An account a cap already excludes from the window's requests counts zero; a 5h or
-7d cap excludes it from every request, Fable ones included.
+`mean(clamp(cap - utilization, 0, 1))` по неотключённым аккаунтам, которые сообщают
+окно, где `cap` — жёсткий предел `max_utilization` аккаунта для этого
+окна (`100%`, если не задан): девять исчерпанных аккаунтов плюс один свежий без
+ предела дают `10%`, а не `100%`, а аккаунт при 44% с лимитом 50% даёт лишь `6%`.
+Аккаунт, который предел уже исключает из запросов этого окна, считается как ноль; предел 5h или
+7d исключает его из всех запросов, включая Fable.
+Это **агрегат по пулу, а не предсказание** — маршрутизация учитывает ещё
+доступность, модель, привязку сессии и приоритет, поэтому хорошее число не
 
-It is a **pool-wide aggregate, not a prediction** — routing also weighs
-availability, model, session affinity and priority, so a healthy figure is not a
-promise that your next request is admitted. For the routing-aware worst case, use
-`GET /api/oauth/usage` instead.
+обещание, что ваш следующий запрос пройдёт. Для учёта маршрутизации
+худший случай даёт `GET /api/oauth/usage`.
+| Окно  | Что покрывает |
+| `5h`    | Скользящее пятичасовое окно сессии |
 
-| Window  | What it covers |
+| `7d`    | Общее недельное окно |
 | ------- | -------------- |
-| `5h`    | The rolling 5-hour session window |
-| `7d`    | The shared weekly window |
-| `fable` | The Fable-scoped weekly window (`7d_oi`) |
+| `fable` | Недельное окно в области Fable (`7d_oi`) |
+Окно читается как `—`, когда о нём не сообщает ни один неотключённый аккаунт. Аккаунты ChatGPT/Codex
+заполняют `5h` и `7d` из заголовков ответа `x-codex-*` и не имеют собственного сигнала
 
-A window reads `—` when no non-disabled account reports it. ChatGPT/Codex
-accounts populate `5h` and `7d` from `x-codex-*` response headers and have no
-Fable-scoped signal of their own.
+для Fable.
+`pool` — агрегат по всем провайдерам пула; строки ниже — тот же агрегат для каждого
+провайдера, так что сессия, направленная одному провайдеру, может читать
 
-`pool` is the aggregate across every pooled provider; the rows beneath it are the
-same aggregate per pooled provider, so a session routed to one provider can read
-that provider's headroom instead of the blended figure. The endpoint never
-carries account names, counts, priorities or per-account numbers — that detail
-stays behind the admin-only `GET /admin/api/pool`.
+его headroom вместо смешанной цифры. Эндпоинт никогда не несёт имён аккаунтов, чисел, приоритетов или отдельных значений —
+эти подробности остаются за административным `GET /admin/api/pool`.
+## Предварительные требования
+1. **Укажите Claude Code на свой шлюз**, как вы уже делаете для маршрутизации через него:
+2. **Включите эндпоинт** на шлюзе. `GET /usage` включается отдельно и требует
 
-## Prerequisites
+   либо `[server.auth]` (токены клиентов), либо `[server.gateway]` (вход в шлюз),
 
-1. **Point Claude Code at your gateway**, as you already do to route through it:
+   рядом с таблицей `[server.usage]` в `shunt.toml`:
 
    ```bash
    export ANTHROPIC_BASE_URL=http://127.0.0.1:3001
    export ANTHROPIC_AUTH_TOKEN=<your client token>
    ```
 
-2. **Enable the endpoint** on the gateway. `GET /usage` is opt-in and requires
-   either `[server.auth]` (client tokens) or `[server.gateway]` (gateway login),
-   next to the `[server.usage]` table in `shunt.toml`:
+   При `[server.gateway]` вместо `[server.auth]` см.
+   [сессии `shunt gateway claude`](#shunt-gateway-claude-sessions) ниже.
+   `[server.auth]` берёт токены из окружения, а не из TOML —
 
    ```toml
    [server.auth]
@@ -116,26 +116,26 @@ stays behind the admin-only `GET /admin/api/pool`.
    [server.usage]
    ```
 
-   With `[server.gateway]` instead of `[server.auth]`, see
-   [`shunt gateway claude` sessions](#shunt-gateway-claude-sessions) below.
-   `[server.auth]` takes its tokens from the environment rather than the TOML —
-   by default `SHUNT_CLIENT_TOKENS`, as `name:token` pairs — and the gateway
-   fails to start when it is unset. Export it where the gateway runs, using the
-   same token you set as `ANTHROPIC_AUTH_TOKEN` above:
+   по умолчанию `SHUNT_CLIENT_TOKENS` в виде пар `name:token` — и шлюз
+   не запускается, если переменная не задана. Экспортируйте её там, где работает шлюз, с тем же
+   токеном, который вы задали как `ANTHROPIC_AUTH_TOKEN` выше:
+3. **Запустите Claude Code с включёнными function hooks** — функция раннего доступа:
+Без шага 3 полосы нет, а команда остаётся, но откатывается к
+`commands/usage.md`, который просит модель прочитать эндпоинт вызовом инструмента.
 
    ```bash
    export SHUNT_CLIENT_TOKENS="claude-code:<your client token>"
    ```
 
-3. **Run Claude Code with function hooks enabled** — the feature is early access:
+## Настройка
 
    ```bash
    CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1 claude
    ```
 
-Without step 3 there is no band, and the command still exists but falls back to
-`commands/usage.md`, which asks the model to read the endpoint with a tool call
-instead.
+Один параметр, строка в `/config` (хранится в settings.json под `pluginConfigs`):
+| Параметр | По умолчанию | Назначение |
+| `usageBand` | `true` | Показывать полосу над запросом. При выключении мод не регистрирует полосу и ничего не опрашивает; `/shunt:usage` всё равно отвечает |
 
 ## Установка
 
@@ -144,97 +144,97 @@ instead.
 /plugin install shunt@shunt
 ```
 
-## Configuration
+Мод читает пять переменных окружения и не пишет ни одной. По умолчанию он отправляет
 
-One option, a row in `/config` (stored in settings.json under `pluginConfigs`):
+собственный токен сессии на тот шлюз, на который сессия уже отправляет каждое
 
-| Option | Default | Purpose |
+сообщение, поэтому не доходит до хоста, который сессия уже не использовала;
 | ------ | ------- | ------- |
-| `usageBand` | `true` | Show the band above the prompt. Off, the mod registers no band and polls nothing; `/shunt:usage` still answers |
+`SHUNT_BASE_URL` — единственное намеренное исключение, оно направляет на названный вами
 
-The mod reads five environment variables and writes none. By default it sends the
-session's own credential to the gateway the session is already sending every
-message to, so it reaches no host the session was not already using;
-`SHUNT_BASE_URL` is the one deliberate exception, and points it at a gateway you
-name instead. With no base URL set at all it asks nothing rather than sending the
-credential to Anthropic's API.
+шлюз. Совсем без base URL он ничего не запрашивает, чтобы не отправить
+токен в API Anthropic.
+| Переменная | Назначение |
+| `SHUNT_BASE_URL` | Базовый URL шлюза; перекрывает `ANTHROPIC_BASE_URL` |
+| `ANTHROPIC_BASE_URL` | Шлюз, через который сессия уже идёт |
+| `SHUNT_TOKEN` | Токен клиента; перекрывает оба ниже, отправляется как `Authorization: Bearer` |
 
-| Variable | Purpose |
+| `ANTHROPIC_AUTH_TOKEN` | Отправляется как `Authorization: Bearer`, как его шлёт Claude Code |
 | -------- | ------- |
-| `SHUNT_BASE_URL` | The gateway base URL; overrides `ANTHROPIC_BASE_URL` |
-| `ANTHROPIC_BASE_URL` | The gateway this session already routes through |
-| `SHUNT_TOKEN` | The client token; overrides both below, sent as `Authorization: Bearer` |
-| `ANTHROPIC_AUTH_TOKEN` | Sent as `Authorization: Bearer`, as Claude Code sends it |
-| `ANTHROPIC_API_KEY` | Sent as `x-api-key`, as Claude Code sends it |
+| `ANTHROPIC_API_KEY` | Отправляется как `x-api-key`, как его шлёт Claude Code |
+`SHUNT_BASE_URL` позволяет читать пул одного шлюза, направляя трафик
+через другой.
+### Сессии `shunt gateway claude`
+`shunt gateway claude` убирает `ANTHROPIC_AUTH_TOKEN` и `ANTHROPIC_API_KEY` из
 
-`SHUNT_BASE_URL` is what lets you read one gateway's pool while routing traffic
-through another.
+окружения, которое передаёт Claude Code, и подключает `apiKeyHelper` к `shunt gateway
+token` вместо них; Claude Code сам потребляет вывод помощника и никогда не
 
-### `shunt gateway claude` sessions
+экспортирует его обратно. Когда ни одна из переменных выше не содержит токен, мод
 
-`shunt gateway claude` scrubs `ANTHROPIC_AUTH_TOKEN` and `ANTHROPIC_API_KEY` from
-the environment it hands Claude Code, and wires `apiKeyHelper` to `shunt gateway
-token` instead; Claude Code consumes the helper's output itself and never
-re-exports it. When none of the variables above holds a credential, the mod
-therefore reads the merged settings (`--settings` included) and, if
-`apiKeyHelper` is shunt's own — `shunt gateway token`, by bare name or by path,
-as the launcher writes it — runs it directly, without a shell, and sends the
-gateway login token it prints as `Authorization: Bearer`. Because there is no
-shell, a leading `~/` in an unquoted helper path is expanded to the home
-directory (`HOME`, else `USERPROFILE`) by the mod itself; a quoted `'~/…'` stays
-literal, as in a shell. The login belongs to the gateway the session talks to
-(`ANTHROPIC_BASE_URL`), so it is sent only when `SHUNT_BASE_URL` is unset or
-spells that same base URL — compared as a string after trimming whitespace and
-trailing slashes, so `localhost` and `127.0.0.1` count as different — and the
-helper is not even run otherwise; to read another gateway's pool, export
-`SHUNT_TOKEN` for it. If that helper fails — a non-zero exit, no output, or it
-cannot be started — the band flags `shunt · ⚠ gateway login unavailable` and
-`/shunt:usage` says to run `shunt gateway login`, rather than silently showing
-the session's own limits.
+поэтому читает объединённые настройки (включая `--settings`) и, если
+`apiKeyHelper` — собственный shunt — `shunt gateway token`, по простому имени или по пути,
+как его пишет лаунчер, — запускает его напрямую, без оболочки, и отправляет
+напечатанный им токен входа в шлюз как `Authorization: Bearer`. Поскольку оболочки нет, ведущее `~/` в некавыченном пути помощника раскрывает до домашней
+папки (`HOME`, иначе `USERPROFILE`) сам мод; кавычечное `'~/…'` остаётся
+буквальным, как в оболочке. Вход принадлежит тому шлюзу, с которым говорит сессия
+(`ANTHROPIC_BASE_URL`), поэтому он отправляется, только если `SHUNT_BASE_URL` не задан или
+указывает тот же base URL — сравнение строкой после обрезки пробелов и
+завершающих слешей, так что `localhost` и `127.0.0.1` считаются разными — и помощник
+иначе даже не запускается; чтобы прочесть пул другого шлюза, экспортируйте
+`SHUNT_TOKEN` для него. Если помощник даёт сбой — ненулевой код, пустой вывод или его
+нельзя запустить — полоса помечает `shunt · ⚠ gateway login unavailable`, а
+`/shunt:usage` говорит выполнить `shunt gateway login`, вместо того чтобы молча показать
+собственные лимиты сессии.
+Токен переиспользуется пять минут, так что опрос раз в минуту не запускает
+помощника каждую минуту. Отклонённый шлюзом переиспользованный токен отбрасывается, и
+помощника просят ещё раз, поскольку обновление могло его заменить. Любой другой
+`apiKeyHelper` — менеджер паролей, сценарий с запросом — никогда не запускается: мод
+иначе запускал бы его каждые несколько минут ради цифры расхода. В такой
 
-The token is reused for five minutes, so a poll every minute does not run the
-helper every minute. A reused token the gateway refuses is dropped and the
-helper asked once more, since a refresh may have rotated it. Any other
-`apiKeyHelper` — a password manager, a script that prompts — is never run: the
-mod would otherwise run it every few minutes for a usage figure. In such a
-session export `SHUNT_TOKEN` with a `[server.auth]` client token instead, or the
-band falls back to the session's own rate limits.
+сессии экспортируйте `SHUNT_TOKEN` с клиентским токеном `[server.auth]`, иначе
+полоса откатывается к собственным лимитам сессии.
+Шлюз должен принимать вход в шлюз на `GET /usage`, для чего нужна сборка shunt,
+которая аутентифицирует входы `[server.gateway]` там; `[server.usage]` с
+только `[server.gateway]` достаточно.
+## Почему `/shunt:usage`, а не `/usage`
+`/usage` — встроенная команда Claude Code, и движок не даёт плагину
 
-The gateway has to accept a gateway login on `GET /usage`, which needs a shunt
-build that authenticates `[server.gateway]` logins there; `[server.usage]` with
-only `[server.gateway]` configured is enough.
+занять имя встроенной:
+`$.command.register` берёт простое глобальное имя. **Markdown**-команда плагина
+находится в пространстве имён плагина, поэтому `commands/usage.md` в плагине
 
-## Why `/shunt:usage` and not `/usage`
+`shunt` значится как `shunt:usage` и ни с чем не конфликтует. Затем модуль хуков
 
-`/usage` is Claude Code's own built-in, and the engine refuses to let a plugin
-take a built-in's name:
+перехватывает `command.run` для этого имени и отвечает напрямую.
+## Расположение
 
 ```
 $.command.register: "/usage" refused: it is the built-in /usage
 ```
 
-`$.command.register` takes a bare, global name. A plugin's **markdown** command
-is namespaced by the plugin instead, so `commands/usage.md` in a plugin named
-`shunt` lists as `shunt:usage` and collides with nothing. The hooks module then
-intercepts `command.run` for that name and answers it directly.
+| Путь | Что это |
+| `hooks/register.tsx` | Хуки: `command.run` на `shunt:usage` и полосы `session.start`, `session.measure`, `turn.complete` и `ui.render` на `AbovePrompt` |
+| `hooks/endpoint.ts` | Определяет URL шлюза и заголовок токена |
+| `hooks/report.ts` | Читает тело `GET /usage`, с защитой от ошибок |
 
-## Layout
+| `hooks/reading.ts` | Превращает один обмен в отчёт или проблему, полный и краткий |
 
-| Path | What it is |
+| `hooks/views.ts` | Рисует полосы, проценты и время сброса команды |
 | ---- | ---------- |
-| `hooks/register.tsx` | The hooks: `command.run` on `shunt:usage`, and the band's `session.start`, `session.measure`, `turn.complete` and `ui.render` on `AbovePrompt` |
-| `hooks/endpoint.ts` | Resolves the gateway URL and credential header |
-| `hooks/report.ts` | Reads a `GET /usage` body, defensively |
-| `hooks/reading.ts` | Turns one round trip into a report or a problem, full and brief |
-| `hooks/views.ts` | Renders the command's bars, percentages and reset times |
-| `hooks/band.ts` | The band's cells, alerts, levels and countdowns, from the pool or the session's own limits |
-| `hooks/names.ts` | The command name and the fixed texts |
-| `types/index.d.ts` | The `$.state` contract: the pool snapshot, the session's limits and the clock the band draws from |
-| `commands/usage.md` | The command, and the no-function-hooks fallback |
-| `tests/*.spec.ts` | Vitest suite over the pure modules |
-| `tests/mod/*.test.tsx` | Engine suite over the hooks, run by `claude plugin test` |
+| `hooks/band.ts` | Ячейки полосы, оповещения, уровни и обратные отсчёты из пула или собственных лимитов сессии |
+| `hooks/names.ts` | Имя команды и фиксированные тексты |
+| `types/index.d.ts` | Контракт `$.state`: снимок пула, лимиты сессии и часы, от которых полоса рисует |
+| `commands/usage.md` | Команда и резервный вариант без function hooks |
+| `tests/*.spec.ts` | Набор Vitest по чистым модулям |
+| `tests/mod/*.test.tsx` | Набор движка по хукам, запускается через `claude plugin test` |
+## Разработка
+`hooks/register.tsx` — единственный файл хуков, который импортирует `claude-code`. Для его
+проверки типов нужен собственный `claude-code.d.ts` движка, который Claude Code записывает в проект
+автору плагина через `/plugin-types`; остальные модули ничего не импортируют из
+движка, поэтому набор покрывает их без него. По той же причине
 
-## Development
+`tsconfig.json` исключает `hooks/register.tsx` из `npm run typecheck`, а также
 
 ```bash
 # The static side-effect analysis: which events it hooks, which $ calls and
@@ -253,21 +253,21 @@ claude plugin test plugins/shunt
 CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1 claude --plugin-dir plugins/shunt
 ```
 
-`hooks/register.tsx` is the only hooks file that imports `claude-code`. Typechecking it
-needs the engine's own `claude-code.d.ts`, which Claude Code writes into a plugin
-author's project via `/plugin-types`; the other modules import nothing from the
-engine, which is why the suite covers them without it. For the same reason
-`tsconfig.json` excludes `hooks/register.tsx` from `npm run typecheck`, along
-with `tests/mod`, the engine suite — that exclusion is deliberate, not an oversight, and typechecking that one file means
-running `/plugin-types` first.
+`tests/mod`, набор движка, — это исключение намеренное, а не упущение, и проверка типов этого файла означает
+сначала выполнить `/plugin-types`.
+> Function hooks — ранний доступ. Модули хуков загружаются только там, где они
+> включены, а API, под который написан этот мод, может меняться между выпусками Claude Code
+> без предупреждения.
+## Лицензия
+MIT OR Apache-2.0, как у проекта shunt.
 
-> Function hooks are early access. Hooks modules load only where they are
-> enabled, and the API this mod is written against may change between Claude Code
-> releases without notice.
+> Function hooks — ранний доступ. Модули хуков загружаются только там, где они
+> включены, а API, под который написан этот мод, может меняться между выпусками Claude Code
+> без предупреждения.
 
-## License
+## Лицензия
 
-MIT OR Apache-2.0, matching the shunt project.
+MIT OR Apache-2.0, как у проекта shunt.
 
 ## Источник и лицензия
 

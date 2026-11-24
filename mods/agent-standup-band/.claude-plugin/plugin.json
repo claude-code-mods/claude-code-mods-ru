@@ -1,0 +1,18 @@
+{
+  "name": "agent-standup-band",
+  "version": "1.47.1",
+  "description": "Строка над подсказкой Claude Code появляется, когда другой сеанс Claude Code на этом компьютере нуждается в вашем участии (утверждении, ответе), а всплывающее уведомление появляется, когда сеанс завершает свой ход. Считывает только файлы статуса, которые Claude Code сохраняет для своих сеансов; ничего не отправляет.",
+  "author": {
+    "name": "Double Geste",
+    "url": "https://github.com/Atoll92"
+  },
+  "homepage": "https://agent-standup.com",
+  "repository": "https://github.com/Atoll92/agent-standup",
+  "license": "MIT",
+  "keywords": [
+    "agents",
+    "sessions",
+    "notifications",
+    "standup"
+  ]
+}

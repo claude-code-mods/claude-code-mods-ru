@@ -1,0 +1,11 @@
+{
+  "name": "ripple",
+  "displayName": "ClaudeRipple",
+  "version": "0.7.0",
+  "description": "Выбирает уровень рассуждений для каждого запроса и исполнителя для каждой переданной задачи, поддерживает кэш и показывает, куда ушёл каждый запрос.",
+  "author": {
+    "name": "ClaudeRipple"
+  },
+  "license": "GPL-3.0-only",
+  "types": "./types/index.d.ts"
+}

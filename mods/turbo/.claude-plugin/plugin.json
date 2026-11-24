@@ -1,0 +1,13 @@
+{
+  "name": "turbo",
+  "displayName": "Turbo",
+  "description": "Фабрика агентного программного обеспечения с контролем со стороны человека: вы решаете, что создавать, и оцениваете результат, а skills формирует, создает, дорабатывает и внедряет изменение, а также извлекает из него уроки.",
+  "author": {
+    "name": "Tobias Hagemann",
+    "url": "https://github.com/tobihagemann"
+  },
+  "homepage": "https://github.com/tobihagemann/turbo",
+  "repository": "https://github.com/tobihagemann/turbo",
+  "license": "MIT",
+  "types": "./types/index.d.ts"
+}

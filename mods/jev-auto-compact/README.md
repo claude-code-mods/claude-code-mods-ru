@@ -1,0 +1,20 @@
+# jev-auto-compact
+
+> This English reference text was assembled from the upstream plugin manifest and catalogue metadata; the pinned upstream commit did not ship a README.
+
+При 60%-ном контексте удаляет устаревшие вызовы инструментов с нулевой генерацией; пропускает их вместо того, чтобы переходить к сводке LLM.
+
+Сжатие дословных данных на основе Jev: как только контекст достигает 60%, устаревшие вызовы инструментов удаляются без генерации. Пропускает (никогда не переключается на модуль обобщения LLM), когда нечего удалять; записывает данные для learning.db.
+
+## Установка
+
+```
+/plugin install jev-auto-compact --marketplace claude-code-mods/claude-code-mods-ru
+```
+
+## Источник и лицензия
+
+- Оригинальный автор: notque
+- Оригинальный репозиторий: https://github.com/notque/vexjoy-agent
+- Лицензия: MIT
+- Русский перевод и локализация интерфейса: проект claude-code-mods-ru

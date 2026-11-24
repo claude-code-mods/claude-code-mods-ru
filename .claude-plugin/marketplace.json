@@ -1,0 +1,489 @@
+{
+  "name": "claude-code-mods-ru",
+  "owner": {
+    "name": "claude-code-mods"
+  },
+  "description": "Отобранные, проверенные и зафиксированные по версии моды Claude Code (плагины на функциях-хуках): добавьте один раз и устанавливайте.",
+  "plugins": [
+    {
+      "name": "fm",
+      "source": "./mods/fm",
+      "description": "Анимация парусника во время работы и транскрипт только для беседы; настройка спокойного режима сохраняется между сессиями.",
+      "version": "1.0.0",
+      "author": {
+        "name": "kunchenguid"
+      },
+      "homepage": "https://github.com/kunchenguid/firstmate",
+      "license": "MIT",
+      "category": "git"
+    },
+    {
+      "name": "terminal-browser",
+      "source": "./mods/terminal-browser",
+      "description": "Браузер внутри Claude Code: предпросмотр сайтов и HTML, а также управление встроенным браузером агентом.",
+      "version": "0.0.2",
+      "author": {
+        "name": "zenbu-labs"
+      },
+      "homepage": "https://github.com/zenbu-labs/terminal-browser",
+      "license": "MIT",
+      "category": "rendering"
+    },
+    {
+      "name": "pebrel-prompt-suggestions",
+      "source": "./mods/pebrel-prompt-suggestions",
+      "description": "Родные подсказки в пустом поле ввода через мост сессий Pebrel.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Kuddev"
+      },
+      "homepage": "https://github.com/Kuddev/pebrel",
+      "license": "GPL-3.0",
+      "category": "productivity"
+    },
+    {
+      "name": "token-optimizer",
+      "source": "./mods/token-optimizer",
+      "description": "Строка состояния оптимизатора токенов: показывает, куда уходят токены и как тратить меньше.",
+      "version": "0.0.0",
+      "author": {
+        "name": "alexgreensh"
+      },
+      "homepage": "https://github.com/alexgreensh/token-optimizer",
+      "license": "NOASSERTION",
+      "category": "dashboards"
+    },
+    {
+      "name": "lcu-approve",
+      "source": "./mods/lcu-approve",
+      "description": "Разрешение на использование компьютера для каждого приложения: разрешить для этой беседы, всегда разрешить или запретить, плюс панель разрешённых приложений.",
+      "version": "0.6.0",
+      "author": {
+        "name": "amontlabs"
+      },
+      "homepage": "https://github.com/amontlabs/lcu",
+      "license": "MIT",
+      "category": "safety"
+    },
+    {
+      "name": "fast-jev-compaction",
+      "source": "./mods/fast-jev-compaction",
+      "description": "Дословное сжатие сессий Claude Code под управлением Jev.",
+      "version": "0.3.0",
+      "author": {
+        "name": "tamaratran"
+      },
+      "homepage": "https://github.com/tamaratran/fast-jev-compaction",
+      "license": "MIT",
+      "category": "productivity"
+    },
+    {
+      "name": "lot-map",
+      "source": "./mods/lot-map",
+      "description": "Живая карта рядом с чатом: память, файлы, оболочка, веб, модель, агенты, навыки и хуки подсвечиваются при использовании.",
+      "version": "0.12.1",
+      "author": {
+        "name": "alexeyw"
+      },
+      "homepage": "https://github.com/alexeyw/lot-map",
+      "license": "MIT",
+      "category": "productivity"
+    },
+    {
+      "name": "council",
+      "source": "./mods/council",
+      "description": "Одновременный опрос нескольких ИИ-агентов для получения разных точек зрения: потоковая панель и дополнительная фоновая проверка.",
+      "version": "2026.11.2",
+      "author": {
+        "name": "hex"
+      },
+      "homepage": "https://github.com/hex/claude-council",
+      "license": "MIT",
+      "category": "dashboards"
+    },
+    {
+      "name": "codex-attachment-manager",
+      "source": "./mods/codex-attachment-manager",
+      "description": "Отправляет ранние изображения короткими заполнителями и получает оригиналы обратно по ID, поэтому длинные сессии с изображениями сохраняют кэш промпта.",
+      "version": "0.11.5",
+      "author": {
+        "name": "chipfighter"
+      },
+      "homepage": "https://github.com/chipfighter/context-attachment-manager",
+      "license": "MIT",
+      "category": "dashboards"
+    },
+    {
+      "name": "storybloq",
+      "source": "./mods/storybloq",
+      "description": "Память проекта: тикеты, задачи, передачи и выводы в папке .story/ вашего репозитория.",
+      "version": "1.16.0",
+      "author": {
+        "name": "Storybloq"
+      },
+      "homepage": "https://github.com/Storybloq/storybloq",
+      "license": "NOASSERTION",
+      "category": "productivity"
+    },
+    {
+      "name": "shared-session",
+      "source": "./mods/shared-session",
+      "description": "Поделитесь сессией по ссылке или с командой; коллеги подключаются из своего Claude Code и видят каждый ход в реальном времени.",
+      "version": "0.11.53",
+      "author": {
+        "name": "Paradigm-Study"
+      },
+      "homepage": "https://github.com/Paradigm-Study/claude-share",
+      "license": "MIT",
+      "category": "agents"
+    },
+    {
+      "name": "just-do-it",
+      "source": "./mods/just-do-it",
+      "description": "Продолжает разрешённую работу через проверку и сдачу, а также выявляет проблемы настройки, которые нужно исправить.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Lifecycle-Innovations-Limited"
+      },
+      "homepage": "https://github.com/Lifecycle-Innovations-Limited/claude-ops",
+      "license": "MIT",
+      "category": "productivity"
+    },
+    {
+      "name": "prismantis",
+      "source": "./mods/prismantis",
+      "description": "Яркая настраиваемая визуализация ответов: таблицы, заголовки, код, числа, пути и ссылки.",
+      "version": "0.49.3",
+      "author": {
+        "name": "NahumLitvin"
+      },
+      "homepage": "https://github.com/NahumLitvin/prismantis",
+      "license": "MIT",
+      "category": "rendering"
+    },
+    {
+      "name": "filetree",
+      "source": "./mods/filetree",
+      "description": "Дерево файлов в стиле IDE: показывает, что делает Claude и в каких файлах.",
+      "version": "0.8.5",
+      "author": {
+        "name": "data-goblin"
+      },
+      "homepage": "https://github.com/data-goblin/claude-code-filetree",
+      "license": "MIT",
+      "category": "productivity"
+    },
+    {
+      "name": "jev-auto-compact",
+      "source": "./mods/jev-auto-compact",
+      "description": "При 60% контекста удаляет устаревшие вызовы инструментов без генерации; вместо перехода к LLM-сводке просто пропускает их.",
+      "version": "1.6.1",
+      "author": {
+        "name": "notque"
+      },
+      "homepage": "https://github.com/notque/vexjoy-agent",
+      "license": "MIT",
+      "category": "productivity"
+    },
+    {
+      "name": "cache-tax",
+      "source": "./mods/cache-tax",
+      "description": "Поддерживает кэш промпта в течение часа во время пауз, спрашивает перед холодной отправкой и показывает стоимость перезаписи.",
+      "version": "2.4.2",
+      "author": {
+        "name": "karanb192"
+      },
+      "homepage": "https://github.com/karanb192/cache-tax",
+      "license": "MIT",
+      "category": "dashboards"
+    },
+    {
+      "name": "turbo",
+      "source": "./mods/turbo",
+      "description": "Управляемая человеком фабрика разработки ПО с агентами: вы решаете, что строить, и оцениваете результат, а навыки собирают и выпускают его.",
+      "version": "0.0.0",
+      "author": {
+        "name": "tobihagemann"
+      },
+      "homepage": "https://github.com/tobihagemann/turbo",
+      "license": "MIT",
+      "category": "git"
+    },
+    {
+      "name": "agent-standup-band",
+      "source": "./mods/agent-standup-band",
+      "description": "Строка над полем ввода, когда другая локальная сессия ждёт вас, и уведомление о её завершении.",
+      "version": "1.47.1",
+      "author": {
+        "name": "Atoll92"
+      },
+      "homepage": "https://github.com/Atoll92/agent-standup",
+      "license": "MIT",
+      "category": "dashboards"
+    },
+    {
+      "name": "flightdeck",
+      "source": "./mods/flightdeck",
+      "description": "Живая панель агента: показатели модели, дежурный архитектор, проверка разрешений, карточки субагентов и журнал сессии.",
+      "version": "0.6.2",
+      "author": {
+        "name": "scasella"
+      },
+      "homepage": "https://github.com/scasella/claude-flightdeck",
+      "license": "MIT",
+      "category": "agents"
+    },
+    {
+      "name": "caliber-jev-compaction",
+      "source": "./mods/caliber-jev-compaction",
+      "description": "Дословное сжатие сессий Claude Code под управлением Jev.",
+      "version": "0.3.0",
+      "author": {
+        "name": "caliber-ai-org"
+      },
+      "homepage": "https://github.com/caliber-ai-org/ai-setup",
+      "license": "MIT",
+      "category": "productivity"
+    },
+    {
+      "name": "mazyos",
+      "source": "./mods/mazyos",
+      "description": "Плагин-операционная система для португалоязычного бизнеса: память компании в каждой сессии, фирменный стиль в результатах и 17 маркетинговых и SEO-навыков.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Mazzeo-Marketing"
+      },
+      "homepage": "https://github.com/Mazzeo-Marketing/MazyOS",
+      "license": "NOASSERTION",
+      "category": "git"
+    },
+    {
+      "name": "start",
+      "source": "./mods/start",
+      "description": "Команды оркестрации рабочего процесса для агентной разработки ПО.",
+      "version": "4.0.0",
+      "author": {
+        "name": "rsmdt"
+      },
+      "homepage": "https://github.com/rsmdt/the-startup",
+      "license": "MIT",
+      "category": "agents"
+    },
+    {
+      "name": "shunt",
+      "source": "./mods/shunt",
+      "description": "Полоса потребления для шлюза shunt: расходы и время сброса за каждый период, а также подробный отчёт /shunt:usage.",
+      "version": "0.1.0",
+      "author": {
+        "name": "pleaseai"
+      },
+      "homepage": "https://github.com/pleaseai/shunt",
+      "license": "Apache-2.0",
+      "category": "dashboards"
+    },
+    {
+      "name": "operator",
+      "source": "./mods/operator",
+      "description": "Устойчивая память проекта и пользователя для разработки с помощью агентов.",
+      "version": "0.2.0",
+      "author": {
+        "name": "aerovato"
+      },
+      "homepage": "https://github.com/aerovato/operator-memory",
+      "license": "BSD-3-Clause",
+      "category": "productivity"
+    },
+    {
+      "name": "carbon",
+      "source": "./mods/carbon",
+      "description": "Отслеживает углеродный след ваших сессий Claude Code в терминале и настольном приложении.",
+      "version": "1.20.1",
+      "author": {
+        "name": "gwittebolle"
+      },
+      "homepage": "https://github.com/gwittebolle/claude-carbon",
+      "license": "MIT",
+      "category": "productivity"
+    },
+    {
+      "name": "agentctl",
+      "source": "./mods/agentctl",
+      "description": "Панель управления агентом для сессии: границы задач, доказательства и передача.",
+      "version": "0.3.1",
+      "author": {
+        "name": "sd0xdev"
+      },
+      "homepage": "https://github.com/sd0xdev/sd0x-harness",
+      "license": "MIT",
+      "category": "safety"
+    },
+    {
+      "name": "multi-core",
+      "source": "./mods/multi-core",
+      "description": "Используйте модели ChatGPT, Cursor, OpenCode и Antigravity в одной сессии, переключаясь через /model.",
+      "version": "0.0.0",
+      "author": {
+        "name": "greenpolo"
+      },
+      "homepage": "https://github.com/greenpolo/cc-multi-cli-plugin",
+      "license": "Apache-2.0",
+      "category": "safety"
+    },
+    {
+      "name": "work-mode",
+      "source": "./mods/work-mode",
+      "description": "Режимы сессии: auto (без вопросов посреди задачи), out (передача пакетной работы) и wrap (свёртывание и завершение).",
+      "version": "0.8.0",
+      "author": {
+        "name": "danyuchn"
+      },
+      "homepage": "https://github.com/danyuchn/claude-work-mode",
+      "license": "MIT",
+      "category": "productivity"
+    },
+    {
+      "name": "tokendoctor",
+      "source": "./mods/tokendoctor",
+      "description": "Воспроизводит ваши прошлые сессии, чтобы показать, сколько сэкономило бы каждое изменение, и применяет только выбранное.",
+      "version": "0.6.1",
+      "author": {
+        "name": "localixai"
+      },
+      "homepage": "https://github.com/localixai/tokendoctor",
+      "license": "MIT",
+      "category": "dashboards"
+    },
+    {
+      "name": "engineer",
+      "source": "./mods/engineer",
+      "description": "Набор методик дисциплинированной агентной разработки: приём задач, поиск критериев приёмки, спецификация, планирование, реализация, проверка и укрепление.",
+      "version": "0.40.2",
+      "author": {
+        "name": "swingerman"
+      },
+      "homepage": "https://github.com/swingerman/engineer",
+      "license": "MIT",
+      "category": "git"
+    },
+    {
+      "name": "skins",
+      "source": "./mods/skins",
+      "description": "Оформление и пятнадцать тем для транскрипта с насыщенными карточками и полосой потребления; /skin меняет их на лету.",
+      "version": "0.5.16",
+      "author": {
+        "name": "hellosverre"
+      },
+      "homepage": "https://github.com/hellosverre/claude-skins",
+      "license": "MIT",
+      "category": "dashboards"
+    },
+    {
+      "name": "show-your-work",
+      "source": "./mods/show-your-work",
+      "description": "Показывает готовую работу в терминале: снимки экрана, видео с переходами по клику и синхронизированное сравнение «до/после» при проверке.",
+      "version": "1.1.0",
+      "author": {
+        "name": "iamumeransari"
+      },
+      "homepage": "https://github.com/iamumeransari/claude-show-your-work",
+      "license": "MIT",
+      "category": "productivity"
+    },
+    {
+      "name": "jevmem-pane",
+      "source": "./mods/jevmem-pane",
+      "description": "Боковая панель: что вспомнил jevmem, что решил его страж и что сохранил последний ход.",
+      "version": "0.7.8",
+      "author": {
+        "name": "Avinash-jetwani"
+      },
+      "homepage": "https://github.com/Avinash-jetwani/jevmem",
+      "license": "MIT",
+      "category": "safety"
+    },
+    {
+      "name": "ctx-handoff",
+      "source": "./mods/ctx-handoff",
+      "description": "Превращает то, чему вы учите Claude, в заметки проекта, ловит типичные ошибки, поддерживает кэш и возобновляет длинные сессии.",
+      "version": "0.8.2",
+      "author": {
+        "name": "cablate"
+      },
+      "homepage": "https://github.com/cablate/ctx-handoff-mod",
+      "license": "MIT",
+      "category": "dashboards"
+    },
+    {
+      "name": "inbox",
+      "source": "./mods/inbox",
+      "description": "Собирает вопросы, задачи, находки и пулл-реквесты, ожидающие вас в сессии.",
+      "version": "0.6.0",
+      "author": {
+        "name": "petekp"
+      },
+      "homepage": "https://github.com/petekp/inbox",
+      "license": "MIT",
+      "category": "productivity"
+    },
+    {
+      "name": "lane-stack",
+      "source": "./mods/lane-stack",
+      "description": "Конвейер для одного менеджера проекта: агенты-оркестраторы, инструкции по дорожкам, команды ввода и возобновления.",
+      "version": "1.67.4",
+      "author": {
+        "name": "VKirill"
+      },
+      "homepage": "https://github.com/VKirill/claude-lane-stack",
+      "license": "MIT",
+      "category": "agents"
+    },
+    {
+      "name": "compact-adviser",
+      "source": "./mods/compact-adviser",
+      "description": "Предлагает или выполняет /compact на завершённой контрольной точке, оценённой с помощью TypeSafe Jev.",
+      "version": "0.1.14",
+      "author": {
+        "name": "kunchenguid"
+      },
+      "homepage": "https://github.com/kunchenguid/compact-adviser",
+      "license": "MIT",
+      "category": "productivity"
+    },
+    {
+      "name": "ripple",
+      "source": "./mods/ripple",
+      "description": "Выбирает уровень рассуждений для каждого запроса и исполнителя для каждой переданной задачи, поддерживает кэш и показывает, куда ушёл каждый запрос.",
+      "version": "0.7.0",
+      "author": {
+        "name": "PBJ-2"
+      },
+      "homepage": "https://github.com/PBJ-2/clauderipple",
+      "license": "GPL-3.0",
+      "category": "dashboards"
+    },
+    {
+      "name": "tavernweave-agent-skills",
+      "source": "./mods/tavernweave-agent-skills",
+      "description": "23 общих навыка для ролевых персонажей, разработки ПО и ограниченных облачных задач, плюс переключатель режима Soul над полем ввода.",
+      "version": "2.4.0",
+      "author": {
+        "name": "LiarMTTT"
+      },
+      "homepage": "https://github.com/LiarMTTT/TavernWeave",
+      "license": "NOASSERTION",
+      "category": "dashboards"
+    },
+    {
+      "name": "agent-usage-guard",
+      "source": "./mods/agent-usage-guard",
+      "description": "Удерживает разветвление субагентов, промпты с большим контекстом и циклы повторов до того, как они потратят вашу квоту.",
+      "version": "1.2.1",
+      "author": {
+        "name": "rbartoli"
+      },
+      "homepage": "https://github.com/rbartoli/agent-usage-guard",
+      "license": "MIT",
+      "category": "dashboards"
+    }
+  ]
+}

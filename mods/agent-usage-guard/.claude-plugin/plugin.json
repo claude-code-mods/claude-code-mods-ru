@@ -1,0 +1,25 @@
+{
+  "name": "agent-usage-guard",
+  "description": "Удерживает разветвление субагентов, промпты с большим контекстом и циклы повторов до того, как они потратят вашу квоту.",
+  "version": "1.2.1",
+  "author": {
+    "name": "Riccardo Bartoli"
+  },
+  "homepage": "https://github.com/rbartoli/agent-usage-guard",
+  "repository": "https://github.com/rbartoli/agent-usage-guard",
+  "license": "MIT",
+  "icon": "./.claude-plugin/icon.png",
+  "types": "./types/index.d.ts",
+  "documentationUrl": "https://github.com/rbartoli/agent-usage-guard#readme",
+  "supportUrl": "https://github.com/rbartoli/agent-usage-guard/issues",
+  "privacyPolicyUrl": "https://github.com/rbartoli/agent-usage-guard#security-and-privacy",
+  "keywords": [
+    "mod",
+    "usage",
+    "rate-limit",
+    "subagents",
+    "context",
+    "guardrails",
+    "cost"
+  ]
+}

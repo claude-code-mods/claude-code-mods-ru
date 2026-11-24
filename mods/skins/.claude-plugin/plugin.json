@@ -1,0 +1,18 @@
+{
+  "name": "skins",
+  "version": "0.5.16",
+  "description": "Скины для Claude Код: строки инструментов, которые открываются при вводе и ответе, выделенный код, diff, таблица, математика, карты Mermaid и shell, ссылки, сворачивание, полоса использования, спокойный режим и пятнадцать тем. /skin меняет их в реальном времени.",
+  "author": {
+    "name": "hellosverre",
+    "url": "https://github.com/hellosverre"
+  },
+  "license": "MIT",
+  "keywords": [
+    "claude-code-mods",
+    "claude-mods",
+    "function-hooks",
+    "theme",
+    "skin"
+  ],
+  "types": "./types/index.d.ts"
+}

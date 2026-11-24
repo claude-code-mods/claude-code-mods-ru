@@ -1,0 +1,15 @@
+{
+  "name": "just-do-it",
+  "version": "0.1.0",
+  "description": "Продолжайте выполнять разрешенные работы, включая проверку и сдачу; выявляйте и устраняйте поддающиеся исправлению проблемы с настройкой.",
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "fleetConfigPath": {
+      "type": "file",
+      "title": "Fleet configuration",
+      "description": "Optional absolute path to a private fleet configuration. Empty disables fleet inspection.",
+      "required": false,
+      "default": ""
+    }
+  }
+}

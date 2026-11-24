@@ -1,0 +1,20 @@
+# fm
+
+> This English reference text was assembled from the upstream plugin manifest and catalogue metadata; the pinned upstream commit did not ship a README.
+
+Анимация работающего парусника и стенограмма только разговора с общей для всех сеансов настройкой «Спокойный режим».
+
+Firstmate Calm для кода Claude: рабочая анимация парусной яхты и представление транскрипта только с диалогами, с передачей настроек для каждого дома/предпочтений Calm расширению Pi Calm. Его модуль hooks может загружаться через флаг развертывания tengu_plugin_hooks_modules кода CLAUDE_CODE_ENABLE_FUNCTION_HOOKS или Claude, но мод активируется только тогда, когда CLAUDE_CODE_ENABLE_FUNCTION_HOOKS равен ровно 1, а в противном случае полностью бездействует.
+
+## Установка
+
+```
+/plugin install fm --marketplace claude-code-mods/claude-code-mods-ru
+```
+
+## Источник и лицензия
+
+- Оригинальный автор: kunchenguid
+- Оригинальный репозиторий: https://github.com/kunchenguid/firstmate
+- Лицензия: MIT
+- Русский перевод и локализация интерфейса: проект claude-code-mods-ru

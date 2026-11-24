@@ -1,0 +1,5 @@
+{
+  "name": "multi-core",
+  "description": "Используйте модели ChatGPT, Cursor, OpenCode и Antigravity в одной сессии, переключаясь через /model.",
+  "version": "0.0.0"
+}

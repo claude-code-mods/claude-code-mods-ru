@@ -1,0 +1,20 @@
+# engineer
+
+> This English reference text was assembled from the upstream plugin manifest and catalogue metadata; the pinned upstream commit did not ship a README.
+
+A disciplined agentic-engineering methodology kit: intake, AC discovery, spec, planning, implementation, verification, hardening.
+
+Disciplined Agentic Engineering (DAE) — набор методологий для кода Claude. Навыки, необходимые для реализации пайплайна DAE: сбор информации о функциях, определение критериев приемки (AC), составление спецификаций, планирование, реализация, верификация, повышение надежности.
+
+## Установка
+
+```
+/plugin install engineer --marketplace claude-code-mods/claude-code-mods-ru
+```
+
+## Источник и лицензия
+
+- Оригинальный автор: swingerman
+- Оригинальный репозиторий: https://github.com/swingerman/engineer
+- Лицензия: MIT
+- Русский перевод и локализация интерфейса: проект claude-code-mods-ru

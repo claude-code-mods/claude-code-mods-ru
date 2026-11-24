@@ -496,7 +496,7 @@ const copyNow = async ($: EngineInterface, style: Style, content: string, surfac
 
 const drawMarkdown = ($: EngineInterface, el: ReturnType<EngineInterface['ui']['resolve']>, style: Style, blocks: ReturnType<typeof parse>, columns: number, math: Map<number, Typeset> = new Map(), pictures: Map<number, Picture> = new Map(), reply?: string, open?: string[], notes?: { id: string; press: boolean }): RenderElement[] => {
   const { Button } = el
-  const copy = (text: string | (() => string), key: string, label = '⧉ copy', rich?: (() => string) | 'png', hues?: () => Hues) => {
+  const copy = (text: string | (() => string), key: string, label = '⧉ копировать', rich?: (() => string) | 'png', hues?: () => Hues) => {
     const copied = (surface: RenderSurface) => lastCopy(() => copyNow($, style, typeof text === 'function' ? text() : text, surface, rich, hues?.()))
     return style.copyButtons && offers(style, rich) ? (
       <Button
@@ -524,7 +524,7 @@ const drawMarkdown = ($: EngineInterface, el: ReturnType<EngineInterface['ui']['
   }
   const tip = notes?.press ? noteTip(blocks, text => void $.ui.toast(text)) : undefined
   const elements = renderBlocks(el, notes ? { ...style, noteKey: instanceKey(notes.id) } : style, blocks, columns, drawMath(el, style, blocks, drawn), copy, folder($, el, open, false, style.folds === 'open'), tip)
-  const button = reply === undefined ? null : copy(reply, 'reply', '⧉ copy reply')
+  const button = reply === undefined ? null : copy(reply, 'reply', '⧉ скопировать ответ')
   if (!button) return elements
   return [...elements, style.copyButtonStyle === 'hover' ? replyMarker(el, button, notes?.id) : <el.Box key="reply" alignSelf="flex-end">{button}</el.Box>]
 }
@@ -581,7 +581,7 @@ const setTheme = async ($: EngineInterface, picked: Picked, name: string): Promi
   picked.latex.color = ratexColor(style.theme.diagramText ?? style.theme.codeText ?? '#808080')
   $.ui.invalidate('ui.render')
   await paintDesktop($, picked.options, picked.theme)
-  return `Theme set to random: ${picked.theme} for now.\nkeep it: /prismantis theme ${picked.theme}`
+  return `На текущий момент выбрана случайная тема: ${picked.theme}.\nоставить её: /prismantis theme ${picked.theme}`
 }
 
 const saveSetupPick = async ($: EngineInterface, picked: Picked, step: SetupStep, value: string): Promise<string> =>
@@ -620,7 +620,7 @@ const pickInPane = async ($: EngineInterface, picked: Picked, at: number, value:
   const done = `${step.title} set to ${value}.`
   if (nextStep) await showSetupStep($, at + 1, nextStep, currentOf(nextStep))
   else await $.ui.close({ id: SETUP_PANE })
-  $.ui.toast(nextStep ? done : `${done} ${at + 1 === ESSENTIAL_STEPS ? SETUP_ESSENTIALS_DONE : 'Setup done.'}`)
+  $.ui.toast(nextStep ? done : `${done} ${at + 1 === ESSENTIAL_STEPS ? SETUP_ESSENTIALS_DONE : 'Настройка завершена.'}`)
   const saved = await saveSetupPick($, picked, step, value)
   if (saved === done) return
   $.ui.toast(saved)
@@ -686,8 +686,8 @@ const SETUP_NPM_TEST = [
 const toolOutputSample = (el: ReturnType<EngineInterface['ui']['resolve']>, style: Style, value: string, id: string, columns: number): RenderElement[] => {
   const row = (key: string, input: Record<string, string>, isErrored: boolean) => <el.Box key={`${id}${key}`}>{renderToolRow(el, style, { tool: 'Bash', input, isRunning: false, isErrored, isInterrupted: false }, columns)}</el.Box>
   const statusRow = row('s', { command: 'git status' }, false)
-  const testRow = row('t', { command: 'npm test', description: 'Run the tests' }, false)
-  const buildRow = row('r', { command: 'npm run build', description: 'Build the app' }, true)
+  const testRow = row('t', { command: 'npm test', description: 'Запустить тесты' }, false)
+  const buildRow = row('r', { command: 'npm run build', description: 'Собрать приложение' }, true)
   const failure = renderFailure(el, style, SETUP_BUILD_ERROR.join('\n'), `${id}e`) ?? <el.Box key={`${id}e`} />
   if (value === 'rows') return [statusRow, testRow, buildRow, failure]
   if (value === 'quiet') return [statusRow, testRow, <el.Box key={`${id}to`}>{renderShellResult(el, style, { stdout: SETUP_NPM_TEST.join('\n'), stderr: '' })}</el.Box>, buildRow, failure]
@@ -712,7 +712,7 @@ const SETUP_TABLE = '| Item | Qty |\n|:-----|----:|\n| Apples | 3 |\n| Pears | 5
 const SETUP_SENT = new Date(2026, 0, 15, 14, 32).getTime()
 
 const copySample = (el: ReturnType<EngineInterface['ui']['resolve']>, style: Style, value: string, id: string, columns: number): RenderElement[] => {
-  const label: CopyButton = (_text, key, name = '⧉ copy', rich) => (offers(style, rich) ? (style.copyButtonStyle === 'dim' ? <el.Text key={key} dimColor>{name}</el.Text> : <el.Text key={key} bold>{`[ ${name} ]`}</el.Text>) : null)
+  const label: CopyButton = (_text, key, name = '⧉ копировать', rich) => (offers(style, rich) ? (style.copyButtonStyle === 'dim' ? <el.Text key={key} dimColor>{name}</el.Text> : <el.Text key={key} bold>{`[ ${name} ]`}</el.Text>) : null)
   const table = renderBlocks(el, style, parse(SETUP_TABLE, { numbers: style.highlightNumbers, paths: style.highlightPaths }), columns, new Map(), label)
   return [
     <el.Box key={`${id}t`} flexDirection="column">{table}</el.Box>,
@@ -919,7 +919,7 @@ export const register: Register = (on, options) => {
     const started = await next(e)
     await paintDesktop($, options, picked.theme)
     await $.command
-      .register({ name: 'prismantis', description: 'Switch the prismantis theme, pick styles from samples, copy the last reply, or show the demo', argumentHint: '[theme [<name> | random] | setup [<step> [<pick>]] | copy [code] | demo]' })
+      .register({ name: 'prismantis', description: 'Сменить тему prismantis, выбрать стили по образцам, скопировать последний ответ или показать демо', argumentHint: '[theme [<name> | random] | setup [<step> [<pick>]] | copy [code] | demo]' })
       .catch(() => undefined)
     return started
   })
@@ -936,25 +936,25 @@ export const register: Register = (on, options) => {
     if (sub === 'demo') return { text: showcaseText(PRESET_NAMES) + languageShowcase(await localeOf($, name)) }
     if (sub === 'setup') return { text: await setup($, picked, e.origin, name, third) }
     if (sub === 'copy') {
-      if (name && name !== 'code') return { text: `Unknown copy target "${name}". Use /prismantis copy, or /prismantis copy code for the last code block.` }
+      if (name && name !== 'code') return { text: `Неизвестная цель копирования "${name}". Используйте /prismantis copy или /prismantis copy code для последнего блока кода.` }
       const reply = (await $.session.messages()).findLast(m => m.role === 'assistant' && m.text.trim())
-      if (!reply) return { text: 'Nothing to copy yet.' }
+      if (!reply) return { text: 'Пока нечего копировать.' }
       const code = name === 'code' ? nestedBlocks(parseCached(reply.text)).findLast(b => b.kind === 'code' && !/^(mermaid|figure)$/i.test(b.lang)) : undefined
-      if (name === 'code' && code?.kind !== 'code') return { text: 'The last reply has no code block.' }
+      if (name === 'code' && code?.kind !== 'code') return { text: 'В последнем ответе нет блока кода.' }
       const text = code?.kind === 'code' ? code.lines.join('\n') : reply.text
       const said = await lastCopy(async () => {
         const result = await $.ui.copy({ text })
         return result.isCopied ? `Copied the last ${code ? 'code block' : 'reply'}.` : `Copy failed: ${result.reason}`
       })
-      return { text: said ?? 'A newer copy replaced this one.' }
+      return { text: said ?? 'Более новая копия заменила эту.' }
     }
     if (sub === 'demo-rtl') {
       await probe($, style, probes)
       return { text: rtlShowcaseText() }
     }
     if (sub !== 'theme') return { text: helpText(PRESET_NAMES) }
-    if (!name) return { text: options.theme === 'random' ? `current: ${picked.theme} (random)\nkeep it: /prismantis theme ${picked.theme}` : `current: ${picked.theme}` }
-    if (!THEME_ARGS.includes(name)) return { text: `Unknown theme "${name}". Themes: ${PRESET_NAMES.join(', ')}, random` }
+    if (!name) return { text: options.theme === 'random' ? `текущая: ${picked.theme} (random)\nоставить её: /prismantis theme ${picked.theme}` : `текущая: ${picked.theme}` }
+    if (!THEME_ARGS.includes(name)) return { text: `Неизвестная тема "${name}". Темы: ${PRESET_NAMES.join(', ')}, random` }
     return { text: await setTheme($, picked, name) }
   })
 

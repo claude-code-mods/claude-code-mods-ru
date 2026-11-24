@@ -10,7 +10,7 @@ function parseMermaid(text) {
   let lines = text.split(`
 `).map((l) => l.trim()).filter((l) => l.length > 0 && !l.startsWith("%%"));
   if (lines.length === 0)
-    throw new Error("Empty mermaid diagram");
+    throw new Error("Пустая диаграмма mermaid");
   let header = lines[0];
   return /^stateDiagram(-v2)?\s*$/i.test(header) ? parseStateDiagram(lines) : parseFlowchart(lines);
 }
@@ -841,7 +841,7 @@ function getPath(grid, from, to) {
   cameFrom.set(gridKey(from), null);
   let steps = 0;
   for (; pq.size() > 0; ) {
-    if (++steps > 5e4) throw new Error("mermaid edge routing gave up");
+    if (++steps > 5e4) throw new Error("Не удалось проложить соединение mermaid");
     let current = pq.pop().coord;
     if (gridCoordEquals(current, to)) {
       let path = [], c = current;

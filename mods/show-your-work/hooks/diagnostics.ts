@@ -49,7 +49,7 @@ export function diagnosis(now: number, kept: Problem[] = problems, isLogging = s
   const lines = recent.length
     ? [`${recent.length} problem${recent.length === 1 ? '' : 's'} in the last 10 minutes:`, ...[...counts].sort((a, b) => b[1] - a[1]).map(([what, n]) => `  ${what} × ${n}`)]
     : ['No problems noticed in the last 10 minutes.']
-  lines.push(isLogging ? `Full log: ${logPath}` : 'For a full log, start Claude Code with SHOW_YOUR_WORK_DEBUG=1 and try again.')
+  lines.push(isLogging ? `Полный лог: ${logPath}` : 'Чтобы получить полный лог, запустите Claude Code с SHOW_YOUR_WORK_DEBUG=1 и повторите попытку.')
   return lines.join('\n')
 }
 

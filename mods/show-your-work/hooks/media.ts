@@ -196,7 +196,7 @@ export const htmlArgv = (chrome: string, page: string, png: string) => [
   '--virtual-time-budget=1000', `--screenshot=${png}`, fileUrl(page),
 ]
 export async function renderPage($: EngineInterface, page: string, key: string): Promise<string> {
-  if (!state.chrome) throw new Error('pages need Chrome or Chromium')
+  if (!state.chrome) throw new Error('для страниц нужен Chrome или Chromium')
   const folder = await $.process.run(['mktemp', '-d', `${state.TMP}/page-XXXXXX`])
   const dir = folder.stdout.trim()
   if (folder.exitCode !== 0 || !dir.startsWith(`${state.TMP}/page-`)) throw new Error("the page couldn't be rendered: could not create its temporary folder")
@@ -356,69 +356,69 @@ export function noticeOf(err: unknown, path: string, homeDir = ''): Notice {
   const shown = homeDir && path.startsWith(`${homeDir}/`) ? `~${path.slice(homeDir.length)}` : path
   const name = path.split('/').pop() || path
   if (raw.includes(NO_FFMPEG_LINUX)) return {
-    kind: 'no_ffmpeg', title: 'This needs ffmpeg', message: NO_FFMPEG_LINUX, prompt: FFMPEG_PROMPT_LINUX,
+    kind: 'no_ffmpeg', title: 'Для этого нужен ffmpeg', message: NO_FFMPEG_LINUX, prompt: FFMPEG_PROMPT_LINUX,
     text: "ffmpeg isn't installed, so videos and pictures other than PNG can't show here. Copy the prompt and paste it to Claude to install it, or install it yourself, for example `sudo apt install ffmpeg`.",
   }
   if (raw.includes(NO_FFMPEG)) return {
-    kind: 'no_ffmpeg', title: 'Videos need ffmpeg', message: NO_FFMPEG, prompt: FFMPEG_PROMPT,
+    kind: 'no_ffmpeg', title: 'Для видео нужен ffmpeg', message: NO_FFMPEG, prompt: FFMPEG_PROMPT,
     text: "ffmpeg isn't installed, so this video can't play here. Pictures still work. Copy the prompt and paste it to Claude to install it, or run `brew install ffmpeg` yourself. No Homebrew? Get it from brew.sh first.",
   }
   if (/^not audio:/i.test(raw)) return {
-    kind: 'not_image', title: "This isn't an audio file",
+    kind: 'not_image', title: "Это не аудиофайл",
     text: `${name} isn't MP3 or WAV, so it can't play here. Convert it to WAV and show it again.`,
     message: `${shown} isn't an audio file (show_audio opens MP3 and WAV). Convert it, for example to WAV with ffmpeg, then show it again; use show_video for a video with sound.`,
-    prompt: `Convert ${shown} to WAV (or MP3) for me, then show it to me again.`,
+    prompt: `Преобразуйте ${shown} в WAV (или MP3), затем покажите мне снова.`,
   }
   if (/does not contain any stream|matches no streams|no frames in|Output file is empty/i.test(raw)) return AUDIO.test(path) ? {
-    kind: 'no_picture', title: "This audio can't be read",
+    kind: 'no_picture', title: "Не удалось прочитать этот аудиофайл",
     text: `${name} is too short or empty to draw, so there's nothing to play.`,
     message: `${shown} is too short or empty to play. Don't retry it; show a real audio file instead.`,
     prompt: `${shown} is too short to play. Find a real audio file and show it to me again.`,
   } : {
-    kind: 'no_picture', title: 'This video has no picture',
+    kind: 'no_picture', title: 'В этом видео нет изображения',
     text: `${name} has sound but no picture, so there's nothing to play.`,
     message: `${shown} has no video track (sound only), so there's nothing to play. Don't retry it; show a file with a picture instead.`,
     prompt: `${shown} has no picture, only sound. Find the right video and show it to me again.`,
   }
   if (/ffmpeg could not read|Invalid data|moov atom|could not find codec|Error opening input/i.test(raw)) return AUDIO.test(path) ? {
-    kind: 'broken_video', title: "This audio can't be read",
+    kind: 'broken_video', title: "Не удалось прочитать этот аудиофайл",
     text: `${name} couldn't be opened as audio. It may be cut off, still being written, or not really an audio file.`,
     message: `${shown} couldn't be read as audio: it's damaged, unfinished (still being recorded or cut off), or not an audio file. Re-export it, then show it again.`,
     prompt: `${shown} couldn't be read as audio. Check it, re-export it if it's broken, then show it to me again.`,
   } : {
-    kind: 'broken_video', title: "This video can't be read",
+    kind: 'broken_video', title: "Не удалось прочитать это видео",
     text: `${name} couldn't be opened as a video. It may be cut off, still being written, or not really a video.`,
     message: `${shown} couldn't be read as a video: it's damaged, unfinished (still recording or cut off), or not a video. Re-export or re-record it, then show it again.`,
     prompt: `${shown} couldn't be read as a video. Check it, re-export or re-record it if it's broken, then show it to me again.`,
   }
   if (/could not convert|not an image|Cannot extract image|sips/i.test(raw)) return {
-    kind: 'not_image', title: "This isn't a picture",
+    kind: 'not_image', title: "Это не изображение",
     text: `${name} isn't a picture, so it can't be shown. Pictures can be PNG, JPEG, WebP, GIF or TIFF.`,
     message: `${shown} isn't a picture (show_image opens PNG, JPEG, WebP, GIF and TIFF). Show an image file, or use show_video for a video.`,
     prompt: `${shown} isn't a picture. Show me the right file instead.`,
   }
   if (/ENOENT|no such file|not found/i.test(raw)) return {
-    kind: 'missing', title: 'File not found',
+    kind: 'missing', title: 'Файл не найден',
     text: `There's no file at ${shown}.`,
     message: `There's no file at ${shown}. Check the path (it may have moved or not been saved yet), then show it again.`,
     prompt: `There's no file at ${shown}. Find the right file and show it to me again.`,
   }
-  if (/pages need Chrome or Chromium/i.test(raw)) return {
-    kind: 'other', title: 'Pages need a browser',
+  if (/для страниц нужен Chrome или Chromium/i.test(raw)) return {
+    kind: 'other', title: 'Для страниц нужен браузер',
     text: `${name} is an HTML page, and no Chrome or Chromium was found to render it. Copy the prompt and paste it to Claude to install one, or install it yourself.`,
     message: `${shown} is an HTML page, and no Chrome or Chromium was found to render it. Screenshot it with headless Playwright instead and show that with show_image.`,
-    prompt: `Install Google Chrome or Chromium for me, then restart Claude Code. After that, show ${shown} to me again.`,
+    prompt: `Установите Google Chrome или Chromium, затем перезапустите Claude Code. После этого покажите ${shown} мне снова.`,
   }
   // A page Chrome couldn't render still reaches the person as a picture.
   if (/the page couldn't be rendered/i.test(raw)) return {
-    kind: 'other', title: "Couldn't render the page",
+    kind: 'other', title: "Не удалось отобразить страницу",
     text: `${name} couldn't be rendered as a page. Claude can screenshot it another way and show that.`,
     message: `${shown} couldn't be rendered as a page. Screenshot it with headless Playwright instead and show that with show_image.`,
     prompt: `${shown} couldn't be rendered as a page. Screenshot it with headless Playwright and show it to me with show_image.`,
   }
   const detail = (raw.split('\n')[0] ?? '').replace(/\/(?:private\/)?tmp\/\S+|\S*\/\.show-your-work\/\S+/g, name).slice(0, 160)
   return {
-    kind: 'other', title: "Couldn't show it",
+    kind: 'other', title: "Не удалось показать",
     text: `${name} couldn't be shown: ${detail}`,
     message: `${shown} couldn't be shown: ${detail}`,
     prompt: `${shown} couldn't be shown (${detail}). Look into it and show it to me again.`,

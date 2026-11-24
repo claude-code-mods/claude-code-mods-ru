@@ -1711,7 +1711,7 @@ const restSource = ({ Text }: ElementTable, rest: Block[], room: number): Render
   const fit = lines.findIndex(line => (room -= line.length + 1) < 0)
   const kept = fit < 0 ? lines : lines.slice(0, fit)
   const text = kept.length ? chunks(kept.join('\n').trimEnd()).map((text, i) => <Text key={`rest${i}`} dimColor>{text}</Text>) : []
-  return fit < 0 ? text : [...text, <Text key="restMore" dimColor>{`… +${lines.length - fit} lines · /prismantis copy for the whole reply`}</Text>]
+  return fit < 0 ? text : [...text, <Text key="restMore" dimColor>{`… ещё ${lines.length - fit} строк · /prismantis copy — весь ответ`}</Text>]
 }
 
 export type ToolRow = { tool: string; input: unknown; isRunning: boolean; isErrored: boolean; isInterrupted: boolean }

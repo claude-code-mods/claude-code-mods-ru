@@ -160,7 +160,7 @@ export const register: Register = on => {
     void $.process.run(['sh', '-c', CLEAN_SH, state.TMP]).then(() => trimFrames($))
     await $.command.register({
       name: 'show-your-work',
-      description: 'Settings for show-your-work; /show-your-work tour for the tour, /show-your-work update to check for updates, /show-your-work diagnose for recent problems',
+      description: 'Настройки show-your-work; /show-your-work tour — экскурсия, /show-your-work update — проверка обновлений, /show-your-work diagnose — недавние проблемы',
       argumentHint: '[settings|tour|update|diagnose]',
     })
     await $.command.register({
@@ -554,7 +554,7 @@ export const register: Register = on => {
     // Run again while they're open, the settings close.
     if (!isSettings && (await $.ui.panes()).some(pane => pane.id === WELCOME)) {
       await $.ui.close({ id: WELCOME })
-      return { text: 'Closed the show-your-work settings.' }
+      return { text: 'Настройки show-your-work закрыты.' }
     }
     await openSettings($)
     return { text: 'Opened the show-your-work settings.' }

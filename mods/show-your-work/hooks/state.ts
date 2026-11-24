@@ -94,7 +94,7 @@ export const state = {
 export const SETTINGS = [
   { field: 'stable_updates', title: 'Updates', options: ['Stable releases', 'Latest'], text: 'Automatically install plugin updates from GitHub' },
   { field: 'usage_stats', title: 'Usage data', options: ['Share anonymously', "Don't share"], text: 'Helps fix bugs and improve the product experience. No sensitive data is ever shared' },
-  { field: 'standard_size', title: 'Picture size', options: ['Standard', 'Large'], text: 'Large shows pictures and videos one and a half times bigger' },
+  { field: 'standard_size', title: 'Picture size', options: ['Standard', 'Large'], text: 'Большой размер показывает изображения и видео в полтора раза крупнее' },
 ] as const
 export type Field = (typeof SETTINGS)[number]['field']
 // Each switch is true on its first option, the default.

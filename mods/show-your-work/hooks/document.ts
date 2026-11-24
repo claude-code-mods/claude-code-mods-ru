@@ -232,7 +232,7 @@ export async function prepareDocument($: EngineInterface, real: string, title: s
   // the print. A PDF file's count is known up front.
   let count = 0
   if (facts.exitCode === 0) count = docPageCount(facts.stdout)
-  if (!printed && (facts.exitCode !== 0 || count < 1)) throw new Error(docErrorOf('PDF is unreadable, empty or password protected', name).message)
+  if (!printed && (facts.exitCode !== 0 || count < 1)) throw new Error(docErrorOf('PDF нечитаем, пуст или защищён паролем', name).message)
   if (count > DOC_MAX_PAGES) throw new Error(docErrorOf('pages', name).message)
 
   if (await isGone($, first)) {
@@ -253,13 +253,13 @@ export async function prepareDocument($: EngineInterface, real: string, title: s
       if ((await $.process.run(['mv', '-f', partHtml, html])).exitCode !== 0) throw new Error(docErrorOf('could not be finished', name).message)
       const printedFacts = await $.process.run(pdfInfoArgv(state.pdfinfo, pdf))
       const printedCount = docPageCount(printedFacts.stdout)
-      if (printedFacts.exitCode !== 0 || printedCount < 1) throw new Error(docErrorOf('was printed with no pages', name).message)
+      if (printedFacts.exitCode !== 0 || printedCount < 1) throw new Error(docErrorOf('был напечатан без страниц', name).message)
       if (printedCount > DOC_MAX_PAGES) throw new Error(docErrorOf('pages', name).message)
       count = printedCount
     }
     await $.process.run(['mkdir', '-p', dir])
     const moved1 = await rasterPage($, pdf, dir, 1)
-    if (moved1 !== first) throw new Error(docErrorOf('poppler could not rasterize page 1', name).message)
+    if (moved1 !== first) throw new Error(docErrorOf('poppler не смог преобразовать страницу 1 в изображение', name).message)
   }
   const size = await pngSize($, first)
   return {

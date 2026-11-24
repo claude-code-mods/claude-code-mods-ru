@@ -375,7 +375,7 @@ function probe($: EngineInterface, site: string, key: string, pic: Pic) {
       state.canImage = false
       state.drawCause = causeOf(state.inTmux, state.terminalName, state.isForced)
       track('cannot_draw', { cause: state.drawCause })
-      $.ui.toast("Pictures can't show here: see the notice in the chat.")
+      $.ui.toast("Изображения здесь не отображаются: см. сообщение в чате.")
       redraw($)
     }
   }, () => undefined)
@@ -899,7 +899,7 @@ function pickVersion($: EngineInterface, site: string, shown: Shown, to: number)
     if (!one.isCompare) flip($, site, { ...shown, compare: version }, true)
     else draw($, site, version)
     redraw($, site)
-  }).catch(() => $.ui.toast('That version is gone'))
+  }).catch(() => $.ui.toast('Эта версия больше недоступна'))
 }
 
 // With history, which version is on screen, in words: "viewing v1 of 3".
@@ -945,7 +945,7 @@ function TitleBar(ui: Ui, $: EngineInterface, site: string, shown: Shown, at: { 
 export function tabsWidth(shown: Shown) {
   if (!shown.compare) return 0
   const labels = [tabLabel(shown.compare.label ?? 'Original'), tabLabel(shown.label ?? 'Updated')]
-  if (shown.frames && shown.pair) labels.push('⧉ Compare')
+  if (shown.frames && shown.pair) labels.push('⧉ Сравнить')
   if ((shown.history?.length ?? 0) > 1) labels.push(`History · ${shown.history!.length + 1}`)
   return labels.reduce((n, l) => n + l.length + 4, 0) + labels.length - 1
 }
@@ -978,7 +978,7 @@ function Tabs(ui: Ui, $: EngineInterface, site: string, shown: Shown) {
     <Box flexDirection="row" gap={1}>
       <Button key="side-before" variant={isCompare ? 'primary' : 'secondary'} label={tabLabel(shown.compare.label ?? 'Original')} onPress={() => { act('original'); tourHeard($, 'original'); restore(true) }} />
       <Button key="side-after" variant={isUpdated ? 'primary' : 'secondary'} label={tabLabel(shown.label ?? 'Updated')} onPress={() => { act('updated'); restore(false) }} />
-      {canBoth && <Button key="side-both" variant={isBoth ? 'primary' : 'secondary'} label="⧉ Compare" onPress={() => { act('compare'); tourHeard($, 'compare'); restore(false); split($, site, shown, true) }} />}
+      {canBoth && <Button key="side-both" variant={isBoth ? 'primary' : 'secondary'} label="⧉ Сравнить" onPress={() => { act('compare'); tourHeard($, 'compare'); restore(false); split($, site, shown, true) }} />}
       {hasSteps && (
         <Button key="history" variant={isHistory ? 'primary' : 'secondary'} label={`History · ${shown.history!.length + 1}`}
           onPress={() => { if (isHistory) return restore(false); act('history'); one.isHistory = true; one.changesPage = 0; redraw($, site) }} />
@@ -1240,7 +1240,7 @@ function Actions(ui: Ui, $: EngineInterface, media: Shown, source: string, isNar
           dimColor
           label="Copy path"
           onPress={(press: { surface: 'terminal' }) =>
-            act('copy_path') || void $.ui.copy({ text: source, surface: press.surface }).then(r => $.ui.toast(r.isCopied ? 'Path copied' : 'Could not copy the path'))
+            act('copy_path') || void $.ui.copy({ text: source, surface: press.surface }).then(r => $.ui.toast(r.isCopied ? 'Путь скопирован' : 'Не удалось скопировать путь'))
           }
         />
       )}
@@ -1278,7 +1278,7 @@ export const NO_PLACEHOLDERS: Record<string, string> = { warp: 'Warp', wezterm: 
 // Code doesn't recognise may be built on Ghostty or kitty (the Herdr
 // app): there pictures draw once Claude Code starts with them forced on.
 export const NO_KITTY = ['apple_terminal', 'vscode', ...Object.keys(NO_PLACEHOLDERS)]
-// 0.6.7 to 0.6.9 offered Turn on pictures in those terminals, which added this
+// 0.6.7 to 0.6.9 offered Включить изображения in those terminals, which added this
 // marked line to the shell profile. It only made the boxes appear, so it's
 // removed again at session start.
 export const PROFILE_MARK = '# show-your-work: pictures in '
@@ -1292,7 +1292,7 @@ export function profileOf(shell: string, home: string, isMac: boolean): string |
   return null
 }
 
-// The profile without the old Turn on pictures line, or null when it has none.
+// The profile without the old Включить изображения line, or null when it has none.
 export function withoutPicturesLine(profile: string): string | null {
   if (!profile.includes(PROFILE_MARK)) return null
   return profile.split('\n').filter(l => !l.includes(PROFILE_MARK)).join('\n')
@@ -1300,7 +1300,7 @@ export function withoutPicturesLine(profile: string): string | null {
 
 // Terminals that paint Claude Code's pictures but that Claude Code doesn't
 // recognise, so it keeps pictures off unless started with FORCE (it reads it
-// at launch only; set from a plugin it's too late). Turn on pictures adds one
+// at launch only; set from a plugin it's too late). Включить изображения adds one
 // line to the shell profile that sets it only in that terminal. Its mark
 // differs from PROFILE_MARK, so removePicturesLine leaves it.
 export const UNRECOGNISED: Record<string, { name: string; sh: string; fish: string }> = {
@@ -1309,7 +1309,7 @@ export const UNRECOGNISED: Record<string, { name: string; sh: string; fish: stri
 }
 export const FORCE_MARK = '# show-your-work: Claude Code images on in '
 
-// The line Turn on pictures adds for this terminal and shell.
+// The line Включить изображения adds for this terminal and shell.
 export function forceLine(shell: string, terminal: string): string | null {
   const t = UNRECOGNISED[terminal]
   if (!t) return null
@@ -1384,14 +1384,14 @@ export function cantDraw(cause: DrawCause, name: string, kind: 'picture' | 'vide
   // with it, the plugin passes them through (see tmux.ts).
   if (cause === 'tmux') return {
     title: `Restart Claude Code to show ${what} in tmux`,
-    text: `"${name}" is ready, but Claude Code keeps ${what} off inside tmux until it restarts. Press Copy command, type /exit, and paste it here to reopen this chat with ${what} on. New tmux panes have them on already.`,
-    command: `${FORCE}=1 claude --resume${id ? ` ${id}` : ''}`, label: 'Copy command', action: 'copy_resume_command',
+    text: `"${name}" is ready, but Claude Code keeps ${what} off inside tmux until it restarts. Press Скопировать команду, type /exit, and paste it here to reopen this chat with ${what} on. New tmux panes have them on already.`,
+    command: `${FORCE}=1 claude --resume${id ? ` ${id}` : ''}`, label: 'Скопировать команду', action: 'copy_resume_command',
     claude: `Claude Code keeps pictures off inside tmux, so the person saw a notice instead of ${name}. They can restart Claude Code with ${FORCE}=1 to see it.`,
   }
   if (cause === 'herdr') return {
     title: `Herdr isn't passing ${what} through`,
     text: `"${name}" is ready, but Herdr isn't passing ${what} on to your terminal. Add this to your Herdr config, restart Herdr, and ask Claude to show it again. The terminal around Herdr also has to be Ghostty or kitty.`,
-    command: '[terminal]\nkitty_graphics = true', label: 'Copy setting', action: 'copy_herdr_setting',
+    command: '[terminal]\nkitty_graphics = true', label: 'Скопировать настройку', action: 'copy_herdr_setting',
     claude: `Herdr isn't passing pictures through, so the person saw a notice instead of ${name}. They can set kitty_graphics = true under [terminal] in their Herdr config and restart Herdr, inside Ghostty or kitty.`,
   }
   // Claude Code keeps pictures off in a terminal it doesn't recognise; one
@@ -1399,8 +1399,8 @@ export function cantDraw(cause: DrawCause, name: string, kind: 'picture' | 'vide
   if (cause === 'force') {
     return {
       title: `Restart Claude Code to show ${what} here`,
-      text: `"${name}" is ready, but Claude Code doesn't recognise this terminal, so it keeps ${what} off. If it's built on Ghostty or kitty, press Copy command, type /exit, and paste it here to reopen this chat with ${what} on.`,
-      command: `${FORCE}=1 claude --resume${id ? ` ${id}` : ''}`, label: 'Copy command', action: 'copy_resume_command',
+      text: `"${name}" is ready, but Claude Code doesn't recognise this terminal, so it keeps ${what} off. If it's built on Ghostty or kitty, press Скопировать команду, type /exit, and paste it here to reopen this chat with ${what} on.`,
+      command: `${FORCE}=1 claude --resume${id ? ` ${id}` : ''}`, label: 'Скопировать команду', action: 'copy_resume_command',
       claude: `Claude Code doesn't recognise this terminal, so it kept pictures off and the person saw a notice instead of ${name}. They can restart Claude Code with ${FORCE}=1 to see it.`,
     }
   }
@@ -1409,20 +1409,20 @@ export function cantDraw(cause: DrawCause, name: string, kind: 'picture' | 'vide
   if (cause === 'iterm') return {
     title: `iTerm2 shows ${what} in fullscreen view`,
     text: `"${name}" is ready. Type /tui fullscreen to switch Claude Code to its fullscreen view (it restarts and resumes this chat), then ask Claude to show it again. Needs iTerm2 3.5 or later.`,
-    command: '/tui fullscreen', label: 'Copy command', action: 'copy_tui_fullscreen',
+    command: '/tui fullscreen', label: 'Скопировать команду', action: 'copy_tui_fullscreen',
     claude: `iTerm2 only draws pictures in Claude Code's fullscreen view, so the person saw a notice instead of ${name}. They can type /tui fullscreen and ask again.`,
   }
   // Rex paints Claude Code's pictures, but Claude Code only sends them there
   // when started with FORCE (it reads it at launch only).
-  // Turn on pictures adds the profile line (turnOnPictures) and copies the
+  // Включить изображения adds the profile line (turnOnPictures) and copies the
   // command that reopens this chat with them on.
   if (cause === 'unrecognised') {
     const where = UNRECOGNISED[state.terminalName]?.name ?? 'this terminal'
     return {
-      title: `Turn on pictures in ${where}`,
-      text: `Claude Code doesn't recognise ${where} yet, so it keeps pictures and videos off. Turn on pictures adds one line to your shell profile so they show from now on, and copies a command. Type /exit and paste it here to reopen this chat.`,
-      command: `${FORCE}=1 claude --resume${id ? ` ${id}` : ''}`, label: 'Turn on pictures', action: 'turn_on_pictures',
-      claude: `Claude Code keeps pictures off in ${where} unless it starts with ${FORCE}=1, so the person saw a notice instead of ${name}. They can press Turn on pictures on it and reopen the chat to see it.`,
+      title: `Включить изображения in ${where}`,
+      text: `Claude Code doesn't recognise ${where} yet, so it keeps pictures and videos off. Включить изображения adds one line to your shell profile so they show from now on, and copies a command. Type /exit and paste it here to reopen this chat.`,
+      command: `${FORCE}=1 claude --resume${id ? ` ${id}` : ''}`, label: 'Включить изображения', action: 'turn_on_pictures',
+      claude: `Claude Code keeps pictures off in ${where} unless it starts with ${FORCE}=1, so the person saw a notice instead of ${name}. They can press Включить изображения on it and reopen the chat to see it.`,
     }
   }
   // The desktop app's Code tab draws the plugin's card but not its pictures
@@ -1439,14 +1439,14 @@ export function cantDraw(cause: DrawCause, name: string, kind: 'picture' | 'vide
     text: known
       ? `"${name}" is ready, but ${known} can't draw ${what} the way Claude Code sends them yet. They show in Ghostty and kitty. See the list:`
       : `"${name}" is ready, but this terminal can't draw ${what}. show-your-work works in Ghostty and kitty. See the list:`,
-    link: { href: TERMINALS, after: 'Then press Copy command and paste it in one of them to open this chat there.' },
-    command: `claude --resume${id ? ` ${id}` : ''}`, label: 'Copy command', action: 'copy_resume_command',
+    link: { href: TERMINALS, after: 'Then press Скопировать команду and paste it in one of them to open this chat there.' },
+    command: `claude --resume${id ? ` ${id}` : ''}`, label: 'Скопировать команду', action: 'copy_resume_command',
     claude: `${known ?? 'this terminal'} can't draw Claude Code's pictures, so the person saw a notice instead of ${name}. Pictures show in Ghostty or kitty (list at ${TERMINALS}).`,
   }
   return {
     title: `Can't show ${what} in a background session`,
-    text: `"${name}" is ready, but this chat is running as a background session, and those can't draw ${what} in the terminal. Press Copy command and paste it in a normal terminal tab to reopen it there.`,
-    command: resumeCommand(id), label: 'Copy command', action: 'copy_resume_command',
+    text: `"${name}" is ready, but this chat is running as a background session, and those can't draw ${what} in the terminal. Press Скопировать команду and paste it in a normal terminal tab to reopen it there.`,
+    command: resumeCommand(id), label: 'Скопировать команду', action: 'copy_resume_command',
     claude: `this chat runs as a background session, which can't draw pictures, so the person saw a notice instead of ${name}. They can resume the chat in a normal terminal tab to see it.`,
   }
 }
@@ -1461,7 +1461,7 @@ function Warning(ui: Ui, $: EngineInterface, site: string, shown: Shown, width: 
         const profile = await turnOnPictures($)
         const copied = await $.ui.copy({ text: n.command, surface: press.surface }).then(r => r.isCopied, () => false)
         const where = profile ? `Added to ${profile.replace(state.home, '~')}. ` : ''
-        $.ui.toast(copied ? `${where}Copied: type /exit and paste it.` : `${where}Could not copy the command.`)
+        $.ui.toast(copied ? `${where}Copied: type /exit and paste it.` : `${where}Не удалось скопировать the command.`)
       })()
       : undefined
   return NoticeBox(ui, $, width, { ...n, copy: n.command, onPress })
@@ -1476,9 +1476,9 @@ export function expiredPrompt(shown: Shown): string {
 }
 function Expired(ui: Ui, $: EngineInterface, shown: Shown, width: number) {
   return NoticeBox(ui, $, width, {
-    title: 'This preview has expired',
-    text: `Previews are cleared after a while to save space. To see "${shown.title}" again, copy the prompt and paste it to Claude.`,
-    copy: expiredPrompt(shown), label: 'Copy prompt', action: 'copy_expired_prompt', isCalm: true,
+    title: 'Срок действия предпросмотра истёк',
+    text: `Предпросмотры со временем очищаются, чтобы экономить место. Чтобы снова увидеть "${shown.title}", скопируйте запрос и вставьте его Claude.`,
+    copy: expiredPrompt(shown), label: 'Скопировать запрос', action: 'copy_expired_prompt', isCalm: true,
   })
 }
 
@@ -1502,7 +1502,7 @@ export function NoticeBox(ui: Ui, $: EngineInterface, width: number, n: { title:
           variant="primary"
           label={n.label}
           onPress={(press: { surface: 'terminal' }) =>
-            n.onPress ? n.onPress(press) : act(n.action) || void $.ui.copy({ text: n.copy, surface: press.surface }).then(r => $.ui.toast(r.isCopied ? (n.command ? 'Copied. Paste it in your terminal.' : 'Copied. Paste it to Claude.') : 'Could not copy'))
+            n.onPress ? n.onPress(press) : act(n.action) || void $.ui.copy({ text: n.copy, surface: press.surface }).then(r => $.ui.toast(r.isCopied ? (n.command ? 'Скопировано. Вставьте в терминал.' : 'Скопировано. Вставьте Claude.') : 'Не удалось скопировать'))
           }
         />
       </Box>
@@ -1674,8 +1674,8 @@ export async function Viewer(
         let target = rendered ?? page
         if (rendered) {
           try { target = await documentView($, baseMedia) ?? undefined }
-          catch (error) { $.ui.toast(`Could not open document: ${String(error).slice(0, 160)}`); return }
-          if (!target) { $.ui.toast('Could not prepare the document preview.'); return }
+          catch (error) { $.ui.toast(`Не удалось открыть документ: ${String(error).slice(0, 160)}`); return }
+          if (!target) { $.ui.toast('Не удалось подготовить предпросмотр документа.'); return }
         }
         // A local page opens in its own small window, the way an image opens
         // in an image viewer: the same engine that rendered the preview, as

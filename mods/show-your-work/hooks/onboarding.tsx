@@ -335,21 +335,21 @@ async function prepareTour($: EngineInterface) {
         ...clip,
         // Where each step lands in the recording (its QA run, 1.3 s behind the log).
         changes: [
-          { title: 'Dates pick a range, nights in the summary', at: at(5.25) },
-          { title: 'Invalid emails rejected with a message', at: at(6.85) },
-          { title: 'Invites become chips', at: at(9.1) },
-          { title: 'Create trip opens the trip', at: at(10.5) },
+          { title: 'Даты выбирают диапазон, ночи видны в сводке', at: at(5.25) },
+          { title: 'Некорректные адреса почты отклоняются с сообщением', at: at(6.85) },
+          { title: 'Приглашения превращаются в метки', at: at(9.1) },
+          { title: 'Кнопка Create trip открывает поездку', at: at(10.5) },
         ],
         checks: [
           { name: 'Dates pick a range', ok: true, at: at(5.25) },
           { name: 'Bad emails get a message', ok: true, at: at(6.85) },
-          { name: 'Invites become chips', ok: true, at: at(9.1) },
-          { name: 'Create trip opens the trip', ok: true, at: at(10.7) },
-          { name: 'Labels for screen readers', ok: true, at: at(11.2) },
+          { name: 'Приглашения превращаются в метки', ok: true, at: at(9.1) },
+          { name: 'Кнопка Create trip открывает поездку', ok: true, at: at(10.7) },
+          { name: 'Подписи для скринридеров', ok: true, at: at(11.2) },
         ],
         summary: [
-          { label: 'Trip form works end to end', ok: true, passed: 4, total: 4 },
-          { label: 'Labels for screen readers', ok: true, passed: 1, total: 1 },
+          { label: 'Форма поездки работает от начала до конца', ok: true, passed: 4, total: 4 },
+          { label: 'Подписи для скринридеров', ok: true, passed: 1, total: 1 },
         ],
       } as Shown
     })().catch(() => prepare($, `${dir}/hero.jpg`, 'Tern homepage').catch(() => null))
@@ -359,7 +359,7 @@ async function prepareTour($: EngineInterface) {
     if (tourMedia.compare !== undefined) return
     tourMedia.compare = await (async () => ({
       ...(await prepare($, `${dir}/hero.jpg`, 'Tern homepage')),
-      changes: [{ title: 'Trip card beside the headline' }, { title: 'Friends and trip count under the button' }],
+      changes: [{ title: 'Карточка поездки рядом с заголовком' }, { title: 'Друзья и число поездок под кнопкой' }],
       compare: await prepare($, `${dir}/direction-b.jpg`, 'Original'),
     }) as Shown)().catch(() => null)
     await ready()
@@ -370,13 +370,13 @@ async function prepareTour($: EngineInterface) {
       const hero = `${dir}/hero.jpg`
       return {
         ...(await prepare($, `${dir}/breakpoints.jpg`, 'Tern homepage')),
-        changes: [{ title: 'Desktop, tablet and phone' }],
-        note: 'Desktop, tablet and phone',
+        changes: [{ title: 'Компьютер, планшет и телефон' }],
+        note: 'Компьютер, планшет и телефон',
         compare: await preparedOf($, hero),
         history: [
           { path: `${dir}/concepts.jpg`, note: 'Four directions' },
           { path: `${dir}/direction-b.jpg`, note: 'Direction B, full size' },
-          { path: hero, note: 'Trip card beside the headline' },
+          { path: hero, note: 'Карточка поездки рядом с заголовком' },
         ],
         historyAt: 2,
       } as Shown

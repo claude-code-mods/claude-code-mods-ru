@@ -37,11 +37,11 @@ export function layoutOf(room: Room): Layout {
   // The window's border and padding; a pane has no row border of its own.
   const inner = room.columns - (room.isPane ? 6 : 10)
   const space = inner - (isWide ? SIDE + 3 : 0)
-  // Picture size (settings): Large is Standard times SIZE_STEP, every limit
+  // Размер изображений (settings): Большой is Обычный times SIZE_STEP, every limit
   // scaled by the same fixed factor, so a picture's size stays predictable.
   const step = sizeStep()
   const maxCols = Math.max(1, Math.max(Math.min(space, 24), Math.min(space, Math.round((room.isPane ? 220 : 120) * step))))
-  // Inline, a picture takes at most 55% of the screen's height (82% in Large);
+  // Inline, a picture takes at most 55% of the screen's height (82% in Большой);
   // a pane keeps 12 rows for its controls.
   const fullRows = room.isPane ? Math.max(6, room.rows - 12) : Math.max(8, Math.min(Math.round(40 * step), Math.floor(room.rows * 0.55 * step)))
   // iTerm2 draws a picture only while all of it is on screen: the player
@@ -55,7 +55,7 @@ export const drawBox = (width: number, height: number, layout: Layout, px: Cell 
   fit(width, height, layout.maxCols, layout.maxRows, px, true)
 // Enough for the box's width and, given the picture's shape, its height:
 // boxes are whole rows, so a wide picture sized by width alone falls short.
-// Large (Picture size) scales every size limit by this one factor.
+// Большой (Размер изображений) scales every size limit by this one factor.
 export const SIZE_STEP = 1.5
 export const sizeStep = () => (settings.standard_size ? 1 : SIZE_STEP)
 export const pixelsFor = (box: { columns: number; rows?: number }, px: Cell | null, aspect = 0) =>
@@ -103,7 +103,7 @@ export const CELL_SH = `perl -e 'open(T, "</dev/tty") or exit 1; my $w = " " x 8
 // The tty's size is in screen pixels in Ghostty, kitty and WezTerm (measured:
 // a 157-column Ghostty window on a 1280-point Retina screen reports 2520 px).
 // Multiplying it by the screen's scale, as 0.6.0 did, made every cell twice
-// its size, so pictures were made twice as wide as needed and, in Large, drawn
+// its size, so pictures were made twice as wide as needed and, in Большой, drawn
 // in boxes half as wide as they should be. A cell under POINT_CELL wide on a
 // Retina screen can only be points (no readable font is that narrow in
 // pixels), so only then is it scaled.
@@ -245,14 +245,14 @@ export function nicknameOf(id: string): string {
 
 // An installed copy runs from Claude Code's plugin cache. One loaded from a
 // folder (--plugin-dir) is someone working on the plugin: it sends nothing.
-export const isInstalledCopy = (root: string) => /\/plugins\/cache\//.test(root)
+export const isУстановленоCopy = (root: string) => /\/plugins\/cache\//.test(root)
 
 // SHOW_YOUR_WORK_TELEMETRY=0, DO_NOT_TRACK=1 or CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: nothing is sent.
 export const isStatsBlocked = (optOut?: string, dnt?: string, quiet?: string) =>
   /^(0|false|off|no)$/i.test(optOut ?? '') || /^(1|true)$/i.test(dnt ?? '') || !!quiet
 
 export async function startTelemetry($: EngineInterface, context: Props) {
-  if (!POSTHOG_PROJECT || !isInstalledCopy($.plugin.root)) return
+  if (!POSTHOG_PROJECT || !isУстановленоCopy($.plugin.root)) return
   const optOut = await $.env.get('SHOW_YOUR_WORK_TELEMETRY')
   const dnt = await $.env.get('DO_NOT_TRACK')
   const quiet = await $.env.get('CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC')
@@ -476,7 +476,7 @@ export function shiftTimes<T extends { at?: number }>(list: T[] | undefined, lea
 }
 
 // HTML is rendered as a fixed viewport, not an interactive browser. The
-// original stays the Open page target; only its screenshot enters history.
+// original stays the Открыть page target; only its screenshot enters history.
 export const isPage = (path: string) => /\.html?$/i.test(path)
 // The page's own window: the browser engine as a small standalone viewer, the
 // way an image opens in an image viewer — no tabs, no address bar, and none of
@@ -486,7 +486,7 @@ export const isPage = (path: string) => /\.html?$/i.test(path)
 // Each path segment percent-encoded, so a name with spaces, `#`, `%` or `?`
 // names the right file.
 const fileUrl = (page: string) => `file://${page.split('/').map(encodeURIComponent).join('/')}`
-export const htmlOpenArgv = (chrome: string, page: string) => [
+export const htmlОткрытьArgv = (chrome: string, page: string) => [
   chrome, '--no-first-run', '--no-default-browser-check', `--app=${fileUrl(page)}`, '--window-size=960,720',
   `--user-data-dir=${state.TMP}/page-viewer.profile`,
 ]
@@ -618,7 +618,7 @@ async function cutWave($: EngineInterface, real: string, out: string): Promise<s
 
 // An audio file becomes a clip of its own waveform and plays like any other:
 // the frames, the play timer, the scrub bar, the skips and the sound are the
-// player's own, and the person's file stays what Open and Save reach for.
+// player's own, and the person's file stays what Открыть and Save reach for.
 export async function prepareAudio($: EngineInterface, real: string, title: string, key?: string): Promise<Shown> {
   if (!state.hasVideoTools) {
     state.hasVideoTools = (await Promise.all([exists($, state.ffmpeg), exists($, state.ffprobe)])).every(Boolean)
@@ -657,69 +657,69 @@ export function noticeOf(err: unknown, path: string, homeDir = ''): Notice {
   const shown = homeDir && path.startsWith(`${homeDir}/`) ? `~${path.slice(homeDir.length)}` : path
   const name = path.split('/').pop() || path
   if (raw.includes(NO_FFMPEG_LINUX)) return {
-    kind: 'no_ffmpeg', title: 'This needs ffmpeg', message: NO_FFMPEG_LINUX, prompt: FFMPEG_PROMPT_LINUX,
+    kind: 'no_ffmpeg', title: 'Для этого нужен ffmpeg', message: NO_FFMPEG_LINUX, prompt: FFMPEG_PROMPT_LINUX,
     text: "ffmpeg isn't installed, so videos and pictures other than PNG can't show here. Copy the prompt and paste it to Claude to install it, or install it yourself, for example `sudo apt install ffmpeg`.",
   }
   if (raw.includes(NO_FFMPEG)) return {
-    kind: 'no_ffmpeg', title: 'Videos need ffmpeg', message: NO_FFMPEG, prompt: FFMPEG_PROMPT,
+    kind: 'no_ffmpeg', title: 'Для видео нужен ffmpeg', message: NO_FFMPEG, prompt: FFMPEG_PROMPT,
     text: "ffmpeg isn't installed, so this video can't play here. Pictures still work. Copy the prompt and paste it to Claude to install it, or run `brew install ffmpeg` yourself. No Homebrew? Get it from brew.sh first.",
   }
   if (/^not audio:/i.test(raw)) return {
-    kind: 'not_image', title: "This isn't an audio file",
+    kind: 'not_image', title: "Это не аудиофайл",
     text: `${name} isn't MP3 or WAV, so it can't play here. Convert it to WAV and show it again.`,
     message: `${shown} isn't an audio file (show_audio opens MP3 and WAV). Convert it, for example to WAV with ffmpeg, then show it again; use show_video for a video with sound.`,
     prompt: `Convert ${shown} to WAV (or MP3) for me, then show it to me again.`,
   }
   if (/does not contain any stream|matches no streams|no frames in|Output file is empty/i.test(raw)) return AUDIO.test(path) ? {
-    kind: 'no_picture', title: "This audio can't be read",
+    kind: 'no_picture', title: "Не удалось прочитать этот аудиофайл",
     text: `${name} is too short or empty to draw, so there's nothing to play.`,
     message: `${shown} is too short or empty to play. Don't retry it; show a real audio file instead.`,
     prompt: `${shown} is too short to play. Find a real audio file and show it to me again.`,
   } : {
-    kind: 'no_picture', title: 'This video has no picture',
+    kind: 'no_picture', title: 'В этом видео нет изображения',
     text: `${name} has sound but no picture, so there's nothing to play.`,
     message: `${shown} has no video track (sound only), so there's nothing to play. Don't retry it; show a file with a picture instead.`,
     prompt: `${shown} has no picture, only sound. Find the right video and show it to me again.`,
   }
   if (/ffmpeg could not read|Invalid data|moov atom|could not find codec|Error opening input/i.test(raw)) return AUDIO.test(path) ? {
-    kind: 'broken_video', title: "This audio can't be read",
+    kind: 'broken_video', title: "Не удалось прочитать этот аудиофайл",
     text: `${name} couldn't be opened as audio. It may be cut off, still being written, or not really an audio file.`,
     message: `${shown} couldn't be read as audio: it's damaged, unfinished (still being recorded or cut off), or not an audio file. Re-export it, then show it again.`,
     prompt: `${shown} couldn't be read as audio. Check it, re-export it if it's broken, then show it to me again.`,
   } : {
-    kind: 'broken_video', title: "This video can't be read",
+    kind: 'broken_video', title: "Не удалось прочитать это видео",
     text: `${name} couldn't be opened as a video. It may be cut off, still being written, or not really a video.`,
     message: `${shown} couldn't be read as a video: it's damaged, unfinished (still recording or cut off), or not a video. Re-export or re-record it, then show it again.`,
     prompt: `${shown} couldn't be read as a video. Check it, re-export or re-record it if it's broken, then show it to me again.`,
   }
   if (/could not convert|not an image|Cannot extract image|sips/i.test(raw)) return {
-    kind: 'not_image', title: "This isn't a picture",
+    kind: 'not_image', title: "Это не изображение",
     text: `${name} isn't a picture, so it can't be shown. Pictures can be PNG, JPEG, WebP, GIF or TIFF.`,
     message: `${shown} isn't a picture (show_image opens PNG, JPEG, WebP, GIF and TIFF). Show an image file, or use show_video for a video.`,
     prompt: `${shown} isn't a picture. Show me the right file instead.`,
   }
   if (/ENOENT|no such file|not found/i.test(raw)) return {
-    kind: 'missing', title: 'File not found',
+    kind: 'missing', title: 'Файл не найден',
     text: `There's no file at ${shown}.`,
     message: `There's no file at ${shown}. Check the path (it may have moved or not been saved yet), then show it again.`,
     prompt: `There's no file at ${shown}. Find the right file and show it to me again.`,
   }
   if (/pages need Chrome or Chromium/i.test(raw)) return {
-    kind: 'other', title: 'Pages need a browser',
+    kind: 'other', title: 'Для страниц нужен браузер',
     text: `${name} is an HTML page, and no Chrome or Chromium was found to render it. Copy the prompt and paste it to Claude to install one, or install it yourself.`,
     message: `${shown} is an HTML page, and no Chrome or Chromium was found to render it. Screenshot it with headless Playwright instead and show that with show_image.`,
     prompt: `Install Google Chrome or Chromium for me, then restart Claude Code. After that, show ${shown} to me again.`,
   }
   // A page Chrome couldn't render still reaches the person as a picture.
   if (/the page couldn't be rendered/i.test(raw)) return {
-    kind: 'other', title: "Couldn't render the page",
+    kind: 'other', title: "Не удалось отобразить страницу",
     text: `${name} couldn't be rendered as a page. Claude can screenshot it another way and show that.`,
     message: `${shown} couldn't be rendered as a page. Screenshot it with headless Playwright instead and show that with show_image.`,
     prompt: `${shown} couldn't be rendered as a page. Screenshot it with headless Playwright and show it to me with show_image.`,
   }
   const detail = (raw.split('\n')[0] ?? '').replace(/\/(?:private\/)?tmp\/\S+|\S*\/\.show-your-work\/\S+/g, name).slice(0, 160)
   return {
-    kind: 'other', title: "Couldn't show it",
+    kind: 'other', title: "Не удалось показать",
     text: `${name} couldn't be shown: ${detail}`,
     message: `${shown} couldn't be shown: ${detail}`,
     prompt: `${shown} couldn't be shown (${detail}). Look into it and show it to me again.`,
@@ -763,7 +763,7 @@ export async function prepareVideo($: EngineInterface, real: string, title: stri
   const facts = await $.process.run([state.ffprobe, '-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=width,height,codec_name:format=duration', '-of', 'default=nw=1', real])
   const field = (name: string) => Number(new RegExp(`^${name}=([0-9.]+)`, 'm').exec(facts.stdout)?.[1] ?? Number.NaN)
   hwDecode.set(real, state.isMac && /^codec_name=(h264|hevc)$/m.test(facts.stdout))
-  // Frames stay within PX_MAX in every Picture size (see sharpen).
+  // Frames stay within PX_MAX in every Размер изображений (see sharpen).
   const cut = Math.min(PX_MAX, cutAt ?? frameWidth(field('width'), field('height'), state.termSize, state.cell))
   const own = field('width') > 0 && field('height') > 0 ? { sourceWidth: field('width'), sourceHeight: field('height') } : {}
   // A clip is cut once per width: a bigger window cuts it again, bigger.
@@ -1893,7 +1893,7 @@ export async function prepareDocument($: EngineInterface, real: string, title: s
   return {
     kind: 'document', path: first, source: real, width: size.width, height: size.height,
     title, generation: ++state.generation, pages: { dir, count, pdf },
-    ...(printed ? { documentOpen: html } : {}),
+    ...(printed ? { documentОткрыть: html } : {}),
   }
 }
 
@@ -1903,7 +1903,7 @@ export async function documentView($: EngineInterface, media: Shown): Promise<st
   const source = media.origin ?? media.source
   if (!source) return null
   const fresh = await prepareDocument($, source, media.title)
-  return fresh.documentOpen ?? null
+  return fresh.documentОткрыть ?? null
 }
 
 // The raster of one page, made when it is first asked for. A printed document
@@ -2154,7 +2154,7 @@ export const STOPS: Stop[] = [
   { tag: 'Press Play to watch it', spot: 'play', goal: 'play', media: 'splash' },
   { tag: 'Click a change to jump to that moment', spot: 'changes', goal: 'change_jump', media: 'recording' },
   { tag: 'Press Original to see it before the change', spot: 'tabs', goal: 'original', media: 'compare' },
-  { tag: 'Open History, then pick a version', spot: 'history', goal: 'version_pick', media: 'history' },
+  { tag: 'Открыть History, then pick a version', spot: 'history', goal: 'version_pick', media: 'history' },
   { tag: 'Now ask Claude to show you what it builds' },
 ]
 
@@ -2576,7 +2576,7 @@ export const player = (site: string): Player => {
   return one
 }
 
-// Opens a file, folder or URL with the desktop's default app.
+// Открытьs a file, folder or URL with the desktop's default app.
 //
 // On Linux, xdg-open on a desktop it doesn't recognise (niri, sway…) runs the
 // app in the foreground until it quits, and $.process.run kills whatever is
@@ -2622,13 +2622,13 @@ const CONTROLS_MIN = 64
 const DOC_CONTROLS_MIN = 80
 
 // A picture is drawn from a copy that fits its box. Ghostty crops a picture
-// bigger than its box instead of shrinking it (a Large video made for a wide
+// bigger than its box instead of shrinking it (a Большой video made for a wide
 // window was cut off after the window narrowed), and never enlarges one
 // smaller than its box. So copies are made at fixed widths (COPY_WIDTHS), in
 // the background from the original file, and each draw uses the largest copy
 // no wider than the box needs: drawn whole, at most one step smaller than the
 // box. Copies are kept and reused, so resizing back and forth makes nothing
-// new. Stills stop at twice their own width (three times in Large; an icon
+// new. Stills stop at twice their own width (three times in Большой; an icon
 // stays small) and MAX_STILL. Video frames stop at PX_MAX in both sizes:
 // bigger frames cost cutting time and memory on every frame.
 export const COPY_WIDTHS = [480, 640, 800, 1000, 1280, 1600, 2000, 2400, 3200]
@@ -2663,10 +2663,10 @@ function fitCopy($: EngineInterface, site: string, m: Shown, need: number) {
   let made = copies.get(key)
   if (!made) copies.set(key, (made = new Map()))
   if (!made.has(m.width)) made.set(m.width, { path: m.path, width: m.width, height: m.height, generation: m.generation, frames: m.frames })
-  // Standard keeps its behaviour from before Picture size: the widest copy is
+  // Обычный keeps its behaviour from before Размер изображений: the widest copy is
   // drawn, and a copy is only ever made bigger, at the width the box needs.
   // Its box hardly changes between window sizes, so it never pays for copies
-  // after a resize. Large draws and makes fitted copies (above).
+  // after a resize. Большой draws and makes fitted copies (above).
   const isFitted = !settings.standard_size
   const widths = [...made.keys()]
   const best = made.get(isFitted ? bestCopy(widths, need)! : Math.max(...widths))!
@@ -2677,12 +2677,12 @@ function fitCopy($: EngineInterface, site: string, m: Shown, need: number) {
   const width = isFitted ? Math.min(copyWidthFor(want), limit) : want
   const source = m.source
   // Already drawn from the copy for this box, or close enough: a bigger copy
-  // must gain 15%, and (Large only) a smaller one is only needed when this
+  // must gain 15%, and (Большой only) a smaller one is only needed when this
   // one doesn't fit.
   const isFine = isFitted ? m.width <= need * FIT_SLACK && m.width * 1.15 > width : m.width * 1.15 > width
   if (!source) return
   if (!isFine) makeCopy($, site, m, source, made, width, need)
-  // In Large a video also gets one small fallback copy as soon as it's shown.
+  // In Большой a video also gets one small fallback copy as soon as it's shown.
   // A new window size needs its own copy, which takes a few seconds to cut;
   // meanwhile the fallback is drawn (smaller, but whole) instead of the big
   // copy, which the terminal would crop.
@@ -2885,7 +2885,7 @@ function probe($: EngineInterface, site: string, key: string, pic: Pic) {
       state.canImage = false
       state.drawCause = causeOf(state.inTmux, state.terminalName, state.isForced)
       track('cannot_draw', { cause: state.drawCause })
-      $.ui.toast("Pictures can't show here: see the notice in the chat.")
+      $.ui.toast("Изображения здесь не отображаются: см. сообщение в чате.")
       redraw($)
     }
   }, () => undefined)
@@ -2931,9 +2931,9 @@ function resized($: EngineInterface, site: string, media: Shown, shown: Shown, b
   // Once the box has held for SETTLE_MS the frame on screen is sent again, and
   // once more after AGAIN_MS in case that send itself raced a late layout.
   const ticket = (one.resizeTicket = boxGenerations)
-  const isLatest = () => players.get(site)?.resizeTicket === ticket
+  const isПоследняя = () => players.get(site)?.resizeTicket === ticket
   const resend = (isAgain: boolean) => {
-    if (!isLatest()) return
+    if (!isПоследняя()) return
     event('resend', { site, generation: ticket, isAgain })
     draw($, site, media, shown)
   }
@@ -3409,7 +3409,7 @@ function pickVersion($: EngineInterface, site: string, shown: Shown, to: number)
     if (!one.isCompare) flip($, site, { ...shown, compare: version }, true)
     else draw($, site, version)
     redraw($, site)
-  }).catch(() => $.ui.toast('That version is gone'))
+  }).catch(() => $.ui.toast('Эта версия больше недоступна'))
 }
 
 // With history, which version is on screen, in words: "viewing v1 of 3".
@@ -3455,7 +3455,7 @@ function TitleBar(ui: Ui, $: EngineInterface, site: string, shown: Shown, at: { 
 export function tabsWidth(shown: Shown) {
   if (!shown.compare) return 0
   const labels = [tabLabel(shown.compare.label ?? 'Original'), tabLabel(shown.label ?? 'Updated')]
-  if (shown.frames && shown.pair) labels.push('⧉ Compare')
+  if (shown.frames && shown.pair) labels.push('⧉ Сравнить')
   if ((shown.history?.length ?? 0) > 1) labels.push(`History · ${shown.history!.length + 1}`)
   return labels.reduce((n, l) => n + l.length + 4, 0) + labels.length - 1
 }
@@ -3488,7 +3488,7 @@ function Tabs(ui: Ui, $: EngineInterface, site: string, shown: Shown) {
     <Box flexDirection="row" gap={1}>
       <Button key="side-before" variant={isCompare ? 'primary' : 'secondary'} label={tabLabel(shown.compare.label ?? 'Original')} onPress={() => { act('original'); tourHeard($, 'original'); restore(true) }} />
       <Button key="side-after" variant={isUpdated ? 'primary' : 'secondary'} label={tabLabel(shown.label ?? 'Updated')} onPress={() => { act('updated'); restore(false) }} />
-      {canBoth && <Button key="side-both" variant={isBoth ? 'primary' : 'secondary'} label="⧉ Compare" onPress={() => { act('compare'); tourHeard($, 'compare'); restore(false); split($, site, shown, true) }} />}
+      {canBoth && <Button key="side-both" variant={isBoth ? 'primary' : 'secondary'} label="⧉ Сравнить" onPress={() => { act('compare'); tourHeard($, 'compare'); restore(false); split($, site, shown, true) }} />}
       {hasSteps && (
         <Button key="history" variant={isHistory ? 'primary' : 'secondary'} label={`History · ${shown.history!.length + 1}`}
           onPress={() => { if (isHistory) return restore(false); act('history'); one.isHistory = true; one.changesPage = 0; redraw($, site) }} />
@@ -3658,7 +3658,7 @@ function Report(ui: Ui, $: EngineInterface, site: string, shown: Shown, prLink: 
       )}
       {(versionPages[versionPage] ?? []).map(({ i, lines }, k) => {
         const isOn = i === onSide
-        const isLatest = i === history.length
+        const isПоследняя = i === history.length
         return (
           <Box key={`version-${i}`} flexDirection="row" gap={1} marginTop={k ? 1 : 0}>
             <Text color={isOn ? 'suggestion' : undefined} dimColor={!isOn}>{`${i + 1}.`.padStart(3)}</Text>
@@ -3667,7 +3667,7 @@ function Report(ui: Ui, $: EngineInterface, site: string, shown: Shown, prLink: 
                 <Button key={`version-${i}-${j}`} plain label={line} hover={{ inverse: true }} onPress={() => { act('version_pick'); tourHeard($, 'version_pick'); pickVersion($, site, shown, i) }} />
               ))}
             </Box>
-            {(isOn || isLatest) && (
+            {(isOn || isПоследняя) && (
               <Text backgroundColor={isOn ? 'suggestion' : PILL} color={isOn ? 'inverseText' : undefined}>
                 {isOn ? ' viewing ' : ' latest '}
               </Text>
@@ -3741,7 +3741,7 @@ function Actions(ui: Ui, $: EngineInterface, media: Shown, source: string, isNar
       {!source.startsWith(`${state.home}/Downloads/`) ? (
         <Button key="keep" plain dimColor label="Save to Downloads" onPress={() => { act('save'); void keep() }} />
       ) : (
-        <Button key="reveal" plain dimColor label={state.isMac ? 'Show in Finder' : 'Show in folder'} onPress={() => act('reveal') || void $.process.run(state.isMac ? ['open', '-R', source] : openArgv(source.slice(0, source.lastIndexOf('/')) || '/')).then(r => done(r, state.isMac ? 'Shown in Finder' : 'Opened the folder', 'folders', source))} />
+        <Button key="reveal" plain dimColor label={state.isMac ? 'Show in Finder' : 'Show in folder'} onPress={() => act('reveal') || void $.process.run(state.isMac ? ['open', '-R', source] : openArgv(source.slice(0, source.lastIndexOf('/')) || '/')).then(r => done(r, state.isMac ? 'Shown in Finder' : 'Открытьed the folder', 'folders', source))} />
       )}
       {!isNarrow && (
         <Button
@@ -3750,7 +3750,7 @@ function Actions(ui: Ui, $: EngineInterface, media: Shown, source: string, isNar
           dimColor
           label="Copy path"
           onPress={(press: { surface: 'terminal' }) =>
-            act('copy_path') || void $.ui.copy({ text: source, surface: press.surface }).then(r => $.ui.toast(r.isCopied ? 'Path copied' : 'Could not copy the path'))
+            act('copy_path') || void $.ui.copy({ text: source, surface: press.surface }).then(r => $.ui.toast(r.isCopied ? 'Путь скопирован' : 'Не удалось скопировать путь'))
           }
         />
       )}
@@ -3894,14 +3894,14 @@ export function cantDraw(cause: DrawCause, name: string, kind: 'picture' | 'vide
   // with it, the plugin passes them through (see tmux.ts).
   if (cause === 'tmux') return {
     title: `Restart Claude Code to show ${what} in tmux`,
-    text: `"${name}" is ready, but Claude Code keeps ${what} off inside tmux until it restarts. Press Copy command, type /exit, and paste it here to reopen this chat with ${what} on. New tmux panes have them on already.`,
-    command: `${FORCE}=1 claude --resume${id ? ` ${id}` : ''}`, label: 'Copy command', action: 'copy_resume_command',
+    text: `"${name}" is ready, but Claude Code keeps ${what} off inside tmux until it restarts. Press Скопировать команду, type /exit, and paste it here to reopen this chat with ${what} on. New tmux panes have them on already.`,
+    command: `${FORCE}=1 claude --resume${id ? ` ${id}` : ''}`, label: 'Скопировать команду', action: 'copy_resume_command',
     claude: `Claude Code keeps pictures off inside tmux, so the person saw a notice instead of ${name}. They can restart Claude Code with ${FORCE}=1 to see it.`,
   }
   if (cause === 'herdr') return {
     title: `Herdr isn't passing ${what} through`,
     text: `"${name}" is ready, but Herdr isn't passing ${what} on to your terminal. Add this to your Herdr config, restart Herdr, and ask Claude to show it again. The terminal around Herdr also has to be Ghostty or kitty.`,
-    command: '[terminal]\nkitty_graphics = true', label: 'Copy setting', action: 'copy_herdr_setting',
+    command: '[terminal]\nkitty_graphics = true', label: 'Скопировать настройку', action: 'copy_herdr_setting',
     claude: `Herdr isn't passing pictures through, so the person saw a notice instead of ${name}. They can set kitty_graphics = true under [terminal] in their Herdr config and restart Herdr, inside Ghostty or kitty.`,
   }
   // Claude Code keeps pictures off in a terminal it doesn't recognise; one
@@ -3909,8 +3909,8 @@ export function cantDraw(cause: DrawCause, name: string, kind: 'picture' | 'vide
   if (cause === 'force') {
     return {
       title: `Restart Claude Code to show ${what} here`,
-      text: `"${name}" is ready, but Claude Code doesn't recognise this terminal, so it keeps ${what} off. If it's built on Ghostty or kitty, press Copy command, type /exit, and paste it here to reopen this chat with ${what} on.`,
-      command: `${FORCE}=1 claude --resume${id ? ` ${id}` : ''}`, label: 'Copy command', action: 'copy_resume_command',
+      text: `"${name}" is ready, but Claude Code doesn't recognise this terminal, so it keeps ${what} off. If it's built on Ghostty or kitty, press Скопировать команду, type /exit, and paste it here to reopen this chat with ${what} on.`,
+      command: `${FORCE}=1 claude --resume${id ? ` ${id}` : ''}`, label: 'Скопировать команду', action: 'copy_resume_command',
       claude: `Claude Code doesn't recognise this terminal, so it kept pictures off and the person saw a notice instead of ${name}. They can restart Claude Code with ${FORCE}=1 to see it.`,
     }
   }
@@ -3919,7 +3919,7 @@ export function cantDraw(cause: DrawCause, name: string, kind: 'picture' | 'vide
   if (cause === 'iterm') return {
     title: `iTerm2 shows ${what} in fullscreen view`,
     text: `"${name}" is ready. Type /tui fullscreen to switch Claude Code to its fullscreen view (it restarts and resumes this chat), then ask Claude to show it again. Needs iTerm2 3.5 or later.`,
-    command: '/tui fullscreen', label: 'Copy command', action: 'copy_tui_fullscreen',
+    command: '/tui fullscreen', label: 'Скопировать команду', action: 'copy_tui_fullscreen',
     claude: `iTerm2 only draws pictures in Claude Code's fullscreen view, so the person saw a notice instead of ${name}. They can type /tui fullscreen and ask again.`,
   }
   // Rex paints Claude Code's pictures, but Claude Code only sends them there
@@ -3939,9 +3939,9 @@ export function cantDraw(cause: DrawCause, name: string, kind: 'picture' | 'vide
   // (#18): the file opens in the system viewer instead.
   if (cause === 'desktop') return {
     title: `The desktop app can't show ${what} here`,
-    text: `"${name}" is ready, but the Claude desktop app doesn't draw ${what} inside the chat. Press Open to see it, or run this chat in Ghostty or kitty to see ${what} inline.`,
-    command: '', label: 'Open', action: 'open_file',
-    claude: `the Claude desktop app can't draw pictures in the chat, so the person saw a notice instead of ${name}. They can press Open on it to view the file.`,
+    text: `"${name}" is ready, but the Claude desktop app doesn't draw ${what} inside the chat. Press Открыть to see it, or run this chat in Ghostty or kitty to see ${what} inline.`,
+    command: '', label: 'Открыть', action: 'open_file',
+    claude: `the Claude desktop app can't draw pictures in the chat, so the person saw a notice instead of ${name}. They can press Открыть on it to view the file.`,
   }
   const known = NO_PLACEHOLDERS[state.terminalName]
   if (cause === 'terminal') return {
@@ -3949,14 +3949,14 @@ export function cantDraw(cause: DrawCause, name: string, kind: 'picture' | 'vide
     text: known
       ? `"${name}" is ready, but ${known} can't draw ${what} the way Claude Code sends them yet. They show in Ghostty and kitty. See the list:`
       : `"${name}" is ready, but this terminal can't draw ${what}. show-your-work works in Ghostty and kitty. See the list:`,
-    link: { href: TERMINALS, after: 'Then press Copy command and paste it in one of them to open this chat there.' },
-    command: `claude --resume${id ? ` ${id}` : ''}`, label: 'Copy command', action: 'copy_resume_command',
+    link: { href: TERMINALS, after: 'Then press Скопировать команду and paste it in one of them to open this chat there.' },
+    command: `claude --resume${id ? ` ${id}` : ''}`, label: 'Скопировать команду', action: 'copy_resume_command',
     claude: `${known ?? 'this terminal'} can't draw Claude Code's pictures, so the person saw a notice instead of ${name}. Pictures show in Ghostty or kitty (list at ${TERMINALS}).`,
   }
   return {
     title: `Can't show ${what} in a background session`,
-    text: `"${name}" is ready, but this chat is running as a background session, and those can't draw ${what} in the terminal. Press Copy command and paste it in a normal terminal tab to reopen it there.`,
-    command: resumeCommand(id), label: 'Copy command', action: 'copy_resume_command',
+    text: `"${name}" is ready, but this chat is running as a background session, and those can't draw ${what} in the terminal. Press Скопировать команду and paste it in a normal terminal tab to reopen it there.`,
+    command: resumeCommand(id), label: 'Скопировать команду', action: 'copy_resume_command',
     claude: `this chat runs as a background session, which can't draw pictures, so the person saw a notice instead of ${name}. They can resume the chat in a normal terminal tab to see it.`,
   }
 }
@@ -3971,7 +3971,7 @@ function Warning(ui: Ui, $: EngineInterface, site: string, shown: Shown, width: 
         const profile = await turnOnPictures($)
         const copied = await $.ui.copy({ text: n.command, surface: press.surface }).then(r => r.isCopied, () => false)
         const where = profile ? `Added to ${profile.replace(state.home, '~')}. ` : ''
-        $.ui.toast(copied ? `${where}Copied: type /exit and paste it.` : `${where}Could not copy the command.`)
+        $.ui.toast(copied ? `${where}Copied: type /exit and paste it.` : `${where}Не удалось скопировать the command.`)
       })()
       : undefined
   return NoticeBox(ui, $, width, { ...n, copy: n.command, onPress })
@@ -3986,9 +3986,9 @@ export function expiredPrompt(shown: Shown): string {
 }
 function Expired(ui: Ui, $: EngineInterface, shown: Shown, width: number) {
   return NoticeBox(ui, $, width, {
-    title: 'This preview has expired',
+    title: 'Срок действия предпросмотра истёк',
     text: `Previews are cleared after a while to save space. To see "${shown.title}" again, copy the prompt and paste it to Claude.`,
-    copy: expiredPrompt(shown), label: 'Copy prompt', action: 'copy_expired_prompt', isCalm: true,
+    copy: expiredPrompt(shown), label: 'Скопировать запрос', action: 'copy_expired_prompt', isCalm: true,
   })
 }
 
@@ -4012,7 +4012,7 @@ export function NoticeBox(ui: Ui, $: EngineInterface, width: number, n: { title:
           variant="primary"
           label={n.label}
           onPress={(press: { surface: 'terminal' }) =>
-            n.onPress ? n.onPress(press) : act(n.action) || void $.ui.copy({ text: n.copy, surface: press.surface }).then(r => $.ui.toast(r.isCopied ? (n.command ? 'Copied. Paste it in your terminal.' : 'Copied. Paste it to Claude.') : 'Could not copy'))
+            n.onPress ? n.onPress(press) : act(n.action) || void $.ui.copy({ text: n.copy, surface: press.surface }).then(r => $.ui.toast(r.isCopied ? (n.command ? 'Скопировано. Вставьте в терминал.' : 'Скопировано. Вставьте Claude.') : 'Не удалось скопировать'))
           }
         />
       </Box>
@@ -4170,12 +4170,12 @@ export async function Viewer(
   const page = (at && /^https?:\/\/[^\s]+$/i.test(at) ? at : undefined) ?? (/\.html?$/i.test(source) ? source : undefined)
   // A printed document's rendered page: the same preview the card shows, as
   // its own small window — the raw Markdown would land in a text editor.
-  const rendered = media.kind === 'document' ? media.documentOpen : undefined
+  const rendered = media.kind === 'document' ? media.documentОткрыть : undefined
   const opener = (
     <Button
       key="page"
       plain
-      label={rendered ? '↗ Open document' : page ? '↗ Open page' : '↗ View'}
+      label={rendered ? '↗ Открыть document' : page ? '↗ Открыть page' : '↗ View'}
       onPress={async () => {
         // Watched elsewhere now: the video here pauses.
         if (one.timer) stop($, site)
@@ -4193,10 +4193,10 @@ export async function Viewer(
         // A headless shell has no window: the default browser opens it then.
         const artifact = (rendered || (page && /\.html?$/i.test(source))) && state.chrome && !state.isMac && !/headless[_-]?shell$/i.test(state.chrome)
         const argv = artifact
-          ? ['sh', '-c', OPEN_SH, 'sh', ...htmlOpenArgv(state.chrome, target!)]
+          ? ['sh', '-c', OPEN_SH, 'sh', ...htmlОткрытьArgv(state.chrome, target!)]
           : openArgv(target ?? source)
         void $.process.run(argv).then(r =>
-          $.ui.toast(r.exitCode === 0 ? `Opened ${(target ?? source.split('/').pop()!).slice(0, 60)}` : openFailure(r, target ? 'web pages' : media.kind === 'video' ? 'videos' : media.kind === 'audio' ? 'audio files' : 'pictures', target ?? source)),
+          $.ui.toast(r.exitCode === 0 ? `Открытьed ${(target ?? source.split('/').pop()!).slice(0, 60)}` : openFailure(r, target ? 'web pages' : media.kind === 'video' ? 'videos' : media.kind === 'audio' ? 'audio files' : 'pictures', target ?? source)),
         )
       }}
     />
@@ -4437,9 +4437,9 @@ export const state = {
 // plugin on every change). The environment variables still turn updates and
 // usage counts off whatever these say.
 export const SETTINGS = [
-  { field: 'stable_updates', title: 'Updates', options: ['Stable releases', 'Latest'], text: 'Automatically install plugin updates from GitHub' },
-  { field: 'usage_stats', title: 'Usage data', options: ['Share anonymously', "Don't share"], text: 'Helps fix bugs and improve the product experience. No sensitive data is ever shared' },
-  { field: 'standard_size', title: 'Picture size', options: ['Standard', 'Large'], text: 'Large shows pictures and videos one and a half times bigger' },
+  { field: 'stable_updates', title: 'Обновления', options: ['Стабильные выпуски', 'Последняя'], text: 'Автоматически устанавливать обновления плагина с GitHub' },
+  { field: 'usage_stats', title: 'Данные об использовании', options: ['Отправлять анонимно', "Не отправлять"], text: 'Помогает исправлять ошибки и улучшать работу. Конфиденциальные данные никогда не отправляются' },
+  { field: 'standard_size', title: 'Размер изображений', options: ['Обычный', 'Большой'], text: 'Большой shows pictures and videos one and a half times bigger' },
 ] as const
 export type Field = (typeof SETTINGS)[number]['field']
 // Each switch is true on its first option, the default.
@@ -4505,7 +4505,7 @@ export function diagnosis(now: number, kept: Problem[] = problems, isLogging = s
 export const isWiderThanBox = (pixels: number, columns: number, cellWidth: number) => pixels > (columns + 1) * cellWidth * 1.03
 
 // ── updater.ts ────────────────────────────────────────────────────────────
-// Updates: a daily check of the install's channel, and the move between
+// Обновления: a daily check of the install's channel, and the move between
 // channels. The updater will be turned off after the plugin moves to the
 // Claude Code plugin directory, which keeps it up to date instead.
 
@@ -4515,7 +4515,7 @@ export const isWiderThanBox = (pixels: number, columns: number, cellWidth: numbe
 // channel and, when it is newer, updates through Claude Code's own plugin
 // commands, quietly. The new version runs from the next session.
 //
-// Two channels, one branch each: Stable releases follow `releases`, Latest
+// Two channels, one branch each: Стабильные выпуски follow `releases`, Последняя
 // follows `latest`. `main` is where work happens and nothing updates from
 // it; an install still on it moves to its channel's branch. Moving means
 // re-adding the marketplace at that branch and installing the plugin again
@@ -4626,7 +4626,7 @@ export async function findUpdate($: EngineInterface, current: string, branch: Br
   const market = markets.find(m => m.name === MARKETPLACE)
   // An installed copy whose marketplace is missing is mid channel move
   // (MOVE_SH removes it, then adds it back): not a folder copy.
-  const isCached = isInstalledCopy(await Promise.resolve().then(() => $.plugin.root).catch(() => ''))
+  const isCached = isУстановленоCopy(await Promise.resolve().then(() => $.plugin.root).catch(() => ''))
   if (market?.source === 'directory' || (!market && !isCached)) return { kind: 'folder' }
   if (!market) return { kind: 'busy' }
   // Added with #v0.5.14 or another ref: the user chose that version.
@@ -4689,31 +4689,31 @@ async function moveTo($: EngineInterface, branch: Branch, market: { url?: string
 
 
 
-// ── Settings and welcome ─────────────────────────────────────────────────
+// ── Настройки and welcome ─────────────────────────────────────────────────
 
 export const WELCOME = 'show-your-work-welcome'
 // The settings pane's and the tour's redraws. Declared in each file that
 // reads or updates it: the engine only reads an atom declared in the same file.
 
 // A no to usage data given before these settings (0.5.12's question, 0.5.16's command) stays a no.
-// Updates are on for everyone: fixes have to reach every install.
+// Обновления are on for everyone: fixes have to reach every install.
 export const earlierNo = (consent: unknown, statsOff: unknown, updatesOff: unknown) => {
   const asked = consent && typeof consent === 'object' ? consent as { stats?: unknown; updates?: unknown } : {}
-  return { isStatsOff: statsOff === true || asked.stats === false, isUpdatesOff: updatesOff === true || asked.updates === false }
+  return { isStatsOff: statsOff === true || asked.stats === false, isОбновленияOff: updatesOff === true || asked.updates === false }
 }
 
 // Reads the saved settings once per plugin load. A reload starts with the
-// defaults in memory, and without this pictures would be laid out as Standard
+// defaults in memory, and without this pictures would be laid out as Обычный
 // until the next session start.
-let hasLoadedSettings = false
-export async function ensureSettings($: EngineInterface) {
-  if (hasLoadedSettings) return
-  hasLoadedSettings = true
+let hasLoadedНастройки = false
+export async function ensureНастройки($: EngineInterface) {
+  if (hasLoadedНастройки) return
+  hasLoadedНастройки = true
   // Unreadable (no store): the defaults stand.
-  await loadSettings($).catch(() => undefined)
+  await loadНастройки($).catch(() => undefined)
 }
 
-export async function loadSettings($: EngineInterface) {
+export async function loadНастройки($: EngineInterface) {
   const saved = ((await $.store.get('settings')) ?? {}) as Partial<Record<Field, unknown>>
   if (typeof saved.usage_stats !== 'boolean' && earlierNo(await $.store.get('consent'), await $.store.get('statsOff'), null).isStatsOff) settings.usage_stats = false
   for (const { field } of SETTINGS) if (typeof saved[field] === 'boolean') settings[field] = saved[field] as boolean
@@ -4721,7 +4721,7 @@ export async function loadSettings($: EngineInterface) {
 
 async function switchSetting($: EngineInterface, field: Field, value: boolean) {
   // The saved choices, not this module's copy: a reload resets the copy.
-  await loadSettings($)
+  await loadНастройки($)
   settings[field] = value
   act(`setting_${field}_${value ? 'first' : 'second'}`)
   await $.store.set('settings', { ...settings })
@@ -4751,7 +4751,7 @@ async function switchSetting($: EngineInterface, field: Field, value: boolean) {
   await update($, welcome, n => n + 1)
 }
 
-// Updates and usage counts wait for the welcome on a first run, so a switch
+// Обновления and usage counts wait for the welcome on a first run, so a switch
 // turned off there is off before anything is sent.
 export async function startBackground($: EngineInterface) {
   if (hasStarted) return
@@ -4771,7 +4771,7 @@ export async function openWelcome($: EngineInterface) {
 }
 
 // /show-your-work update opens this pane. It checks GitHub for the newest
-// version on the person's channel (Stable or Latest) right away, skipping the
+// version on the person's channel (Stable or Последняя) right away, skipping the
 // once-a-day limit, then offers Install. Nothing installs until they press it.
 export const UPDATE = 'show-your-work-update'
 type UpdateCheck =
@@ -4783,9 +4783,9 @@ type UpdateCheck =
 let updateCheck: UpdateCheck = { phase: 'checking' }
 export async function openUpdate($: EngineInterface) {
   updateCheck = { phase: 'checking' }
-  await $.ui.open({ id: UPDATE, title: 'Updates', focus: true, closeOnEscape: true, holdToasts: true, rows: 9, columns: 70 })
+  await $.ui.open({ id: UPDATE, title: 'Обновления', focus: true, closeOnEscape: true, holdToasts: true, rows: 9, columns: 70 })
   await update($, welcome, n => n + 1)
-  await loadSettings($)
+  await loadНастройки($)
   const branch = settings.stable_updates ? BRANCHES.stable : BRANCHES.latest
   const found = await findUpdate($, state.pluginVersion, branch).catch((): Found => ({ kind: 'offline' }))
   updateCheck = { phase: 'found', found }
@@ -4803,8 +4803,8 @@ async function installFound($: EngineInterface, found: Extract<Found, { kind: 'u
 
 export function UpdatePane(ui: Ui, $: EngineInterface) {
   const { Box, Text, Button } = ui
-  const channel = settings.stable_updates ? 'Stable releases' : 'Latest releases'
-  const close = <Button key="update-close" label="Close" onPress={() => void $.ui.close({ id: UPDATE })} />
+  const channel = settings.stable_updates ? 'Стабильные выпуски' : 'Последняя releases'
+  const close = <Button key="update-close" label="Закрыть" onPress={() => void $.ui.close({ id: UPDATE })} />
   const c = updateCheck
   const found = c.phase === 'found' ? c.found : null
   // Each outcome of the check sets a bold headline, a dim second line, and
@@ -4861,8 +4861,8 @@ export function UpdatePane(ui: Ui, $: EngineInterface) {
 }
 
 // /show-your-work: the switches, in a pane.
-export async function openSettings($: EngineInterface) {
-  await $.ui.open({ id: WELCOME, title: 'Settings', focus: true, closeOnEscape: true, holdToasts: true, rows: 10, columns: 70 })
+export async function openНастройки($: EngineInterface) {
+  await $.ui.open({ id: WELCOME, title: 'Настройки', focus: true, closeOnEscape: true, holdToasts: true, rows: 10, columns: 70 })
   await update($, welcome, n => n + 1)
 }
 
@@ -4891,9 +4891,9 @@ async function prepareSplash($: EngineInterface) {
     ...opened,
     changesTitle: 'What it does',
     changes: [
-      { title: 'Installed', at: 1.8 },
-      { title: 'Everything Claude can show you', at: 5.0 },
-      { title: 'Claude shows what it builds', at: 15.7 },
+      { title: 'Установлено', at: 1.8 },
+      { title: 'Всё, что Claude может вам показать', at: 5.0 },
+      { title: 'Claude показывает то, что создаёт', at: 15.7 },
     ],
     checks: [
       { name: 'This terminal draws pictures', ok: state.canImage, at: 2.2 },
@@ -4906,15 +4906,15 @@ async function prepareSplash($: EngineInterface) {
 }
 
 // /show-your-work's pane: the switches, and the way back into the tour.
-export function Settings(ui: Ui, $: EngineInterface) {
+export function Настройки(ui: Ui, $: EngineInterface) {
   const { Box, Text, Button } = ui
   return (
     <Box flexDirection="column" paddingX={2} paddingBottom={1}>
       <Box flexDirection="row" columnGap={2} marginBottom={1}>
-        <Button key="close" label="✕ Close" onPress={() => void $.ui.close({ id: WELCOME })} />
-        <Button key="tour" label="Take a tour" onPress={() => { act('tour_from_settings'); void $.ui.close({ id: WELCOME }).then(() => openTour($)) }} />
+        <Button key="close" label="✕ Закрыть" onPress={() => void $.ui.close({ id: WELCOME })} />
+        <Button key="tour" label="Пройти экскурсию" onPress={() => { act('tour_from_settings'); void $.ui.close({ id: WELCOME }).then(() => openTour($)) }} />
       </Box>
-      <Box marginBottom={1}><Text bold>Show Your Work Settings</Text></Box>
+      <Box marginBottom={1}><Text bold>Show Your Work Настройки</Text></Box>
       {SettingRows(ui, $)}
     </Box>
   )
@@ -4948,14 +4948,14 @@ function SettingRows(ui: Ui, $: EngineInterface) {
           })}
         </Box>
       ))}
-      <Box marginTop={1}><Text dimColor>Usage data is anonymous and helps fix bugs and improve the product experience. No sensitive data is ever shared.</Text></Box>
+      <Box marginTop={1}><Text dimColor>Данные об использовании is anonymous and helps fix bugs and improve the product experience. No sensitive data is ever shared.</Text></Box>
     </Box>
   )
 }
 
 // The welcome row: the opening in the real player, with its side list, then
 // what to ask and one quiet line about updates and usage counts.
-export async function Opening($: EngineInterface, e: Parameters<EngineInterface['ui']['resolve']>[0], site: string, viewport?: { columns: number; rows: number }) {
+export async function Открытьing($: EngineInterface, e: Parameters<EngineInterface['ui']['resolve']>[0], site: string, viewport?: { columns: number; rows: number }) {
   const { Box, Text } = $.ui.resolve(e) as Ui
   let view = null
   // Where pictures can't draw, the heading alone: a warning has no place here.
@@ -4977,7 +4977,7 @@ export async function Opening($: EngineInterface, e: Parameters<EngineInterface[
 
 // A walk through the player on the launch film's demos: the opening, a recording with
 // its report, the same recording against the broken version, a screenshot's
-// history, then the commands and switches. Opens by itself on a fresh
+// history, then the commands and switches. Открытьs by itself on a fresh
 // install; /show-your-work tour, or the button in the settings, opens it again.
 const TOUR = 'show-your-work-tour'
 // The tour is a message in the chat, drawn by the output row of
@@ -5134,7 +5134,7 @@ export async function Tour($: EngineInterface, e: Parameters<EngineInterface['ui
       {view ?? (s.media && <Text dimColor>Loading the demo…</Text>)}
       {state.tourStop === STOPS.length - 1 && (
         <Box key="settings-box" flexDirection="column" borderStyle="round" borderColor="subtle" paddingX={1} width={width}>
-          <Text bold>Settings</Text>
+          <Text bold>Настройки</Text>
           <Box marginTop={1}>{SettingRows(ui, $)}</Box>
         </Box>
       )}
@@ -5232,7 +5232,7 @@ export function setUp($: EngineInterface): Promise<void> {
     // Chrome in /Applications, then Playwright's headless shells (newest
     // last). A headless shell is made for screenshots: Playwright's Chrome
     // for Testing 1234 never wrote one on macOS and hung. It opens no window,
-    // so Open page uses the default browser. With none, the install notice
+    // so Открыть page uses the default browser. With none, the install notice
     // shows instead of a failed render.
     state.chrome = got('ch')
     state.pdftoppm = got('pp') || (state.isMac ? '/opt/homebrew/bin/pdftoppm' : '')
@@ -5294,10 +5294,10 @@ const CHECKS = {
 const TOOL_INPUT = {
   type: 'object',
   properties: {
-    path: { type: 'string', description: 'Absolute path' },
-    title: { type: 'string', description: 'Short caption' },
+    path: { type: 'string', description: 'Абсолютный путь' },
+    title: { type: 'string', description: 'Короткая подпись' },
     pr: { type: 'string', description: 'PR URL or number' },
-    url: { type: 'string', description: 'The page shown; adds Open page' },
+    url: { type: 'string', description: 'The page shown; adds Открыть page' },
     changes: {
       type: 'array',
       description: 'What changed: { title, detail?, at? (seconds), url? }, in clip order',
@@ -5335,7 +5335,7 @@ export const register: Register = on => {
     state.sessionId = await $.session.id().catch(() => '')
     state.sentHint = ''
     state.hasVideoTools = false
-    await loadSettings($)
+    await loadНастройки($)
     void (async () => {
       const manifest = JSON.parse(await $.fs.read(`${$.plugin.root}/.claude-plugin/plugin.json`)) as { version?: string }
       state.pluginVersion = manifest.version ?? '0.0.0'
@@ -5395,7 +5395,7 @@ export const register: Register = on => {
     void $.process.run(['sh', '-c', CLEAN_SH, state.TMP]).then(() => trimFrames($))
     await $.command.register({
       name: 'show-your-work',
-      description: 'Settings for show-your-work; /show-your-work tour for the tour, /show-your-work update to check for updates, /show-your-work diagnose for recent problems',
+      description: 'Настройки for show-your-work; /show-your-work tour for the tour, /show-your-work update to check for updates, /show-your-work diagnose for recent problems',
       argumentHint: '[settings|tour|update|diagnose]',
     })
     await $.command.register({
@@ -5405,7 +5405,7 @@ export const register: Register = on => {
     })
     await $.command.register({
       name: 'page',
-      description: 'Show a local HTML page in your terminal: /page <path>. Open page opens the live page.',
+      description: 'Show a local HTML page in your terminal: /page <path>. Открыть page opens the live page.',
       argumentHint: '<path>',
     })
     await $.command.register({
@@ -5428,7 +5428,7 @@ export const register: Register = on => {
     // with Playwright and uses show_image.
     if (state.chrome) await $.tool.register({
       name: 'show_html',
-      description: 'Shows a local HTML file as a static preview inline in the terminal, using Chrome or Chromium. Accepts .html and .htm files. The preview is a fixed 1280 by 800 viewport, not an interactive page: scrolling, forms and sound work only after the person chooses Open page in their browser. Use it for HTML reports, page designs and small artifacts you have made. Pass path and an optional title; changes, summary and previous work as for show_image. No URL navigation. The file may execute scripts while Chrome renders it; use only pages you intend to render. The person sees the preview; you do not.',
+      description: 'Shows a local HTML file as a static preview inline in the terminal, using Chrome or Chromium. Accepts .html and .htm files. The preview is a fixed 1280 by 800 viewport, not an interactive page: scrolling, forms and sound work only after the person chooses Открыть page in their browser. Use it for HTML reports, page designs and small artifacts you have made. Pass path and an optional title; changes, summary and previous work as for show_image. No URL navigation. The file may execute scripts while Chrome renders it; use only pages you intend to render. The person sees the preview; you do not.',
       inputSchema: IMAGE_INPUT,
       isDeferred: false,
     })
@@ -5498,7 +5498,7 @@ export const register: Register = on => {
       const found = name ? await findPasted($, name) : null
       if (!found) {
         return {
-          text: 'Pasted images reach Claude, not mods, so /img cannot read one. Drag the file into the prompt (that types its path) or type the path: /img ~/path/to/file.png',
+          text: 'Вставленные изображения попадают к Claude, а не к mods, поэтому /img не может их прочитать. Перетащите файл в поле ввода (там появится его путь) или введите путь: /img ~/path/to/file.png',
         }
       }
       arg = found
@@ -5534,7 +5534,7 @@ export const register: Register = on => {
       await $.process.run(['sh', '-c', 'printf "%s" "$1" > "$0"', `${await storeOf($)}/${id}.shown`, JSON.stringify(shown)]).catch(() => undefined)
 
       track('page_command', { kind: 'image' })
-      return { text: `Previewing ${shown.title}. Open page opens it in your browser.\n${MARK}#${id}` }
+      return { text: `Previewing ${shown.title}. Открыть page opens it in your browser.\n${MARK}#${id}` }
     } catch (err) {
       const n = noticeOf(err, arg, state.home)
       track('show_failed', { from: 'page_command', reason: REASONS[n.kind] })
@@ -5599,7 +5599,7 @@ export const register: Register = on => {
       // Only pictures and videos are copied into the history: never a key or
       // a config file a model was talked into naming. A page is rendered from
       // where it lies, so its relative assets resolve; history keeps the
-      // picture, and the card's source stays the page itself, so Open page
+      // picture, and the card's source stays the page itself, so Открыть page
       // opens it.
       const page = isPage(input.path)
       const audio = isAudio(input.path)
@@ -5719,7 +5719,7 @@ export const register: Register = on => {
       const n = notices.get((props as { tool_use_id?: string }).tool_use_id ?? '') ??
         (textOf(props.output).includes(NO_FFMPEG) ? noticeOf(new Error(NO_FFMPEG), '') : undefined)
       if (!n) return next(e)
-      return NoticeBox($.ui.resolve(e) as Ui, $, (e.viewport?.columns ?? 100) - 8, { ...n, copy: n.prompt, label: 'Copy prompt', action: `copy_${n.kind}_prompt` })
+      return NoticeBox($.ui.resolve(e) as Ui, $, (e.viewport?.columns ?? 100) - 8, { ...n, copy: n.prompt, label: 'Скопировать запрос', action: `copy_${n.kind}_prompt` })
     }
     // Scrolled out of view: stop playing.
     const one = player(e.requestId)
@@ -5742,7 +5742,7 @@ export const register: Register = on => {
       // After /reload-plugins nothing else has set up the folders yet: without
       // this the result looks for its picture in the wrong place and collapses.
       await setUp($)
-      await ensureSettings($)
+      await ensureНастройки($)
       const shown = await shownOf($, props.output)
       if (!shown) return next(e)
       view = atStep(shown, e.requestId)
@@ -5782,17 +5782,17 @@ export const register: Register = on => {
     if (/^diagnose$/i.test(invoked.args.trim())) return { text: diagnosis(await $.clock.now()) }
     if (/^update$/i.test(invoked.args.trim())) {
       void openUpdate($).catch(() => undefined)
-      return { text: 'Checking for show-your-work updates.' }
+      return { text: 'Проверка обновлений show-your-work.' }
     }
     // /show-your-work settings (or setting) opens them, never closes them.
-    const isSettings = /^settings?$/i.test(invoked.args.trim())
+    const isНастройки = /^settings?$/i.test(invoked.args.trim())
     // Run again while they're open, the settings close.
-    if (!isSettings && (await $.ui.panes()).some(pane => pane.id === WELCOME)) {
+    if (!isНастройки && (await $.ui.panes()).some(pane => pane.id === WELCOME)) {
       await $.ui.close({ id: WELCOME })
-      return { text: 'Closed the show-your-work settings.' }
+      return { text: 'Закрытьd the show-your-work settings.' }
     }
-    await openSettings($)
-    return { text: 'Opened the show-your-work settings.' }
+    await openНастройки($)
+    return { text: 'Настройки show-your-work открыты.' }
   })
 
   on('ui.render', { component: 'Pane', requestId: UPDATE }, async ($, e) => {
@@ -5804,8 +5804,8 @@ export const register: Register = on => {
   on('ui.render', { component: 'Pane', requestId: WELCOME }, async ($, e) => {
     await setUp($)
     await read($, welcome)
-    await loadSettings($)
-    return Settings($.ui.resolve(e) as Ui, $)
+    await loadНастройки($)
+    return Настройки($.ui.resolve(e) as Ui, $)
   })
 
 
@@ -5817,7 +5817,7 @@ export const register: Register = on => {
     // /img and /page: the player, in the chat under the command.
     if ((row.command === 'img' || row.command === 'page' || row.command === 'audio' || row.command === 'doc') && !row.isErrored && (row.text ?? '').includes(MARK)) {
       await setUp($)
-      await ensureSettings($)
+      await ensureНастройки($)
       const shown = await shownOf($, row.text ?? '')
       if (!shown) {
         // A row from before a restart: the picture is no longer at hand.
@@ -5855,7 +5855,7 @@ export const register: Register = on => {
       welcomeRows.add(e.requestId)
     }
     await setUp($)
-    return Opening($, e, e.requestId, e.viewport)
+    return Открытьing($, e, e.requestId, e.viewport)
   })
 }
 

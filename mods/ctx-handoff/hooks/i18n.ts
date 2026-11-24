@@ -2,7 +2,7 @@
 // 不放這裡：給模型的提示、經驗檔的格式與標記（NOTE_TAG、標題、做法／理由／根據、規則行）、store 的鍵——那些是資料，改了會讀不了舊檔。
 // 有參數的訊息寫成函式；zh-TW 是原文，en 的型別跟著它，少一條就編譯不過。
 
-export type Lang = 'en' | 'zh-TW'
+export type Lang = 'en' | 'zh-TW' | 'ru'
 
 let current: Lang = 'en'
 export const setLang = (lang: Lang) => { current = lang }
@@ -15,8 +15,16 @@ export const isChinese = (s: string) => /^zh|chinese|中文|繁體|繁体|台灣
 // 選介面語言：Claude Code 的 language 設定（使用者明確選的）優先，沒設就看系統語系。
 // 系統語系在 Linux／macOS 跟著 LANG，在 Windows 是作業系統的顯示語言；Git Bash 的 LANG 常是 en_US，不能拿來判斷
 export const pickLang = (setting: unknown, systemLocale: string | undefined): Lang => {
-  if (typeof setting === 'string' && setting.trim()) return isChinese(setting) ? 'zh-TW' : 'en'
-  return systemLocale && isChinese(systemLocale) ? 'zh-TW' : 'en'
+  const norm = (x: unknown) => (typeof x === 'string' ? x.trim().toLowerCase() : '')
+  const isTarget = (x: unknown) => /^ru|русск|russian/i.test(norm(x))
+  if (typeof setting === 'string' && setting.trim()) {
+    if (isChinese(setting)) return 'zh-TW'
+    if (isTarget(setting)) return 'ru' as Lang
+    return 'en'
+  }
+  if (systemLocale && isChinese(systemLocale)) return 'zh-TW'
+  if (systemLocale && isTarget(systemLocale)) return 'ru' as Lang
+  return 'en'
 }
 
 const s = (n: number) => (n === 1 ? '' : 's')
@@ -829,4 +837,396 @@ const en: Messages = {
   },
 }
 
-const MSG: Record<Lang, Messages> = { 'zh-TW': zh, en }
+const ru: Messages = {
+  ind: '  ',
+  bullet: '- ',
+  list: ', ',
+  slashList: ' / ',
+  // 面板展開時，經驗檔裡的欄位標籤（做法／理由／根據）顯示成英文；檔案本身不變
+  fieldLabel: line => line.replace(/^做法：/, 'Как: ').replace(/^理由：/, 'Почему: ').replace(/^根據：/, 'Основание: '),
+  guardMatch: (tool, match, unless) => `${tool} matches /${match}/${unless ? ` and not /${unless}/` : ''}`,
+
+  usage: (input, read, ratio, write, plain, output, sec) =>
+    `input ${input} (кэш read ${read} = ${ratio}%, written ${write}, uncached ${plain}) · output ${output} · ${sec}s`,
+
+  fork: {
+    timeout: 'timeout: the fork did not answer in время, прервано waiting',
+    nothingToFork: 'nothing-to-fork: this сессия was just restarted or cleared, so there is nothing to build on yet. Send a сообщение, wait for the ответ, then try again',
+  },
+
+  handoff: {
+    failedLog: why => `передача не удалась: ${why}`,
+    failedToast: 'передача не удалась',
+    failGenerate: why => `generation не удалось: ${why}`,
+    savedLog: (kind, usage) => `передача (${kind}) ${usage}`,
+    dropped: reason => `dropped: ${reason}`,
+    reasonClear: r => `clear не удалось: ${r}`,
+    reasonSubmit: r => `submit не удалось: ${r}`,
+    reasonException: r => `exception: ${r}`,
+    reasonStage: (stage, r) => `${stage} не удалось: ${r}`,
+    resubmitFailed: r => `не удалось resend the сообщения received during передача: ${r}`,
+    clearFailedLog: r => `/clear не удалось: ${r}`,
+    submitFailedLog: r => `submit не удалось: ${r}`,
+    submitFailedToast: 'Передача создана but not sent. Run /передача resend to send it again',
+    failedAll: r => `передача не удалась: ${r}`,
+    failedCleanup: r => `cleanup after the не удалось передача also не удалось: ${r}`,
+    whyManual: 'пользователь ran /передача now',
+    whyTokens: tokens => `контекст reached ${tokens} токены`,
+    intro: why =>
+      `The previous conversation was cleared automatically because ${why}. Here is the передача: read it, tell me in a few lines the current state and следующий step as you understand them, then wait for пользователь's instructions. Do not start working yet.`,
+    introHeld: why =>
+      `The previous conversation was cleared automatically because ${why}. Here is the передача and the сообщения пользователь sent during the передача: respond to пользователь's последний сообщение below, using the передача as контекст.`,
+    note: note => ` (${note})`,
+    heldHead: '---\\nMessages пользователь sent during the передача:',
+  },
+
+  background: {
+    pause: 'Pause отсутствие work for this сессия',
+    resume: 'Resume отсутствие work for this сессия',
+    bound: (file, sid) => `заметки рабочей области: ${file}; this сессия ${sid}`,
+    away: (paused, next) => `отсутствие work ${paused ? 'paused' : 'enabled'}; ${next === undefined ? 'no timer scheduled' : `next ${new Date(next).toLocaleString()}`}`,
+    task: (label, sid, phase, at) => `${label}: ${phase} (source ${sid}, started ${new Date(at).toLocaleTimeString()})`,
+    distill: 'обновление заметок', handoff: 'передача / refresh', idle: 'простой',
+    idleTask: label => `${label}: простой`,
+    phases: { refresh: 'refreshing кэш', generating: 'generating summary', submitting: 'submitting передача' },
+    collected: (at, usage, unknown) => `сессия background использование (collected since ${new Date(at).toLocaleString()} after this update, not a bill): ${usage}; ${unknown} requests with неизвестный использование`,
+    uncollected: 'No background использование collected for this сессия yet; earlier cost is not known to be zero',
+    pending: sid => `Undelivered передача source ${sid}; /передача resend ${sid}`,
+    history: 'Recent records (diagnostic history is not a recoverable summary)',
+  },
+  distill: {
+    why: {
+      idle: 'простой refresh',
+      away: 'отсутствие',
+      before: 'before передача',
+      manual: 'manual',
+      every: n => `every ${n} сообщения`,
+    },
+    failLog: (why, reason) => `обновление заметок не удалось (${why}): ${reason}`,
+    timeout: min => `timeout: нет ответа after ${min} минут, прервано`,
+    edited: file => `the заметки file was edited during the update, skipped this время: ${file}`,
+    skipLog: (why, reason) => `обновление заметок (${why}): ${reason}`,
+    waiting: why => `обновление заметок (${why}): another update is running, queued after it; this part of the conversation is already captured`,
+    doneLog: (why, changes, rejected, file) =>
+      `обновление заметок (${why}): ${changes} change${s(changes)}${rejected ? `, dropped ${rejected} invalid line${s(rejected)}` : ''}${changes ? `; wrote ${file}` : ''}`,
+    queued: n => `${n} change${s(n)} queued for your следующий сообщение`,
+    toast: (n, queued, file) => `заметки updated: ${n} change${s(n)}${queued ? ', sent along with your next message' : ''}: ${file}`,
+    writeFailed: err => `не удалось write the file: ${err}`,
+    noUsableActions: 'No usable actions in the заметки output; the conversation is kept for retry',
+    retryLost: 'The previous partial update endpoint is отсутствует; заметки and прогресс were not changed',
+    retryCleanup: err => `заметки updated, but retry endpoint cleanup не удалось: ${err}`,
+  },
+
+  status: {
+    running: 'Updating заметки…',
+    left: n => `${n} more сообщение${s(n)} until обновление заметок`,
+    short: 'Conversation is short, заметки not updated yet',
+    next: 'обновление заметок after the следующий сообщение',
+    deferred: parts => `передача delayed: ${parts}`,
+  },
+
+  distillStatus: {
+    head: (on, every) => `Background заметки ${on} (простой refresh, отсутствие, before передача, every ${every} сообщения)`,
+    next: (left, idleMin) => `следующий: in ${left} сообщение${s(left)}, after ${idleMin} min простой, or before a передача`,
+    last: (at, why, n) => `последний: ${at} · ${why} · ${n} change${s(n)}`,
+    lastNone: 'последний: нет',
+    rejected: (n, samples) => `Dropped ${n} недопустимый строка${s(n)}: ${samples}`,
+    failed: (at, why, reason) => `последний ошибка: ${at} · ${why} · ${reason}`,
+    notes: (file, memory, rules, injected) =>
+      `заметки рабочей области: ${file} (${memory} memor${memory === 1 ? 'y' : 'ies'}, ${rules} правило${s(rules)}, ${injected} правило${s(injected)} carried into новые диалоги)`,
+    procedures: (n, inProject) => `рабочая область procedures: ${n} (${inProject} already in a проект skill or doc; procedures are not carried into новые диалоги)`,
+    tiers: (full, titles, archived, days) =>
+      `Memories carried in: ${full} preference${s(full)} and correction${s(full)} in full, ${titles} fact${s(titles)} and location${s(titles)} as titles только, ${archived} archived (not confirmed for over ${days} дней, not carried in)`,
+  },
+
+  idle: {
+    refreshSkipped: 'кэш refresh skipped: this process has no request to fork; простой timing resumes after the следующий main conversation response',
+    refresh: (n, max, read, create) => `кэш refresh ${n}/${max} кэш_read=${read} кэш_creation=${create}`,
+    refreshFailed: (n, max, reason) => `кэш refresh ${n}/${max} не удалось: ${reason}`,
+    awaySavedLog: tokens => `отсутствие передача saved (${tokens} токены), will not /clear automatically`,
+    awaySavedToast: 'отсутствие передача saved',
+    outdated: 'the conversation went on, deleted the outdated отсутствие передача',
+  },
+
+  stop: {
+    tasks: n => `${n} background задача${s(n)}`,
+    oneShot: n => `${n} one-off schedule${s(n)}`,
+    agents: n => `${n} subagent${s(n)}`,
+    deferral: (parts, cap) => `${parts} still running, waiting for them to finish before передача (лимит ${cap} токены)`,
+    deferLog: (tokens, parts) => `контекст ${tokens} reached the порог, but ${parts} still running; waiting for them to finish before передача`,
+    note: (parts, cap) => `${parts} still running at передача; контекст reached the лимит of ${cap}`,
+    capLog: (tokens, cap, parts) => `контекст ${tokens} reached the лимит of ${cap}; not waiting for ${parts} any longer, handing off now`,
+    retryLog: tokens => `контекст ${tokens} reached the порог, but the последний передача не удалась recently; will try again later`,
+    stopFailed: err => `Stop check не удалось: ${err}`,
+  },
+
+  loops: {
+    doneLog: 'Said готово, but no test or check ran after the edits this turn; asked Claude to verify первый',
+    rewriteLog: 'The final ответ was not in the set язык; asked Claude to rewrite it once',
+    status: (retry, done, reply) => `Nudges: repeated ошибка ${retry}, verify before готово ${done}, язык ответа ${reply}`,
+  },
+
+  progress: {
+    status: (at, task, state, hintOff) => `Latest прогресс: ${at}, ${task} (${state})${hintOff ? ', not offered to new chats (resume_hint is off)' : ''}`,
+    states: { done: 'готово', in_progress: 'in прогресс', blocked: 'blocked' },
+  },
+
+  start: {
+    description: 'ctx-передача: статус; панель / now / dry / distill / resume / continue / resend / отсутствие / защита / refresh',
+    taken: err => `/передача is already taken (${err}), using /ctx-передача instead`,
+    registerFailed: err => `не удалось register the command: ${err}`,
+    resumeFailed: err => `не удалось restore the простой timer: ${err}`,
+    pruneFailed: err => `не удалось tidy the store at startup: ${err}`,
+  },
+
+  submit: {
+    wait: (sec, max) => `${sec}s so far, usually готово within a minute, up to about ${max} минут`,
+    attach: 'Images and other attachments cannot be held. Paste them again after the передача.',
+    busy: (wait, attach) => `передача in прогресс (${wait}).${attach ? ` ${attach}` : ''}`,
+    dup: (wait, attach) => `передача in прогресс (${wait}). This сообщение is already held and will not be sent twice.${attach ? ` ${attach}` : ''}`,
+    held: (wait, attach) => `передача in прогресс (${wait}). This сообщение is held and will be sent in the новый диалог.${attach ? ` ${attach}` : ''}`,
+    pendingToast: 'A передача was not delivered. Run /передача resend to send it again',
+    awayAttach: 'There is an отсутствие передача and the старый conversation\\\'s кэш has expired. Attachments cannot be held: run /передача resume (новый диалог) or /передача continue (stay in the старый one) первый, then paste again.',
+    awayHeld: hasAttach =>
+      'There is an отсутствие передача and the старый conversation\\\'s кэш has expired. /передача resume: continue in a новый диалог and include this сообщение; /передача continue: send this сообщение in the старый conversation (or just send it again).' +
+      (hasAttach ? 'There is an отсутствие передача and the старый conversation\\\'s кэш has expired. /передача resume: continue in a новый диалог and include this сообщение; /передача continue: send this сообщение in the старый conversation (or just send it again).' : 'There is an отсутствие передача and the старый conversation\\\'s кэш has expired. /передача resume: continue in a новый диалог and include this сообщение; /передача continue: send this сообщение in the старый conversation (or just send it again).'),
+  },
+
+  guard: {
+    state: { proposed: 'черновик', on: 'on', off: 'off' },
+    mode: { deny: 'блокировать', remind: 'напоминать' },
+    checkFailed: err => `защита check не удалось, letting the call through: ${err}`,
+    head: (id, rule, message) => `защита #${id} (${rule}): ${message}`,
+    denyToast: (id, tool, rule) => `защита #${id} blocked ${tool}: ${rule}`,
+    denyHint: id => `If пользователь really wants this to run as is, ask them to run /передача защита off ${id} первый.`,
+    noCandidates: min => `No правило without a защита was corrected again after going into the repo, or came up ${min}+ раз while kept out of it`,
+    suggestFailed: reason => `защита suggestion не удалось: ${reason}`,
+    autoFailed: reason => `Drafting guards не удалось: ${reason}`,
+    autoDrafted: n => `Drafted ${n} защита${n === 1 ? '' : 's'}; the следующий conversation will have Claude ask whether to use them`,
+    suggested: (rules, drafts) => `Looked at ${rules} правило${s(rules)} and drafted ${drafts} защита${s(drafts)} (not active yet; approve with /передача защита on N)`,
+    droppedLines: (n, list) => `Dropped ${n} строка${s(n)}: ${list}`,
+    none: min => `Guards: нет (правила corrected again after going into the repo, or said ${min}+ раз while kept out of it, get drafted and Claude asks you; or run /передача защита suggest)`,
+    listHead: 'Guards:',
+    entry: (id, state, mode, rule, hits) => `#${id} [${state} · ${mode}] ${rule} (triggered ${hits} время${s(hits)})`,
+    example: (bad, good) => `Example: blocks "${bad}", allows "${good}"`,
+    replay: (calls, hits) => `Trial match on this conversation when drafted: ${hits} of ${calls} tool call${s(calls)}`,
+    recentHits: 'Recent hits (check they should really fire; if most are false alarms, narrow the защита or turn it off):',
+    usage: 'использование: /передача защита [suggest | on N | off N | mode N deny|напоминать | drop N]',
+    missing: id => `No защита #${id}`,
+    changed: (id, dropped) => `защита #${id} ${dropped ? 'deleted' : 'updated'}`,
+    summary: (on, draft, off) => `Guards: ${on} on, ${draft} черновик, ${off} off`,
+    summaryMore: (n, min) => `; ${n} правило${s(n)} appeared ${min}+ раз without a защита (/передача защита suggest)`,
+    panelDone: (id, action) => `защита #${id} ${action === 'on' ? 'approved' : action === 'off' ? 'turned off' : 'deleted'}`,
+    parse: {
+      noMarker: 'ACTIONS marker not found',
+      notCandidate: 'правило is not a candidate',
+      badTool: 'bad tool format',
+      missingFields: 'отсутствует match / сообщение / mode',
+      tooLong: 'regex too long',
+      missingExamples: 'отсутствует bad / good examples',
+      badNotBlocked: 'the bad example is not blocked',
+      goodBlocked: 'the good example would be blocked too',
+      duplicate: 'same правило repeated',
+      wrap: (line, why) => `${line} (${why})`,
+    },
+  },
+
+  panelCmd: {
+    opened: 'панель opened above the input. Click the buttons, or press ctrl+x tab to use the keyboard. Run /передача панель again to close it',
+    closed: 'панель closed',
+    readFailed: err => `не удалось read панель data: ${err}`,
+    failed: err => `не удалось: ${err}`,
+    busyKeep: 'заметки are being updated, try again in a moment',
+    busyDrop: 'заметки are being updated, try deleting again in a moment',
+    notFound: 'не удалось find this entry. The заметки file may have just been edited',
+    kept: title => `Kept: ${title} (carried into новые диалоги again)`,
+    deleted: (kind, name, dir) =>
+      `Deleted ${kind === 'm' ? 'the memory' : kind === 'r' ? `the rule "${name}"` : `the procedure "${name}"`} (original backed up to ${dir}/.ctx-передача-backup/)`,
+    settingSet: (name, value) => `${name}: ${value} (other sessions pick it up on their следующий сообщение)`,
+    settingReset: (name, value) => `${name} back to настройки.json or the default: ${value}`,
+  },
+
+  change: {
+    addMemory: head => `Added память: ${head}`,
+    updateMemory: head => `Updated память: ${head}`,
+    confirmMemory: head => `память confirmed: ${head}`,
+    deleteMemory: head => `Deleted память: ${head}`,
+    addRule: (name, rule) => `новый правило: ${name} (seen 1 время): ${rule}`,
+    confirmRule: (name, count) => `правило confirmed: ${name} → seen ${count} раз`,
+    updateRule: name => `Updated правило: ${name}`,
+    deleteRule: name => `Deleted правило: ${name}`,
+    addProcedure: (name, steps) => `новый procedure: ${name} (${steps} шаги, seen 1 время)`,
+    confirmProcedure: (name, count) => `Procedure confirmed: ${name} → seen ${count} раз`,
+    updateProcedure: name => `Updated procedure: ${name}`,
+    deleteProcedure: name => `Deleted procedure: ${name}`,
+    inProject: (name, where) => `Now in the repo: ${name} → ${where}`,
+    notInProject: name => `Not moving to the repo (you said no): ${name}`,
+    guardApproved: (id, rule) => `защита #${id} turned on (you said yes): ${rule}`,
+    guardDeclined: (id, rule) => `защита #${id} turned down (you said no): ${rule}`,
+  },
+
+  reject: {
+    over: (k, max) => `${k} over ${max} символов`,
+    overJoin: ', ',
+    idNot: kind => `id is not ${kind}#`,
+    noId: id => `no such id ${id}`,
+    whereMissing: where => `${where} is not in the repo`,
+    buried: title => `"${title}" was deleted by пользователь and no новый цитата from пользователь brings it back`,
+    badType: type => `недопустимый type (${type})`,
+    missing: names => `отсутствует ${names}`,
+    quoteNotFound: 'цитата is not in пользователь\\\'s сообщения',
+    quoteMissing: type => `${type} entries need a цитата from пользователь`,
+    badOp: op => `неизвестный op (${op})`,
+    badSteps: (min, max) => `шаги must be ${min} to ${max} non-empty strings`,
+    noMarker: marker => `${marker} marker not found`,
+    badJson: msg => `недопустимый JSON (${msg})`,
+    notObject: 'не объект JSON',
+    secret: 'похоже на секрет',
+    badState: v => `недопустимый state (${v})`,
+    badFiles: 'files is not a list',
+    badList: field => `${field} is not a list`,
+    tooMany: (k, max) => `${k} has more than ${max} элементы`,
+    overTotal: max => `прогресс note over ${max} символов in total`,
+    noRecord: '(content not recorded)',
+    sample: (why, line) => `${why}: ${line}`,
+  },
+
+  cmd: {
+    unknown: sub => `неизвестный subcommand "${sub}"`,
+    usageHead: 'использование:',
+    usageLines: [
+      '  /передача                  статус',
+      '  /передача                  статус',
+      '  /передача                  статус',
+      '  /передача                  статус',
+      '  /передача                  статус',
+      '  /передача                  статус',
+      '  /передача                  статус',
+      '  /передача                  статус',
+      '  /передача                  статус',
+      '  /передача                  статус',
+      '  /передача                  статус',
+      '  /передача                  статус',
+    ],
+    context: (tokens, threshold, window) => `контекст ${tokens} / порог ${threshold} (window ${window})`,
+    refresh: (on, n, max, timer) => `кэш refresh ${on}, refreshed ${n}/${max} this простой period, timer ${timer ? 'waiting' : 'not started'}`,
+    away: state => `отсутствие передача: ${state === 'none' ? 'none' : state === 'yes' ? 'yes' : 'yes (one message held)'}`,
+    latest: last => `Latest передача: ${last ? `${last.at} ${last.kind}, context ${last.tokens}` : 'none'}`,
+    latestFailure: (at, kind, reason) => `Latest ошибка: ${at} ${kind}, ${reason}`,
+    undelivered: 'Undelivered передача: yes (/передача resend to send it again)',
+    deferred: deferral => `передача delayed: ${deferral}`,
+    background: (tasks, oneShot, recurring) => `Background (последний Stop): ${tasks} задача${s(tasks)}, ${oneShot} one-off schedule${s(oneShot)}, ${recurring} recurring schedule${s(recurring)}`,
+    busy: 'Another передача is in прогресс',
+    nowStarted: 'Creating the передача, then /clear and send it',
+    dryFailed: 'Trial run не удалось, see the log above for the причина',
+    dryDone: tokens => `Trial run готово (no /clear), контекст ${tokens}`,
+    distillSet: arg => `Background заметки set to ${arg}`,
+    distillUsage: 'использование: /передача distill (update now) or /передача distill on|off',
+    distilling: 'Already updating заметки',
+    distillNone: 'заметки not updated: no новый сообщения since the последний update, or it не удалось',
+    distillDone: 'заметки updated',
+    refreshNow: on => `Currently ${on}. использование: /передача refresh on|off`,
+    refreshSet: (arg, minutes) => `кэш refresh set to ${arg}${arg === 'off' ? ` (an away handoff is created after ${minutes} idle minutes)` : ''}`,
+    noAway: 'No отсутствие передача',
+    resumeIntro: 'The previous conversation went простой and a передача was created, so this is a новый диалог to continue it. Read the передача, tell me in a few lines the current state and следующий step as you understand them, then wait for пользователь\\\'s instructions.',
+    resumeIntroHeld: 'The previous conversation went простой and a передача was created, so this is a новый диалог to continue it. Respond to пользователь\\\'s сообщение at the end, using the передача as контекст.',
+    resumeHeld: '---\\nThe user\\\'s первый сообщение after coming back:',
+    resumeFailedLog: r => `/clear or submit не удалось: ${r}`,
+    resumeClearFailed: '/clear не удалось. The отсутствие передача is kept, you can run /передача resume again',
+    resuming: 'About to /clear and send the отсутствие передача',
+    resendIntro: 'Resending the previous передача. Read it, tell me in a few lines the current state and следующий step as you understand them, then wait for пользователь\\\'s instructions. Do not start working yet.',
+    nothingToResend: 'No передача to resend in this сессия',
+    pendingUnbound: 'This older pending record has no рабочая область source and cannot be resent safely; it is kept unchanged',
+    awayUsage: 'использование: /передача отсутствие pause|resume (this сессия только; заметки updates keep running)',
+    commandFailed: err => `Command не удалось; completion was not reported: ${err}`,
+    awayChanged: paused => paused ? 'отсутствие work paused for this сессия. Requests already sent cannot be cancelled and may still cost токены; late results are ignored. заметки updates keep running' : 'отсутствие work paused for this сессия. Requests already sent cannot be cancelled and may still cost токены; late results are ignored. заметки updates keep running',
+    resendFailed: err => `resend не удалось: ${err}`,
+    resending: 'Resending the передача (no /clear)',
+    discarded: 'отсутствие передача discarded, staying in the старый conversation',
+    discardedSend: 'отсутствие передача discarded, sending your последний сообщение in the старый conversation',
+    sendHeldFailed: err => `не удалось send the held сообщение: ${err}`,
+  },
+
+  panel: {
+    title: ' · проект заметки and guards',
+    close: 'Close',
+    more: 'More',
+    less: 'Less',
+    del: 'Delete',
+    confirmDel: 'Confirm',
+    cancel: 'Cancel',
+    keep: 'Keep',
+    off: 'Turn off',
+    approve: 'Approve',
+    draftBtn: 'черновик guards',
+    buttonsCells: 32,
+    tabGuard: n => `Guards ${n}`,
+    tabMemory: n => `память ${n}`,
+    tabRules: (r, p = 0) => (p > 0 ? `правила ${r} / Proc ${p}` : `правила ${r} / Proc ${p}`),
+    tabDistill: 'последний update',
+    tabSettings: 'настройки',
+    settingsHint: 'Values set here win over настройки.json and apply to every рабочая область. Press More for подробности',
+    source: { panel: 'панель', file: 'настройки.json', default: 'default' },
+    on: 'on',
+    offValue: 'off',
+    toggleBtn: 'Toggle',
+    resetBtn: 'Reset',
+    minutes: n => `${n} min`,
+    settingName: {
+      auto_handoff: 'Hand off at the порог',
+      threshold: 'передача порог',
+      window_ratio: 'порог ratio on маленький windows',
+      refresh: 'Keep the кэш warm while отсутствие',
+      idle_minutes: 'простой время before a refresh',
+      max_refresh: 'Refreshes per простой period',
+      away_handoff: 'отсутствие передача',
+      distill: 'проект заметки (background)',
+      distill_every: 'сообщения between заметки updates',
+      min_tokens: 'Smallest conversation handled',
+      notes_model: 'модель for заметки',
+      resume_hint: 'Tell новый chats where you stopped',
+      retry_nudge: 'Repeated ошибка nudge',
+      done_check: 'Check before "готово"',
+      reply_language: 'язык ответа reminder',
+      language: 'сообщение язык',
+    },
+    settingHelp: {
+      auto_handoff: '"When off, nothing happens at the порог and Claude Code\'s own compact takes over"',
+      threshold: 'Hand off to a новый диалог when the контекст reaches this many токены (needs automatic передача on)',
+      window_ratio: 'On windows smaller than the порог, hand off at this share of the window',
+      refresh: 'While you are отсутствие, send a tiny request now and then so the кэш does not expire',
+      idle_minutes: 'минут after the кэш was последний used before refreshing (the кэш expires at 60)',
+      max_refresh: 'After this many, write an отсутствие передача to pick up from when you return',
+      away_handoff: 'When refreshes run out or are off, write an отсутствие передача and offer /передача resume or continue on return; off does nothing',
+      distill: 'Update the проект заметки in the background every N сообщения, when простой and before a передача',
+      distill_every: 'Update the заметки after this many of your сообщения; fewer is fresher but makes more requests',
+      min_tokens: 'Smaller conversations are cheap to rebuild: no refresh, заметки or отсутствие передача',
+      notes_model: 'модель for background заметки (Sonnet 5.5 at least); настройки.json can name another модель',
+      resume_hint: 'A новый chat in the same folder within 7 дней is told where the последний one stopped',
+      retry_nudge: 'When a tool fails twice in a row for the same причина, ask Claude to change approach',
+      done_check: 'When Claude says готово after editing code with no passing test or check, ask it to verify once',
+      reply_language: '"напоминать Claude once when its explanation is not in this язык; auto follows Claude Code\'s язык"',
+      language: '"язык of the строка состояния, notices and панель; auto follows Claude Code\'s язык, then the система"',
+    },
+    noGuards: 'No guards yet. Once a правило appears 3+ раз you can ask the модель to черновик one.',
+    guardMeta: (id, mode, hits) => `#${id} · ${mode} · ${hits} hit${s(hits)}`,
+    blockLabel: 'Blocks ',
+    allowLabel: 'Allows ',
+    replay: (calls, hits) => `Trial match on this conversation: ${hits} of ${calls} tool call${s(calls)}`,
+    recentHits: 'Recent hits (if most are false alarms, narrow or turn off):',
+    suggesting: 'Asking the модель for drafts…',
+    candidates: n => `${n} правило${s(n)} appeared 3+ раз without a защита `,
+    memoryHint: (shown, total) => `Latest ${shown} of ${total} · preferences and corrections go into новые диалоги in full, facts and locations as titles только`,
+    archived: (n, days) => `${n} archived: not confirmed for over ${days} дней, not carried into новые диалоги`,
+    noRules: 'No правила yet',
+    ruleCount: n => `${n}x`,
+    proceduresHint: n => `${n} procedure${s(n)} · not carried into новые диалоги; at 3+ раз the AI is asked to turn them into проект skills`,
+    inProject: project => (project.startsWith('已在 ') ? `in ${project.slice(3)}` : 'in ${project.slice(3)}'),
+    distillLine: (at, why, n) => `${at} · ${why} · ${n} change${s(n)}`,
+    noDistill: 'No заметки updates yet',
+    footer: file => `After ctrl+x tab, press 1–5 to switch tabs · ${file}`,
+    typeLabel: { user: 'Preference', feedback: 'Correction', project: 'Fact', reference: 'Location' },
+  },
+}
+
+const MSG: Record<Lang, Messages> = { 'zh-TW': zh, en, 'ru': ru }

@@ -72,17 +72,19 @@ test('英文：面板與守門清單', async ($, on) => {
 })
 
 // 語言的判斷：language 設定優先（空白當成沒設），沒設就看系統語系；系統語系在測試裡假造不了，所以直接測 pickLang
-const PICK_CASES: { name: string; setting: unknown; locale: string | undefined; want: 'zh-TW' | 'en' }[] = [
+const PICK_CASES: { name: string; setting: unknown; locale: string | undefined; want: 'zh-TW' | 'en' | 'ru' }[] = [
   { name: '系統語系 zh-TW', setting: undefined, locale: 'zh-TW', want: 'zh-TW' },
   { name: '系統語系 zh-Hant-TW', setting: undefined, locale: 'zh-Hant-TW', want: 'zh-TW' },
   { name: '系統語系 zh-CN', setting: undefined, locale: 'zh-CN', want: 'zh-TW' },
   { name: '系統語系 en-US', setting: undefined, locale: 'en-US', want: 'en' },
+  { name: '系統語系 русский', setting: undefined, locale: 'ru', want: 'ru' },
   { name: '系統語系 ja-JP', setting: undefined, locale: 'ja-JP', want: 'en' },
   { name: '讀不到系統語系', setting: undefined, locale: undefined, want: 'en' },
   { name: 'language 設定是中文、系統英文', setting: 'Traditional Chinese', locale: 'en-US', want: 'zh-TW' },
   { name: 'language 設定是繁體中文', setting: '繁體中文', locale: 'en-US', want: 'zh-TW' },
   { name: 'language 設定是日文、系統中文', setting: 'japanese', locale: 'zh-TW', want: 'en' },
   { name: 'language 設定空白：看系統語系', setting: '  ', locale: 'zh-TW', want: 'zh-TW' },
+  { name: 'language 設定是целевой язык', setting: 'русский', locale: 'en-US', want: 'ru' },
 ]
 for (const c of PICK_CASES) {
   test(`語言判斷：${c.name} → ${c.want}`, async () => {

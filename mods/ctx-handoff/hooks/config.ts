@@ -45,7 +45,7 @@ export const SETTINGS: readonly SettingSpec[] = [
   { key: 'distill_every', kind: 'num', min: 5, max: 200, step: 5, d: 30 },
   // free：settings.json 可以寫清單外的模型名稱；面板只在清單裡輪
   { key: 'notes_model', kind: 'choice', options: ['claude-sonnet-5-5', 'claude-opus-5-5'], d: 'claude-sonnet-5-5', free: true },
-  { key: 'language', kind: 'choice', options: ['auto', 'zh-TW', 'en'], d: 'auto' },
+  { key: 'language', kind: 'choice', options: ['auto', 'zh-TW', 'en', 'ru'], d: 'auto' },
   { key: 'reply_language', kind: 'choice', options: REPLY_LANG_SETTINGS, d: 'auto' },
   { key: 'retry_nudge', kind: 'bool', d: true },
   { key: 'done_check', kind: 'bool', d: true },

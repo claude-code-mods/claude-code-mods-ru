@@ -1,60 +1,60 @@
 # fast-jev-compaction
 
-Claude Code plugin that replaces the compaction summary with Jev decisions:
-every tool call and result is scored in one fast request, stale ones are
-dropped or truncated, everything kept stays verbatim. Also usable as an npm
-library.
+Плагин Claude Code, который заменяет сводку сжатия решениями Jev:
+каждый вызов инструмента и результат оцениваются за один быстрый запрос, устаревшие
+отбрасываются или усекаются, всё сохранённое остаётся дословно. Также пригоден как npm-
+библиотека.
 
-## What and why
+## Что и зачем
 
-Most context compaction asks an LLM to summarize old turns. A summary is
-lossy: a file path, exact error, constraint, or command can disappear even when
-it matters later. This library never rewrites anything. It only deletes tool
-calls and tool results Jev says are no longer needed, and it asks Jev while
-showing it the whole conversation. User and assistant text stays verbatim and
-in order.
+Большинство сжатий контекста просят LLM сделать сводку старых ходов. Сводка
+теряет данные: путь файла, точная ошибка, ограничение или команда могут исчезнуть, даже если
+потом они важны. Эта библиотека никогда ничего не переписывает. Она только удаляет вызовы
+инструментов и результаты инструментов, которые Jev считает больше не нужными, и спрашивает Jev,
+показывая ему всю беседу. Текст пользователя и ассистента остаётся дословным и
+в порядке.
 
-The repository is both an npm package (`src/`) and a Claude Code plugin
-(`hooks/`, `.claude-plugin/`) that uses the package to replace Claude Code's
-built-in compaction summary with the original messages.
+Репозиторий — одновременно npm-пакет (`src/`) и плагин Claude Code
+(`hooks/`, `.claude-plugin/`), который использует пакет, чтобы заменить встроенную
+сводку сжатия Claude Code оригинальными сообщениями.
 
-## How it works
+## Как это работает
 
-1. Every `tool_use` is paired with its `tool_result` by `tool_use_id`. Calls in
-   the first message or in the newest `preserveRecentMessages` messages are
-   pinned and never touched.
-2. The **state** sent to Jev is the whole conversation so far, oldest first,
-   with every tool result replaced by a short note (`ok, 4213 chars (omitted)`).
-   Tool inputs are included, texts are included, nothing is summarized.
-3. The state is fitted into `maxStateTokens` (25k by default) in stages, each
-   applied only if the previous one was not enough: tool inputs truncated to
-   1000, then 200, then 60 characters; long texts abridged to head + tail,
-   oldest non-pinned messages first; old non-pinned messages collapsed to a
-   `[… N chars omitted …]` note; old tool calls reduced to one line each
-   (`t12 Read file_path=src/a.ts → ok 480ch`); old call-less messages left
-   out; runs of old call-only messages folded into one entry. If it still
-   does not fit, compaction throws. Tokens are estimated without a tokenizer (a
-   word per six letters, half a token per digit, ~one per other symbol),
-   calibrated to land a little above the counts Jev reports.
-4. For every non-pinned call Jev gets two `noul` questions: should the **call**
-   stay (knowing it was made, with its input, still matters), and should the
-   **result** stay verbatim (its contents are still needed and re-running the
-   tool would not do).
-5. Questions are split into as many requests as needed so state plus questions
-   stays under `maxRequestTokens` (30k by default, under Jev's 32k request
-   limit). The same full state is resent with every request; requests run
-   concurrently and their answers are merged.
-6. Decisions per call, against `keepThreshold`:
-   - `keepResult ≥ threshold` → keep call and result;
-   - else `keepCall ≥ threshold` → keep the call, truncate the result to its
-     first `truncateHeadChars` characters plus a one-line note;
-   - else → remove the call together with its result.
-7. The message list is rebuilt: a message that loses all its content is
-   removed, untouched messages are returned as the same objects, and no result
-   is ever left without its call.
+1. Каждый `tool_use` сопоставляется со своим `tool_result` по `tool_use_id`. Вызовы в
+   первом сообщении или в новейших `preserveRecentMessages` сообщениях
+   закреплены и никогда не трогаются.
+2. **Состояние**, отправляемое Jev, — это вся беседа до этого момента, от старого к новому,
+   каждый результат инструмента заменён короткой заметкой (`ok, 4213 chars (omitted)`).
+   Входы инструментов включены, тексты включены, ничего не обобщается.
+3. Состояние подгоняется под `maxStateTokens` (по умолчанию 25k) поэтапно, каждый этап
+   применяется только если предыдущего не хватило: входы инструментов усекаются до
+   1000, затем 200, затем 60 символов; длинные тексты сокращаются до начала + конца,
+   начиная с самых старых незакреплённых сообщений; старые незакреплённые сообщения сворачиваются в
+   заметку `[… N chars omitted …]`; старые вызовы инструментов сводятся к одной строке каждый
+   (`t12 Read file_path=src/a.ts → ok 480ch`); старые сообщения без вызовов убираются
+   вовсе; серии старых сообщений только с вызовами сворачиваются в одну запись. Если оно всё
+   равно не помещается, сжатие выбрасывает исключение. Токены оцениваются без токенизатора (слово
+   за шесть букв, полтокена за цифру, ~один за другой символ),
+   откалибровано, чтобы немного превышать числа, которые сообщает Jev.
+4. Для каждого незакреплённого вызова Jev получает два вопроса `noul`: должен ли **вызов**
+   остаться (знать, что он был сделан и с каким вводом, всё ещё важно), и должен ли
+   **результат** остаться дословным (его содержимое ещё нужно, а повторный запуск
+   инструмента не подойдёт).
+5. Вопросы разбиваются на столько запросов, сколько нужно, чтобы состояние плюс вопросы
+   оставалось ниже `maxRequestTokens` (по умолчанию 30k, ниже лимита запроса Jev в 32k). Одно и то же полное состояние переотправляется с каждым запросом; запросы идут
+   параллельно, а их ответы объединяются.
+6. Решения по каждому вызову относительно `keepThreshold`:
+   - `keepResult ≥ threshold` → сохранить вызов и результат;
+   - иначе `keepCall ≥ threshold` → сохранить вызов, усечь результат до первых
+     `truncateHeadChars` символов плюс однострочная заметка;
+   - иначе → удалить вызов вместе с результатом.
+7. Список сообщений перестраивается: сообщение, потерявшее всё содержимое,
+   удаляется, нетронутые сообщения возвращаются как те же объекты, и никакой результат
+   никогда не остаётся без своего вызова.
+Сбои Jev, некорректные ответы, отсутствующий ключ или история, которая не подгоняется,
 
-Jev failures, malformed answers, a missing key, or a history that cannot be
-fitted throw; the caller (or the Claude Code hook) decides what to fall back to.
+выбрасывают исключение; вызывающий (или хук Claude Code) решает, к чему откатиться.
+`Message` — подмножество `SessionMessage` Claude Code, поэтому транскрипт сессии
 
 ## Установка и использование
 
@@ -84,85 +84,85 @@ if (reductionRatio(result) < 0.25) {
 }
 ```
 
-`Message` is a subset of Claude Code's `SessionMessage`, so a session transcript
-can be passed in as is.
+можно передать как есть.
+Чтобы принести собственный транспорт, реализуйте `JevAsker` (один метод `ask(state, questions)`)
 
-To bring your own transport, implement `JevAsker` (one `ask(state, questions)`
-method) and call `compact(messages, asker, options)`; `buildJevRequest` and
-`parseJevResponse` give you the HTTP request body and response validation.
-The building blocks (`collectToolCalls`, `fitState`, `batchCalls`,
-`decideCall`, `applyDecisions`) are exported too.
+и вызовите `compact(messages, asker, options)`; `buildJevRequest` и
+`parseJevResponse` дают вам тело HTTP-запроса и валидацию ответа.
+Строительные блоки (`collectToolCalls`, `fitState`, `batchCalls`,
+`decideCall`, `applyDecisions`) тоже экспортируются.
+`apiKey` по умолчанию берётся из `process.env.TYPESAFE_API_KEY`. Никогда не коммитьте ключ и не
 
-`apiKey` defaults to `process.env.TYPESAFE_API_KEY`. Never commit the key or
-put it in a source file.
+помещайте его в файл исходников.
+## Параметры
 
-## Options
+| Параметр | По умолчанию | Описание |
 
-| Option | Default | Description |
+| `apiKey` | `TYPESAFE_API_KEY` | Ключ TypeSafe API (`compactMessages`/`JevClient`) |
 | --- | --- | --- |
-| `apiKey` | `TYPESAFE_API_KEY` | TypeSafe API key (`compactMessages`/`JevClient`) |
-| `model` | `jev-latest` | Jev model name |
-| `baseUrl` | `https://api.typesafe.ai/v1/systemone` | System One endpoint |
-| `fetch` | native `fetch` | Injectable fetch implementation for tests |
-| `goal` | last 3 user prompts | Ongoing task description included in the state |
-| `keepThreshold` | `0.5` | Minimum keep probability for a call or result to stay |
-| `preserveRecentMessages` | `6` | Newest messages never touched (the first is always kept) |
-| `maxStateTokens` | `25000` | Estimated token ceiling for the state |
-| `maxRequestTokens` | `30000` | Estimated ceiling for state plus one batch of questions |
-| `truncateHeadChars` | `300` | Characters of a dropped tool result retained before its note |
+| `model` | `jev-latest` | Имя модели Jev |
+| `baseUrl` | `https://api.typesafe.ai/v1/systemone` | Адрес System One |
+| `fetch` | нативный `fetch` | Внедряемая реализация fetch для тестов |
+| `goal` | последние 3 запроса пользователя | Описание текущей задачи, включаемое в состояние |
+| `keepThreshold` | `0.5` | Минимальная вероятность сохранения для вызова или результата |
+| `preserveRecentMessages` | `6` | Новейшие сообщения не трогаются (первое всегда сохраняется) |
+| `maxStateTokens` | `25000` | Оценочный потолок токенов для состояния |
+| `maxRequestTokens` | `30000` | Оценочный потолок для состояния плюс один пакет вопросов |
+| `truncateHeadChars` | `300` | Символов усечённого результата инструмента сохраняется до заметки |
+`result.stats` сообщает число сообщений и символов до и после,
 
-`result.stats` reports message and character counts before and after, the
-per-reason decision counts, the state size in estimated tokens, which fitting
-stage was needed, and the number of requests.
+счётчики решений по причинам, размер состояния в оценочных токенах, какой этап подгонки
+понадобился, и число запросов.
+## Ограничения
 
-## Limitations
+- Кандидатами являются только вызовы и результаты инструментов; текстовые сообщения никогда не удаляются
 
-- Only tool calls and results are candidates; text messages are never removed
-  or shortened in the output (they are only abridged in the state Jev sees).
-- Token sizes are estimates from character counts, not a tokenizer.
-- Calibration is at the request level; a probability is not a proof that a
-  result is safe to delete. The assistant can always re-run the tool.
-- The full state is repeated with every request, so a history near the state
-  ceiling costs one request per handful of questions.
+  и не укорачиваются в выводе (они лишь сокращаются в состоянии, которое видит Jev).
+- Размеры токенов — оценки по числу символов, а не токенизатор.
+- Калибровка на уровне запроса; вероятность не доказывает, что результат безопасно удалить.
+  Ассистент всегда может повторно запустить инструмент.
+- Полное состояние повторяется с каждым запросом, поэтому история рядом с потолком
+  состояния стоит один запрос на горсть вопросов.
+## Плагин Claude Code
 
-## Claude Code plugin
+Корень репозитория — плагин function-hook Claude Code: `hooks/fast-jev.ts` —
 
-The repository root is a Claude Code function-hook plugin: `hooks/fast-jev.ts`
-is a thin adapter that feeds `session.compact` transcripts through `src/` and
-falls back to Claude Code's built-in summary on errors or insufficient
-reduction. See [`hooks/README.md`](hooks/README.md) for configuration and the
-Claude Code 2.1.274 type reference.
+тонкий адаптер, который прогоняет транскрипты `session.compact` через `src/` и
+откатывается к встроенной сводке Claude Code при ошибках или недостаточном
+сокращении. См. [`hooks/README.md`](hooks/README.md) для конфигурации и
+справочник типов Claude Code 2.1.274.
+Function hooks — функция Claude Code раннего доступа (2.1.274+), поэтому
 
 ### Установка в Claude Code
 
-Function hooks are an early-access Claude Code feature (2.1.274+), so the
-opt-in flag must be set wherever Claude Code runs, e.g. in `~/.claude/settings.json`:
+флаг согласия должен быть задан там, где работает Claude Code, например в `~/.claude/settings.json`:
+Затем добавьте этот репозиторий как маркетплейс плагинов и установите плагин
 
 ```json
 { "env": { "CLAUDE_CODE_ENABLE_FUNCTION_HOOKS": "1", "TYPESAFE_API_KEY": "<your key>" } }
 ```
 
-Then add this repository as a plugin marketplace and install the plugin,
-either from the shell or as slash commands inside a session:
+из оболочки или слэш-командами внутри сессии:
+Установка спросит параметры плагина (ключ API, пороги, `truncateHeadChars`,
 
 ```sh
 claude plugin marketplace add tamaratran/fast-jev-compaction
 claude plugin install fast-jev-compaction@fast-jev-compaction
 ```
 
-The install prompts for the plugin options (API key, thresholds, `truncateHeadChars`,
-…); leave them at their defaults to use `TYPESAFE_API_KEY` from the environment.
-Restart Claude Code or run `/reload-plugins`. From then on `/compact` (and
-auto-compaction) goes through Jev: the toast reads
-`fast-jev-compaction: kept N/M messages, no summary (…)` when the pruned history
-replaced the built-in summary, or `fallback to built-in summary (…)` when Jev
-could not remove enough (short sessions, or when it fails).
+…); оставьте их по умолчанию, чтобы использовать `TYPESAFE_API_KEY` из окружения.
+Перезапустите Claude Code или выполните `/reload-plugins`. С этого момента `/compact` (и
+автосжатие) идёт через Jev: уведомление читается
+`fast-jev-compaction: kept N/M messages, no summary (…)` когда сокращённая история
+заменила встроенную сводку, или `fallback to built-in summary (…)` когда Jev
+не смог убрать достаточно (короткие сессии, или когда он даёт сбой).
+Чтобы запустить из чекаута без установки: `CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1 claude --plugin-dir .`
 
-To run from a checkout without installing: `CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1 claude --plugin-dir .`
-from the repository root. No publishing step is required; the marketplace is
-just the repo's `.claude-plugin/marketplace.json`.
+из корня репозитория. Шаг публикации не требуется; маркетплейс —
+просто `.claude-plugin/marketplace.json` репозитория.
+## Разработка
 
-## Development
+Юнит-тесты используют поддельный Jev и никогда не связываются с TypeSafe. Демо — живая
 
 ```sh
 npm install
@@ -173,22 +173,22 @@ npm run validate:plugin  # claude plugin validate
 TYPESAFE_API_KEY="$(cat ~/.typesafe_key)" npm run demo
 ```
 
-The unit tests use a fake Jev and never contact TypeSafe. The demo is the live
-network check.
+сетевая проверка.
+## Анимированное демо (macOS)
 
-## Animated demo (macOS)
+`demo/JevDemo` — небольшое нативное приложение SwiftUI, которое проигрывает сценарную, драматизированную
 
-`demo/JevDemo` is a small native SwiftUI app that plays a scripted, dramatized
-version of the compaction flow inside a Claude Code-style terminal: the tool
-calls of a canned transcript are scored, results and calls Jev lets go turn red
-and collapse away, and the rest stays verbatim. It never calls the API; it
-exists to be screen recorded.
+версию потока сжатия внутри терминала в стиле Claude Code: вызовы инструментов
+из заготовленного транскрипта оцениваются, результаты и вызовы, которые Jev отпускает, краснеют
+и сворачиваются, а остальное остаётся дословным. Оно никогда не вызывает API; оно
+существует, чтобы записать его экран.
+Нажмите пробел в приложении, чтобы проиграть с начала.
 
 ```sh
 demo/JevDemo/build.sh   # builds demo/JevDemo/build/JevDemo.app and launches it
 ```
 
-Press space in the app to replay from the start.
+Нажмите пробел в приложении, чтобы проиграть с начала.
 
 ## Источник и лицензия
 

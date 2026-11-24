@@ -4,8 +4,6 @@
 
 Use ChatGPT, Cursor, OpenCode and Antigravity models inside one session, switching with /model.
 
-在一个 Claude Code 会话中使用 ChatGPT、Cursor、OpenCode 和 Antigravity 模型，用 /model 切换。
-
 ## Установка
 
 ```

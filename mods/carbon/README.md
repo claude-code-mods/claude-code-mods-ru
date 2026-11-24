@@ -1,117 +1,116 @@
-<p><img src="docs/banner.png" width="100%" alt="claude-carbon, free and open source: the CO2 of your Claude Code sessions, in the terminal and in the Claude app. Eight pixel molecules from dark blue to dark red, a terminal whose status line reads 8.2gCO2, and the /carbon-panel pane: this session's molecule and CO2, the last 30 days as tiles and warming stripes, a button for the yearly card"></p>
+<p><img src="docs/banner.png" width="100%" alt="claude-carbon, свободный и с открытым кодом: CO2 ваших сессий Claude Code, в терминале и в приложении Claude. Восемь пиксельных молекул от тёмно-синего к тёмно-красному, терминал со строкой состояния 8.2gCO2 и панель /carbon-panel: молекула и CO2 этой сессии, последние 30 дней плитками и полосами потепления, кнопка для годовой карточки"></p>
 
-[![GitHub stars](https://img.shields.io/github/stars/gwittebolle/claude-carbon)](https://github.com/gwittebolle/claude-carbon/stargazers)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![GitHub release](https://img.shields.io/github/v/release/gwittebolle/claude-carbon)](https://github.com/gwittebolle/claude-carbon/releases)
+[![Звёзды GitHub](https://img.shields.io/github/stars/gwittebolle/claude-carbon)](https://github.com/gwittebolle/claude-carbon/stargazers)
+[![Лицензия: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Выпуск GitHub](https://img.shields.io/github/v/release/gwittebolle/claude-carbon)](https://github.com/gwittebolle/claude-carbon/releases)
 [![npm](https://img.shields.io/npm/v/claude-carbon)](https://www.npmjs.com/package/claude-carbon)
 [![CI](https://github.com/gwittebolle/claude-carbon/actions/workflows/ci.yml/badge.svg)](https://github.com/gwittebolle/claude-carbon/actions/workflows/ci.yml)
 
-claude-carbon is an open source Claude Code plugin that tracks the carbon footprint of your sessions: a live CO2 estimate computed locally from your token usage, in the terminal status line and in the Code tab of the Claude desktop app, next to the session's API-equivalent cost. In the desktop app, `/carbon-panel` opens a pane with a pixel molecule coloured by this session's CO2 against the median of your past sessions, your usage over the period you pick, its warming stripes, and a button for your yearly card.
+claude-carbon — плагин Claude Code с открытым кодом, который отслеживает углеродный след ваших сессий: оценка CO2 в реальном времени, вычисляемая локально из расхода токенов, в строке состояния терминала и во вкладке Code приложения Claude Desktop, рядом с эквивалентной по API стоимостью сессии. В приложении Desktop `/carbon-panel` открывает панель с пиксельной молекулой, окрашенной по CO2 этой сессии относительно медианы ваших прошлых сессий, вашим Usage за выбранный период, полосами потепления и кнопкой годовой карточки.
 
-<p align="center"><img src="https://github.com/user-attachments/assets/f52b2653-28b9-4efc-82a6-02dfe256e193" width="480" alt="claude-carbon in 16 seconds: Claude Code never shows its CO2; claude-carbon puts it in the terminal status line, then in the Claude desktop app, where /carbon-panel opens a pane with a pixel molecule coloured by this session's CO2 against the median of your past sessions"></p>
+<p align="center"><img src="https://github.com/user-attachments/assets/f52b2653-28b9-4efc-82a6-02dfe256e193" width="480" alt="claude-carbon за 16 секунд: Claude Code никогда не показывает свой CO2; claude-carbon помещает его в строку состояния терминала, затем в приложение Claude Desktop, где /carbon-panel открывает панель с пиксельной молекулой, окрашенной по CO2 этой сессии относительно медианы прошлых сессий"></p>
 
-## What claude-carbon does
+## Что делает claude-carbon
 
-- `/carbon-panel`: a pane in the Claude desktop app with your CO2 molecule, your usage and the warming stripes of your sessions (in a terminal, the session in the band above the prompt). See [the mod](#the-mod-carbon-panel-and-the-co2-of-each-answer)
-- Adds a live CO2 estimate to the Claude Code status line, and the session's CO2 under the prompt in the Claude desktop app, each next to the session's API-equivalent cost
-- Persists each session to a local SQLite database, so history survives the 30-day transcript purge
-- Backfills historical data from existing `~/.claude` transcripts
-- Slash commands: `/carbon-report` (text), `/carbon-card` (PNG), `/carbon-pr` (footprint of a pull request)
-- A README badge with your all-time total, and a public methodology with every factor sourced
+- `/carbon-panel`: панель в приложении Claude Desktop с вашей молекулой CO2, вашим Usage и полосами потепления ваших сессий (в терминале — сессия в полосе над запросом). См. [мод](#the-mod-carbon-panel-and-the-co2-of-each-answer)
+- Добавляет оценку CO2 в реальном времени в строку состояния Claude Code и CO2 сессии под запросом в приложении Claude Desktop, каждую рядом с эквивалентной по API стоимостью сессии
+- Сохраняет каждую сессию в локальную базу SQLite, так что история переживает 30-дневную очистку транскриптов
+- Восстанавливает исторические данные из существующих транскриптов `~/.claude`
+- Слэш-команды: `/carbon-report` (текст), `/carbon-card` (PNG), `/carbon-pr` (углеродный след пулл-реквеста)
+- Значок README с вашим общим итогом и открытая методика с источником каждого коэффициента
 
-> **About the `$` figure.** It is an API equivalent: what your session would cost at Anthropic's pay-as-you-go API list prices. On a Pro, Max or Ultra subscription you do not pay it; it shows the value of what you used, next to its CO2. See [How it works](#how-it-works).
+> **О цифре `$`.** Это эквивалент API: сколько стоила бы ваша сессия по ценам Anthropic pay-as-you-go API. По подписке Pro, Max или Ultra вы её не платите; она показывает стоимость использованного рядом с его CO2. См. [Как это работает](#how-it-works).
 
 ## Установка
 
-In Claude Code, type:
+В Claude Code введите:
 
 ```text
 /plugin install claude-carbon --marketplace gwittebolle/claude-carbon
 ```
 
-Claude Code asks you to confirm the marketplace, shows what the plugin installs, then asks where to install it: pick **Install for you**. The same line works on macOS, Linux and Windows. In the **Code** tab of the Claude desktop app, if the line is not taken, paste this message instead and accept when Claude asks:
+Claude Code попросит подтвердить маркетплейс, покажет, что устанавливает плагин, затем спросит, куда его установить: выберите **Install for you**. Та же строка работает на macOS, Linux и Windows. Во вкладке **Code** приложения Claude Desktop, если строка не срабатывает, вставьте вместо неё это сообщение и согласитесь, когда Claude спросит:
 
 ```text
 Install the claude-carbon plugin for me: claude plugin install claude-carbon --marketplace gwittebolle/claude-carbon
 ```
 
-Then quit Claude Code completely, open it again and start a new session. Your CO2 now shows next to the session's cost:
+Затем полностью закройте Claude Code, откройте снова и начните новую сессию. Ваш CO2 теперь показывается рядом со стоимостью сессии:
 
-- in a terminal, in the status line: `$0.50 · 65gCO₂`
-- in the desktop app, under the prompt: `This session: 3.6 gCO₂ · $0.12`
+- в терминале, в строке состояния: `$0.50 · 65gCO₂`
+- в приложении Desktop, под запросом: `This session: 3.6 gCO₂ · $0.12`
 
-The plugin sets that status line once, at its first session start, and only when you have none: another tool's status line is left as it is (to add the CO2 to it, see [ccstatusline](#using-with-ccstatusline)). `/carbon-report` gives your totals, and `/carbon-panel` opens the pane in the desktop app. The `$` is an API-equivalent cost, not what your subscription bills. To update later, run `/carbon-update`.
+Плагин задаёт эту строку состояния один раз, при первом запуске сессии, и только если у вас её нет: строка состояния другого инструмента остаётся как есть (чтобы добавить к ней CO2, см. [ccstatusline](#using-with-ccstatusline)). `/carbon-report` даёт ваши итоги, а `/carbon-panel` открывает панель в приложении Desktop. `$` — стоимость-эквивалент API, а то, что списывает ваша подписка. Для обновления позже выполните `/carbon-update`.
 
-<p align="center"><img src="docs/desktop-pane.png" width="560" alt="Illustration of the Claude desktop app with the claude-carbon pane open: a blue pixel molecule, &quot;This session: 8.2 gCO₂ · 0.04× your median&quot;, the last 30 days as tiles and warming stripes, a &quot;Get my 2026 card&quot; button, and &quot;This session: 8.2 gCO₂&quot; under the prompt"></p>
+<p align="center"><img src="docs/desktop-pane.png" width="560" alt="Приложение Claude Desktop с открытой панелью claude-carbon: синяя пиксельная молекула, «This session: 8.2 gCO₂ · 0.04× your median», последние 30 дней плитками и полосами потепления, кнопка «Get my 2026 card» и «This session: 8.2 gCO₂» под запросом"></p>
 
 <details>
-<summary><b>If the install stops</b></summary>
+<summary><b>Если установка останавливается</b></summary>
 
-- **macOS opens a window about "command line developer tools".** That is `git`, which Claude Code needs to fetch the plugin and a Mac without developer tools does not have yet. Click **Install**, wait until it finishes (a few minutes), then install again.
-- **"jq is not installed" or "sqlite3 is not installed".** Tell Claude: "Install what is missing.", then restart Claude Code. Every Mac has `sqlite3`, and macOS 15 and later also have `jq`. On an older Mac, Claude can install `jq` with Homebrew, or the installer (under Other ways to install) fetches the official `jq` itself, checked against its published checksum. On Windows, `/carbon-panel` names the one missing and Claude can install it with `winget`. If `winget` answers "Access is denied", security software on the PC is blocking it: allow `winget` there, then try again.
-- **Windows says Git Bash is missing.** Install [Git for Windows](https://git-scm.com/downloads/win) (Claude Code needs it on Windows anyway), quit the app completely and reopen it, then install again in a new session. Claude Code looks for Git Bash when a session starts, so a session open during the Git install still runs without it.
-- **Installed from Anthropic's community marketplace and the plugin fails to load?** The `co2-tracker@claude-community` entry is pinned to a release from August 2026 that current Claude Code rejects ("Duplicate hooks file detected"). Run `/plugin uninstall co2-tracker@claude-community`, then install as above.
+- **macOS открывает окно про «инструменты разработчика командной строки».** Это `git`, который Claude Code нужен для загрузки плагина, а на Mac без инструментов разработчика его ещё нет. Нажмите **Install**, дождитесь окончания (несколько минут), затем установите снова.
+- **«jq is not installed» или «sqlite3 is not installed».** Скажите Claude: «Установи недостающее.», затем перезапустите Claude Code. На каждом Mac есть `sqlite3`, а на macOS 15 и новее есть и `jq`. На более старом Mac Claude может поставить `jq` через Homebrew, а установщик (в разделе Другие способы установки) скачает официальный `jq` сам, с проверкой по опубликованной контрольной сумме. В Windows `/carbon-panel` назовёт недостающее, и Claude сможет поставить его через `winget`. Если `winget` отвечает «Access is denied», его блокирует защитное ПО на ПК: разрешите `winget` там и попробуйте снова.
+- **Windows говорит, что нет Git Bash.** Установите [Git for Windows](https://git-scm.com/downloads/win) (Claude Code всё равно нуждается в нём на Windows), полностью закройте приложение и откройте снова, затем установите заново в новой сессии. Claude Code ищет Git Bash при начале сессии, поэтому сессия, открытая во время установки Git, всё равно работает без него.
+- **Установлено из сообщества маркетплейса Anthropic, и плагин не загружается?** Запись `co2-tracker@claude-community` привязана к выпуску августа 2026, который текущий Claude Code отвергает («Обнаружен дублирующийся файл хуков»). Выполните `/plugin uninstall co2-tracker@claude-community`, затем установите как описано выше.
 
 </details>
 
 <details>
-<summary><b>Other ways to install</b></summary>
+<summary><b>Другие способы установки</b></summary>
 
-- **The installer**, a script that clones this repository and wires everything into `~/.claude/settings.json` itself. Paste this message into Claude Code, or run the command after the colon yourself in a terminal:
+- **Установщик** — сценарий, который клонирует этот репозиторий и сам вносит всё в `~/.claude/settings.json`. Вставьте это сообщение в Claude Code или выполните команду после двоеточия сами в терминале:
 
   ```text
   Install claude-carbon for me by running this command:
   curl -fsSL https://raw.githubusercontent.com/gwittebolle/claude-carbon/main/install.sh | bash
   ```
 
-  On Windows, in PowerShell (it needs [Git for Windows](https://git-scm.com/downloads/win) and two packages first, see [Windows](#windows)):
+  В Windows, в PowerShell (нужны [Git for Windows](https://git-scm.com/downloads/win) и два пакета сначала, см. [Windows](#windows)):
 
   ```text
   Install claude-carbon for me by running this command in PowerShell:
   irm https://raw.githubusercontent.com/gwittebolle/claude-carbon/main/install.ps1 | iex
   ```
 
-  If the mode selector under the prompt shows **Auto**, pick **Manual** first: auto mode blocks a command that downloads a script and runs it. You can read [install.sh](install.sh) before running it.
-- **With Node.js:** `npx claude-carbon` runs the same installer.
+  Если селектор режима под запросом показывает **Auto**, сначала выберите **Manual**: авторежим блокирует команду, которая скачивает сценарий и запускает его. Вы можете прочесть [install.sh](install.sh) перед запуском.
+- **С Node.js:** `npx claude-carbon` запускает тот же установщик.
 
-Use one way only: the plugin and the installer together would run every hook twice. Already installed with the installer? Nothing to change, `/carbon-update` keeps it up to date.
+Используйте только один способ: плагин и установщик вместе запускали бы каждый хук дважды. Уже установили через установщик? Ничего менять не нужно, `/carbon-update` keeps его актуальным.
 
 </details>
 
-Not covered: the chat and Cowork tabs and the web app (claude.ai/code). Their sessions run on Anthropic's servers, so nothing reaches your machine to count.
+Не охвачено: чат и вкладки Cowork, а также веб-приложение (claude.ai/code). Их сессии работают на серверах Anthropic, поэтому до вашего компьютера ничего не доходит для подсчёта.
 
-## Example report
+## Пример отчёта
 
 <p align="center">
-  <img src="docs/example-card.png" alt="claude-carbon summary card: 1190.3 kg of estimated CO2 from January to September 2026, a bar per month, then 25.3B tokens processed, 94% of them cache reads, a car equivalent, the API-price cost and a yearly projection" width="540">
+  <img src="docs/example-card.png" alt="Сводная карточка claude-carbon: 1190.3 кг оценочного CO2 с января по сентябрь 2026, столбец на каждый месяц, затем 25.3B обработанных токенов, 94% из них — чтения кэша, автомобильный эквивалент, стоимость по ценам API и прогноз на год" width="540">
 </p>
 
-Generate yours with `/carbon-card` in Claude Code. The summary and detailed PNGs land in
-`~/Downloads/claude-carbon/` (the Windows Downloads folder follows the system setting, so a
-OneDrive-redirected one is honoured) and the folder opens in your file manager, with the
-card selected on macOS. `CLAUDE_CARBON_EXPORT_DIR` picks another folder;
-`CLAUDE_CARBON_NO_OPEN=1` skips the opening.
+Создайте свою через `/carbon-card` в Claude Code. Сводные и подробные PNG-карточки попадают в
+`~/Downloads/claude-carbon/` (папка Загрузки в Windows следует системной настройке, так что
+перенаправленная в OneDrive папка учитывается), и папка открывается в вашем файловом менеджере, с
+выделенной карточкой на macOS. `CLAUDE_CARBON_EXPORT_DIR` задаёт другую папку;
+`CLAUDE_CARBON_NO_OPEN=1` пропускает открытие.
 
-Without Playwright or Chromium there is no PNG and the command still finishes: the summary
-card is saved as an HTML page in the same folder and opens in your browser, scaled to fit the
-window, and a screenshot of it does the job.
-The token count on the card is every token Claude processed, cache reads included, as `ccusage` counts them; the grey line under it gives the share of cache reads. The card's footer says where to find the tool, `claude-carbon sur GitHub` / `claude-carbon on GitHub`, with the address below it.
+Без Playwright или Chromium PNG не будет, но команда всё равно завершается: сводная
+карточка сохраняется как HTML-страница в той же папке и открывается в браузере, масштабированная по
+окну, и её скриншот подходит.
+Число токенов на карточке — все токены, которые обработал Claude, включая чтения кэша, как их считает `ccusage`; серая строка под ним даёт долю чтений кэша. Внизу карточки сказано, где найти инструмент: `claude-carbon sur GitHub` / `claude-carbon on GitHub`, с адресом ниже.
 
-From the 1st to the 10th of each month the status line ends with `📊 September: 84.2kgCO₂ · /carbon-card`:
-the total of the month just closed, the bar the card draws for it, in the same format as the
-session figure. It is read from carbon.db once a day while the nudge shows, and kept in
-`~/.claude/claude-carbon/last-month-total`. A month with fewer than 7 days of sessions gets no
-nudge, so a fresh install is not pushed to share a near-empty card. Generating a card
-clears it for the month; it goes quiet on its own after the 10th. In December it gives the year
-so far instead, `📊 2026: 1444.4kgCO₂ · /carbon-card`, and stays the whole month, the card covering
-the calendar year. From the 1st to the 10th of January it gives the year just ended, and over those
-days `/carbon-card` covers that year, whole, unless you pass a period or that year has no session (the
-card keeps those ten days even when the reminder is turned off). `CLAUDE_CARBON_CARD_NUDGE_UNTIL_DAY`
-moves the cut-off (0 removes the nudge, December included), `CLAUDE_CARBON_NO_CARD_NUDGE=1` removes the nudge. Nothing is posted anywhere:
-sharing stays a human decision.
+С 1 по 10 число каждого месяца строка состояния заканчивается на `📊 September: 84.2kgCO₂ · /carbon-card`:
+итог только что закрывшегося месяца, столбец, который картинка для него рисует, в том же формате, что и
+число сессии. Он читается из carbon.db раз в день, пока напоминание показано, и хранится в
+`~/.claude/claude-carbon/last-month-total`. Месяц с менее чем 7 днями сессий не получает
+напоминания, так что свежую установку не подталкивают поделиться почти пустой карточкой. Создание карточки
+сбрасывает напоминание на месяц; после 10 числа оно умолкает само. В декабре вместо него даётся год
+на сегодня, `📊 2026: 1444.4kgCO₂ · /carbon-card`, и держится весь месяц, поскольку карточка покрывает
+календарный год. С 1 по 10 января даётся только что закончившийся год, и в эти
+дни `/carbon-card` покрывает тот год целиком, если вы не передали период или у того года нет сессий (карточка сохраняет эти десять дней даже при выключенном напоминании). `CLAUDE_CARBON_CARD_NUDGE_UNTIL_DAY`
+Ничего никуда не публикуется:
+обмен остаётся решением человека.
 
 <details>
-<summary>Advanced options (CLI)</summary>
+<summary>Дополнительные параметры (CLI)</summary>
 
 ```bash
 # Since a specific date
@@ -127,37 +126,37 @@ bash ~/code/claude-carbon/scripts/generate-report.sh --since 2026-01-01 --until 
 </details>
 
 <details>
-<summary>Custom install directory</summary>
+<summary>Свой каталог установки</summary>
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/gwittebolle/claude-carbon/main/install.sh | CLAUDE_CARBON_DIR=~/my-path/claude-carbon bash
 ```
 
-The env var has to sit on the `bash` side of the pipe, not the `curl` side, or the installer never sees it.
+Переменная окружения должна стоять на стороне `bash` конвейера, а не `curl`, иначе установщик её не увидит.
 
 </details>
 
 <details>
-<summary>Second Claude environment (CLAUDE_CONFIG_DIR)</summary>
+<summary>Второе окружение Claude (CLAUDE_CONFIG_DIR)</summary>
 
-If you run a second Claude Code environment out of its own config directory, e.g.
+Если вы запускаете второе окружение Claude Code из собственного каталога конфигурации, например
 
 ```bash
 alias claude-work="CLAUDE_CONFIG_DIR=~/.claude-work claude"
 ```
 
-install claude-carbon into that same directory by passing `CLAUDE_CONFIG_DIR` to the installer:
+установите claude-carbon в тот же каталог, передав `CLAUDE_CONFIG_DIR` установщику:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/gwittebolle/claude-carbon/main/install.sh | CLAUDE_CONFIG_DIR=~/.claude-work bash
 ```
 
-The status line, the hooks, the database and the `/carbon-*` commands all live under that config dir, so each environment tracks its own sessions independently. When `CLAUDE_CONFIG_DIR` is unset everything falls back to `~/.claude` as before.
+Строка состояния, хуки, база и команды `/carbon-*` живут под этим каталогом конфигурации, так что каждое окружение учитывает свои сессии независимо. Когда `CLAUDE_CONFIG_DIR` не задан, всё по-прежнему откатывается к `~/.claude`.
 
 </details>
 
 <details>
-<summary>Manual install</summary>
+<summary>Ручная установка</summary>
 
 ```bash
 git clone https://github.com/gwittebolle/claude-carbon.git ~/code/claude-carbon
@@ -165,7 +164,7 @@ bash ~/code/claude-carbon/scripts/setup.sh
 bash ~/code/claude-carbon/scripts/configure-settings.sh
 ```
 
-The second script merges the block below into `~/.claude/settings.json` (additively: an existing status line or third-party hooks are left alone) and symlinks the `/carbon-*` commands. To wire it by hand instead, skip it and add:
+Второй сценарий объединяет блок ниже с `~/.claude/settings.json` (аддитивно: существующая строка состояния или хуки третьих лиц не трогаются) и создаёт символические ссылки на команды `/carbon-*`. Чтобы подключить вручную, пропустите его и добавьте:
 
 ```json
 {
@@ -222,24 +221,24 @@ The second script merges the block below into `~/.claude/settings.json` (additiv
 }
 ```
 
-The `Stop` hook records the session after each turn, and `SessionEnd` records it once more as it closes, so a last turn interrupted before `Stop` fired is still counted. The `SessionStart` one re-scans for sessions both missed (crash, kill) and drives the daily update check the status line reads; without it you are never told a new version exists. `SubagentStop` records the branch an agent worked on, for `/carbon-pr`.
+Хук `Stop` записывает сессию после каждого хода, а `SessionEnd` записывает её ещё раз при закрытии, так что последний ход, прерванный до срабатывания `Stop`, всё равно учитывается. `SessionStart` повторно сканирует пропущенные сессии (сбой, kill) и ведёт ежедневную проверку обновлений, которую читает строка состояния; без него вы никогда не узнаете о новой версии. `SubagentStop` записывает ветку, над которой работал агент, для `/carbon-pr`.
 
-Restart Claude Code.
+Перезапустите Claude Code.
 
 </details>
 
-## For teams
+## Для команд
 
-claude-carbon measures one developer's sessions, locally. If the question comes from your CTO, a client RFP or a CSR committee, the same methodology exists as a hosted layer:
+claude-carbon измеряет сессии одного разработчика, локально. Если вопрос пришёл от CTO, в RFP клиента или из комитета по CSR, та же методика существует как размещённый слой:
 
-- [Free calculator](https://tokenclimate.com/en/calculator?ref=github) and [per-model factor sheets](https://tokenclimate.com/en/models?ref=github) - the exact versioned factors of this repo, browsable.
-- [TokenClimate](https://tokenclimate.com/en?ref=github) - hosted team dashboards. Both sides share this repo's golden vectors, verified weekly in CI.
+- [Бесплатный калькулятор](https://tokenclimate.com/en/calculator?ref=github) и [таблицы коэффициентов по моделям](https://tokenclimate.com/en/models?ref=github) — те же версионированные коэффициенты этого репозитория, которые можно посмотреть.
+- [TokenClimate](https://tokenclimate.com/en?ref=github) — размещённые панели для команд. Обе стороны используют золотые векторы этого репозитория, проверяемые еженедельно в CI.
 
-The OSS points there from five places: a one-line footer in `/carbon-report`, a small credit on the `/carbon-card` PNGs, the last line of a `/carbon-pr` comment, the foot of the `/carbon-panel` pane and the `url` field of `CITATION.cff`. No status-line promo, no email capture: nothing leaves your machine.
+OSS указывает туда из пяти мест: однострочный футер в `/carbon-report`, небольшая благодарность на PNG `/carbon-card`, последняя строка комментария `/carbon-pr`, низ панели `/carbon-panel` и поле `url` в `CITATION.cff`. Ни рекламы в строке состояния, ни сбора почт: с компьютера ничего не уходит.
 
-### PR dev footprint (/carbon-pr)
+### След разработки PR (/carbon-pr)
 
-The number reviewers rarely see is what the PR cost to develop: your local Claude Code sessions while building the branch. `/carbon-pr` (or `scripts/generate-pr-report.sh`) sums the recorded sessions of the current branch and posts one sticky comment on its open PR, through your own `gh` auth. Run it after your push; running it again updates the same comment in place.
+Число, которое ревьюеры видят редко, — сколько стоила разработка PR: ваши локальные сессии Claude Code во время сборки ветки. `/carbon-pr` (или `scripts/generate-pr-report.sh`) суммирует записанные сессии текущей ветки и оставляет один закреплённый комментарий на её открытом PR через вашу собственную авторизацию `gh`. Запускайте после push; повторный запуск обновляет тот же комментарий.
 
 ```
 **Claude Code carbon report** · developing this PR
@@ -249,39 +248,39 @@ The number reviewers rarely see is what the PR cost to develop: your local Claud
 | **124 g** | $3.00 | 180k | 1.5M | 2 |
 ```
 
-Under the table come the car equivalence, a foldable token detail per model and a one-line footer.
+Под таблицей идут автомобильный эквивалент, сворачиваемые подробности по токенам для каждой модели и однострочный футер.
 
-How the sessions are attributed: the Stop hook stores each session's git branch (read from the transcript), and the report selects `project + branch`. Sessions recorded before this column existed carry no branch; `scripts/backfill.sh` repairs them while their transcripts are still on disk (about 30 days). A session whose last folder is a subdirectory of the repo is stored under the subdirectory's name and stays out of the sum. A session that ends on another branch than it started is attributed to where it finished.
+Как атрибутируются сессии: хук Stop сохраняет git-ветку каждой сессии (прочитанную из транскрипта), а отчёт выбирает `проект + ветка`. Сессии, записанные до появления этой колонки, не имеют ветки; `scripts/backfill.sh` чинит их, пока их транскрипты ещё на диске (около 30 дней). Сессия, последняя папка которой — подкаталог репозитория, хранится под именем подкаталога и не входит в сумму. Сессия, закончившаяся на другой ветке, чем началась, относится к ветке завершения.
 
-How its agents are attributed: an agent counts with its session, unless it worked on a branch of its own. A session on `main` that sends agents to build a PR in a worktree puts their share on the PR's branch, and the comment then says how many sessions recorded elsewhere it includes. A `SubagentStop` hook (`agent-stop.sh`) reads the branch as each agent ends, while its worktree still exists:
+Как атрибутируются агенты: агент считается со своей сессией, если не работал в собственной ветке. Сессия на `main`, отправляющая агентов собирать PR в worktree, относит их долю к ветке PR, и комментарий говорит, сколько сессий, записанных в других местах, он включает. Хук `SubagentStop` (`agent-stop.sh`) читает ветку по завершении каждого агента, пока его worktree ещё существует:
 
-- an agent that ran in a worktree of its own (Claude Code's isolated and workflow agents) counts on the branch that worktree has then, unless Claude Code named it (`worktree-agent-*`, `worktree-wf_*`) or it is detached;
-- an agent that ran in the session's folder counts on the worktree its tool calls name in at least half of those that give a place (a command, a file path), and no other as often: absolute paths, `~/`, `../` from the repository's folder when the worktree sits beside it, `./` when it sits inside. Never the repository's main folder, nor the session's own. This one is a deduction from the agent's commands.
+- агент, работавший в собственном worktree (изолированные и воркфлоу-агенты Claude Code), считается по ветке, которую тот worktree имеет в этот момент, если Claude Code не дал ему имя (`worktree-agent-*`, `worktree-wf_*`) и он не отсоединён;
+- агент, работавший в папке сессии, считается по worktree, который его вызовы инструментов называют минимум в половине случаев, где указано место (команда, путь файла), и ни другой так же часто: абсолютные пути, `~/`, `../` из папки репозитория, когда worktree рядом, `./`, когда внутри. Никогда основная папка репозитория или сама сессия. Это вывод из команд агента.
 
-The hook stores that agent's tokens, CO2 and cost, per model, in an `agent_usage` table, with the repository and the worktree's folder; the session's own row does not change. The report takes those agents out of their session's branch and adds them to theirs, as long as the session's row holds all its agents (`agents_collected = 2`: the Stop hook or the rescan read every agent transcript), was written after the agent ended (in a later second) and was recorded with the current method (not a v1 row). An agent that worked in another repository than its session's is not recorded, and one recorded before its repository was moved stays with its session. Forks are left out (they replay their parent's messages), and so is the work a session does itself in a worktree. Only agents that end with this version installed are attributed: nothing is rebuilt for past sessions.
+Хук сохраняет токены, CO2 и стоимость этого агента по моделям в таблице `agent_usage`, вместе с репозиторием и папкой worktree; собственная строка сессии не меняется. Отчёт убирает этих агентов из ветки их сессии и добавляет к их ветке, при условии что строка сессии содержит всех её агентов (`agents_collected = 2`: хук Stop или повторное сканирование прочитали каждый транскрипт агента), была записана после завершения агента (в более позднюю секунду) и записана текущим методом (не строка v1). Агент, работавший в другом репозитории, чем его сессия, не записывается, а записанный до перемещения своего репозитория остаётся со своей сессией. Ответвления исключаются (они проигрывают сообщения родителя), как и работа, которую сессия делает сама в worktree. Атрибутируются только агенты, завершившиеся с установленной этой версией: прошедшие сессии не пересчитываются.
 
-The hook needs Claude Code 2.1.69 or later, the first to give `SubagentStop` the agent's type (its id and transcript came in 2.0.42); with an older one it records nothing. Claude Code's own agents (prompt suggestions, `/btw`) are left out. In a session run without `--agent` their type is empty: the hook's matcher skips them from 2.1.275, the script itself before that. With `--agent` they carry that agent's name and pass the matcher; the script skips them because their transcript is not one the session's row reads.
+Хуку нужен Claude Code 2.1.69 или новее — первая версия, передающая `SubagentStop` тип агента (его id и транскрипт пришли в 2.0.42); со старой он ничего не записывает. Собственные агенты Claude Code (подсказки запросов, `/btw`) исключаются. В сессии, запущенной без `--agent`, их тип пуст: матчер хука пропускает их с 2.1.275, сам сценарий — раньше. С `--agent` они несут имя этого агента и проходят матчер; сценарий пропускает их, потому что их транскрипт не тот, который читает строка сессии.
 
-The hook runs synchronously, before the agent's result reaches the session: on a Mac, about 0.1 to 0.3 s for most agents, up to about 1 to 2 s for one whose transcript passes 100 MB, since it reads that transcript whole. Claude Code writes transcripts asynchronously: when the agent's final message is not in it yet, the hook reads it again every 0.2 s, for 1 s at most, then counts what is there. A database kept busy for more than about 10 s (a long read elsewhere) loses the record, and the agent counts with its session.
+Хук работает синхронно, до того как результат агента дойдёт до сессии: на Mac около 0.1–0.3 с для большинства агентов, до 1–2 с для того, чей транскрипт превышает 100 MB, поскольку он читает его целиком. Claude Code пишет транскрипты асинхронно: когда последнего сообщения агента там ещё нет, хук читает его снова каждые 0.2 с, не более 1 с, затем считает то, что есть. База, занятая более примерно 10 с (долгое чтение где-то ещё), теряет запись, и агент считается со своей сессией.
 
-#### For every PR of a repository
+#### Для каждого PR репозитория
 
-A repository can ask for the report on its pull requests. Its maintainers commit this in `.claude/settings.json`, a change the team reviews like any other:
+Репозиторий может запросить отчёт на свои пулл-реквесты. Его разработчики фиксируют это в `.claude/settings.json`, и команда проверяет изменение как любое другое:
 
 ```json
 { "env": { "CLAUDE_CARBON_PR": "1" } }
 ```
 
-Nothing is posted on that alone. The first time a developer who has the plugin opens a pull request there with Claude Code (`gh pr create`), Claude asks them once whether to post the report of their own sessions under their own GitHub account. Their answer stays on their machine, per repository (`pr-consent.tsv` in the data folder):
+Само по себе это ничего не публикует. Когда разработчик с плагином впервые открывает там PR через Claude Code (`gh pr create`), Claude один раз спрашивает его, публиковать ли отчёт по его собственным сессиям под его собственным GitHub-аккаунтом. Ответ остаётся на его компьютере, для каждого репозитория (`pr-consent.tsv` в папке данных):
 
-- **yes**: the comment is posted when that answer ends, then updated in place after each `git push` or `gh pr create` Claude runs there, once the answer that pushed is recorded and while the pushed branch is still the one checked out. A push you type yourself in a terminal triggers nothing. One comment per PR, and never by itself on a PR whose branch lives in a fork.
-- **no**, or no answer: nothing is posted and the question does not come back. `/carbon-pr` still works when they run it.
+- **да**: комментарий публикуется по завершении этого ответа, затем обновляется на месте после каждого `git push` или `gh pr create`, которые Claude там запускает, когда записан вызвавший их ответ и пока запушенная ветка всё ещё checkout-нута. Push, который вы набрали сами в терминале, ничего не вызывает. Один комментарий на PR и никогда сам по себе на PR, чья ветка живёт в форке.
+- **нет** или отсутствие ответа: ничего не публикуется, и вопрос не возвращается. `/carbon-pr` продолжает работать, когда его запускают.
 
-Change your answer from the repository with `scripts/generate-pr-report.sh --consent yes` or `--consent never` (after a yes typed in a terminal, the first comment comes with your next push or `gh pr create` in Claude Code); a yes is only taken once the question was put to you there, which also covers a question that never showed because the turn was interrupted. The answer is kept under the repository's `origin` URL (without credentials): rename the remote and the question comes back once. A repository cannot answer for you: the answers are never read from a config folder or a database placed inside the repository, and posted by itself the comment only goes to the repository `origin` names, whatever `GH_REPO` says. `CLAUDE_CARBON_NO_PR_AUTO=1` in your own environment turns the question and the posting off everywhere. To stop it for the repository, remove the `CLAUDE_CARBON_PR` line. It needs the plugin's hooks (a marketplace install): an installer-only clone is not asked and posts nothing by itself. It is meant for a team's repository; on a public project, contributors from outside would see comments they did not ask for.
+Измените ответ из репозитория через `scripts/generate-pr-report.sh --consent yes` или `--consent never` (после «да», набранного в терминале, первый комментарий появится со следующим push или `gh pr create` в Claude Code); «да» принимается только если вопрос был там задан, что покрывает и вопрос, который не показался из-за прерванного хода. Ответ хранится под URL `origin` репозитория (без учётных данных): переименуйте remote — вопрос вернётся один раз. Репозиторий не может ответить за вас: ответы никогда не читаются из папки конфигурации или базы, положенной внутрь репозитория, а самый комментарий публикуется только в репозиторий, который называет `origin`, что бы ни говорил `GH_REPO`. `CLAUDE_CARBON_NO_PR_AUTO=1` в вашем окружении выключает вопрос и публикацию везде. Чтобы остановить для репозитория, уберите строку `CLAUDE_CARBON_PR`. Нужны хуки плагина (установка из маркетплейса): клон через установщик не спрашивает и ничего не публикует сам. Это для командного репозитория; в публичном проекте внешние участники увидят комментарии, которых не просили.
 
-#### The repository's total
+#### Итог репозитория
 
-`scripts/generate-pr-report.sh --summary` reads back, through `gh`, the reports already posted on the repository's merged pull requests and totals them per month merged and per author. `--since 2026-10-01` narrows it. It prints in your terminal only, posts nothing and does not read your database: the figures are the ones each author posted.
+`scripts/generate-pr-report.sh --summary` читает через `gh` уже опубликованные на слитых PR репозитория отчёты и суммирует их по месяцу слияния и по автору. `--since 2026-10-01` сужает выборку. Он печатает только в вашем терминале, ничего не публикует и не читает вашу базу: цифры — те, что опубликовал каждый автор.
 
 ```
 Month merged             PRs  Sessions       CO2e       Cost
@@ -295,134 +294,134 @@ bob-dev                    1         3     1.2 kg     $40.00
 Total: 3 PRs, 5 sessions, 1.8 kg CO2e, $59.18 at API list price.
 ```
 
-A comment in the older one-line form, or edited by hand, is counted as unread and left out. It covers the pull requests that carry a report, not the repository's whole footprint, and reads at most 100 of them at a time.
+Комментарий в старом однострочном формате или отредактированный вручную считается непрочитанным и исключается. Отчёт покрывает PR с отчётом, а не весь след репозитория, и читает максимум 100 за раз.
 
-Outside such a repository, turning it off is the default: nothing is posted unless you run it. `--dry-run` previews the comment, `--pr <number>` targets a specific PR of the repository (one opened from a fork is refused: run the command from the fork's clone instead), and deleting the comment on GitHub is the full cleanup. Once agents of the repository are on record, the report counts, from whichever folder it runs, the sessions of the repository's main folder, of the worktree the branch is checked out in and of the worktrees its agents worked in, even removed since. A branch checked out nowhere whose name sessions of other folders also carry is refused: nothing is posted rather than a figure that may lack them.
+Вне такого репозитория по умолчанию выключено: ничего не публикуется, пока вы не запустите. `--dry-run` показывает комментарий, `--pr <number>` указывает конкретный PR репозитория (открытый из форка отклоняется: запустите команду из клона форка), а удаление комментария на GitHub — полная уборка. Когда агенты репозитория уже записаны, отчёт считает, из любой папки он запущен, сессии основной папки репозитория, worktree, где checkout-нута ветка, и worktree, где работали его агенты, даже удалённые с тех пор. Ветка, нигде не checkout-нутая, но носящая имя, есть и у сессий других папок, отклоняется: лучше ничего не публиковать, чем цифру, которой может не хватать.
 
-## How it works
+## Как это работает
 
 ![claude-carbon data flow: Claude Code transcripts and status line JSON to a local SQLite database and a CO2 estimate](docs/data-flow.svg)
 
-**Three data paths, two levels of accuracy:**
+**Три пути данных, два уровня точности:**
 
-| Script               | Trigger                 | Data source           | Subagents    | Cache reads         | Accuracy      |
+| Сценарий            | Срабатывание            | Источник данных       | Субагенты    | Чтения кэша         | Точность      |
 | -------------------- | ----------------------- | --------------------- | ------------ | ------------------- | ------------- |
-| `backfill.sh`        | Manual / setup          | JSONL files           | Included     | Counted (8% energy) | Best estimate |
-| `persist-session.sh` | Stop + SessionEnd hooks | JSONL files           | Included     | Counted (8% energy) | Best estimate |
-| `statusline.sh`      | Every turn (live)       | `carbon.db` row       | Included     | Counted (8% energy) | One turn late |
+| `backfill.sh`        | Вручную / настройка          | Файлы JSONL           | Включены     | Учтены (8% энергии) | Лучшая оценка |
+| `persist-session.sh` | Хуки Stop + SessionEnd | Файлы JSONL           | Включены     | Учтены (8% энергии) | Лучшая оценка |
+| `statusline.sh`      | Каждый ход (в реальном времени)       | Строка `carbon.db`       | Включены     | Учтены (8% энергии) | На один ход позже |
 
-**backfill** and **persist-session** parse the raw JSONL transcripts (main session, subagent files and the transcripts of the agents a workflow starts), applying per-model emission factors. They deduplicate assistant messages by `(message.id, requestId)`, so resumed and compacted sessions are not double-counted (this matches `ccusage`; without it the token sum inflates roughly 3x). Each session stores its raw token breakdown (input, cache write, cache read, output), which feeds the SQLite database used by reports.
+**backfill** и **persist-session** разбирают сырые JSONL-транскрипты (основная сессия, файлы субагентов и транскрипты агентов, запущенных воркфлоу), применяя коэффициенты выбросов по моделям. Они дедуплицируют сообщения ассистента по `(message.id, requestId)`, так что возобновлённые и сжатые сессии не считаются дважды (это совпадает с `ccusage`; без этого сумма токенов раздувается примерно в 3 раза). Каждая сессия хранит свой сырой разбор токенов (ввод, запись кэша, чтение кэша, вывод), который питает базу SQLite для отчётов.
 
-An agent's transcript stops changing once the agent is done, so its totals are kept in `~/.claude/claude-carbon/usage-cache/` (one small file per session, removed by the daily re-scan 45 days after it was last written) and read again only when the file's size, modification or change time, or inode changes (the file a symlink points to). An agent with a line that does not parse yet, cut by a write in progress, is never kept. The main transcript is always read in full. `CLAUDE_CARBON_NO_USAGE_CACHE=1` reads everything every time and writes no cache.
+Транскрипт агента перестаёт меняться, когда агент завершён, поэтому его итоги хранятся в `~/.claude/claude-carbon/usage-cache/` (по одному маленькому файлу на сессию, удаляются ежедневным повторным сканированием через 45 дней после последней записи) и читаются снова, только если изменились размер файла, время модификации или изменения или inode (файл, на который указывает символическая ссылка). Строка агента с ещё не разбираемой линией, обрезанной во время записи, никогда не сохраняется. Основной транскрипт всегда читается целиком. `CLAUDE_CARBON_NO_USAGE_CACHE=1` читает всё каждый раз и не пишет кэш.
 
-**Cost** is the theoretical API list value (pay-as-you-go), not your subscription price: input, output, cache write, and cache read (0.1x input) at current Anthropic rates, set in `data/prices.json`. Cache writes are billed per TTL tier, 1.25x input for the 5-minute tier and 2x for the 1-hour one; each session's split is read from its transcript rather than assumed (Claude Code writes at the 1-hour tier). On deduplicated data it matches `ccusage`.
+**Стоимость** — теоретическая цена API по прайс-листу (pay-as-you-go), а не цена вашей подписки: ввод, вывод, запись кэша и чтение кэша (0.1× ввода) по текущим ставкам Anthropic, заданным в `data/prices.json`. Записи кэша тарифицируются по категориям TTL, 1.25× ввода для 5 минут и 2× для часа; разбиение каждой сессии читается из её транскрипта, а не предполагается (Claude Code пишет в категории 1 час). На дедуплицированных данных совпадает с `ccusage`.
 
-**statusline** reads this session's row from `carbon.db` at each turn, so the CO2 it shows is the session total on the same basis as the reports, one turn behind at most. Before that row exists (first turn, or no database yet) it falls back to an estimate from `context_window.total_input_tokens`, which is the size of the current context rather than a running total: subagents are invisible to it and every compaction sends it back down. Either way the status line displays, it never feeds the reports.
+**statusline** читает строку этой сессии из `carbon.db` на каждом ходу, поэтому показываемый CO2 — итог сессии на том же основании, что и отчёты, максимум на один ход позже. Пока строки нет (первый ход или базы ещё нет), он откатывается к оценке из `context_window.total_input_tokens`, который представляет размер текущего контекста, а не накопительный итог: субагенты для него невидимы, и каждое сжатие уменьшает число. В любом случае строка состояния только отображает, но никогда не питает отчёты.
 
-### The status line
+### Строка состояния
 
-Segments, left to right: project + git branch, model + context window %, API-equivalent session cost + CO2, subscription quota % + reset time. The quota is the 5-hour window, or the weekly one when no 5-hour window is open (always, on a verified Ultra account; on Pro and Max, between a 5-hour window's reset and your next request): `Use 41% 7d ↻Thu`, the reset as a weekday while it is more than a day away. A 🔥 prefix appears when the sustained burn rate would overshoot 100% of the limit by the end of the window (once usage reaches 15%, after a grace of 15 min for the 5-hour window and of a day for the weekly one).
+Сегменты слева направо: проект + git-ветка, модель + % окна контекста, стоимость сессии-эквивалент API + CO2, % квоты подписки + время сброса. Квота — пятичасовое окно или недельное, когда пятичасовое не открыто (всегда на проверенном аккаунте Ultra; на Pro и Max — между сбросом пятичасового окна и вашим следующим запросом): `Use 41% 7d ↻Thu`, сброс днём недели, если до него больше суток. Префикс 🔥 появляется, когда устойчивый темп расхода превысит 100% лимита к концу окна (при использовании от 15%, после отсрочки 15 минут для пятичасового окна и суток для недельного).
 
-> **Where the CO2 shows up.** The status line is a feature of the Claude Code terminal UI. It is displayed only when you run `claude` in a terminal, including the integrated terminal of VS Code or JetBrains. The IDE extensions' chat panel has no status line at all, so nothing is displayed there even though the hooks still run and your sessions are recorded: `/carbon-report` covers them. If you use the VS Code panel and want the live CO2, open a terminal in VS Code (`` Ctrl+` ``) and run `claude` from there. The web app (claude.ai/code) runs neither the status line nor the hooks, so nothing is displayed or recorded there. The desktop app does not display the status line either; the plugin's [mod](#the-mod-carbon-panel-and-the-co2-of-each-answer) draws the CO2 in its Code tab.
+> **Где показывается CO2.** Строка состояния — функция терминального UI Claude Code. Она показывается только когда вы запускаете `claude` в терминале, включая встроенный терминал VS Code или JetBrains. Чат-панель расширений IDE не имеет строки состояния вообще, поэтому там ничего не отображается, хотя хуки работают и ваши сессии записываются: их покрывает `/carbon-report`. Если вы пользуетесь панелью VS Code и хотите живой CO2, откройте в VS Code терминал (`` Ctrl+` ``) и запустите `claude` оттуда. Веб-приложение (claude.ai/code) не запускает ни строку состояния, ни хуки, так что там ничего не отображается и не записывается. Приложение Desktop тоже не показывает строку состояния; [мод](#the-mod-carbon-panel-and-the-co2-of-each-answer) плагина рисует CO2 во вкладке Code.
 
-**Quota source.** The percentage is Anthropic's own, the same data Claude Code displays in `/usage`. No heuristic, no token-limit file to seed. Two sources in order:
+**Источник квоты.** Процент берётся у самого Anthropic, те же данные, что Claude Code показывает в `/usage`. Никакой эвристики и файла лимита токенов. Два источника по порядку:
 
-1. **stdin** (preferred): the `rate_limits` Claude Code passes in the statusline JSON, `five_hour` first, else `seven_day`. When `rate_limits` is there, a window it leaves out does not exist, and nothing else is asked.
-2. **OAuth API fallback**, only when stdin has no `rate_limits` (before the session's first response, or with an older Claude Code): `GET https://api.anthropic.com/api/oauth/usage` with the bearer token from macOS Keychain, `CLAUDE_CODE_OAUTH_TOKEN`, or `~/.claude/.credentials.json`, at most once a minute whether it answers or not. The answer is cached in `~/.claude/claude-carbon/oauth-usage.json`; a window without a reset time, or whose reset has passed, is left out.
+1. **stdin** (предпочтительно): `rate_limits`, которые Claude Code передаёт в JSON строки состояния, сначала `five_hour`, иначе `seven_day`. Когда `rate_limits` есть, отсутствующее в нём окно не существует, и больше ничего не запрашивается.
+2. **Резерв OAuth API**, только когда в stdin нет `rate_limits` (до первого ответа в сессии или со старым Claude Code): `GET https://api.anthropic.com/api/oauth/usage` с bearer-токеном из Keychain macOS, `CLAUDE_CODE_OAUTH_TOKEN` или `~/.claude/.credentials.json`, не чаще раза в минуту независимо от ответа. Ответ кэшируется в `~/.claude/claude-carbon/oauth-usage.json`; окно без времени сброса или с прошедшим сбросом исключается.
 
-Accurate on Pro, Max and Ultra.
+Точно на Pro, Max и Ultra.
 
-### Surviving the 30-day transcript purge
+### Как пережить 30-дневную очистку транскриптов
 
-Claude Code deletes JSONL transcripts after about 30 days, so the SQLite database is the durable record. The `Stop` and `SessionEnd` hooks capture each session before its transcript ages out, and a once-a-day background re-scan (`SessionStart` hook, `safety-rescan.sh`) catches any session they missed while its transcript still exists, including one whose transcript kept growing after its row was written. Because each row stores raw token counts, `recompute.sh` regenerates cost and CO2 from `data/factors.json` + `data/prices.json` at any time, with no transcript needed. When Anthropic changes a price or a factor is revised, edit the config and run:
+Claude Code удаляет JSONL-транскрипты примерно через 30 дней, поэтому постоянная запись — база SQLite. Хуки `Stop` и `SessionEnd` захватывают каждую сессию до того, как её транскрипт устареет, а ежедневное фоновое повторное сканирование (хук `SessionStart`, `safety-rescan.sh`) ловит то, что они пропустили, пока транскрипт ещё есть, в том числе сессию, чей транскрипт продолжал расти после записи её строки. Поскольку каждая строка хранит сырые счётчики токенов, `recompute.sh` в любое время воссоздаёт стоимость и CO2 из `data/factors.json` + `data/prices.json`, без транскрипта. Когда Anthropic меняет цену или пересматривается коэффициент, отредактируйте конфиг и выполните:
 
 ```bash
 bash scripts/recompute.sh
 ```
 
-Sessions recorded since September 2026 are re-derived model by model, exactly. Older sessions without a per-model split keep their stored values; `--include-unsplit` re-derives them at their dominant model, an approximation (see METHODOLOGY.md, "Surviving the 30-day transcript purge").
+Сессии, записанные с сентября 2026, пересчитываются модель за моделью точно. Более старые сессии без разбиения по моделям сохраняют свои значения; `--include-unsplit` пересчитывает их по доминирующей модели, приблизительно (см. METHODOLOGY.md, «Переживая 30-дневную очистку транскриптов»).
 
-## Commands
+## Команды
 
-| Command          | What it does                                        |
+| Команда          | Что делает                                        |
 | ---------------- | --------------------------------------------------- |
-| `/carbon-report` | Text report with totals, car equivalent, share of a 2 t budget, top sessions |
-| `/carbon-card`   | Generate shareable PNG report cards                 |
-| `/carbon-badge`  | Shields.io badge of your total footprint for your READMEs |
-| `/carbon-pr`     | Post the dev footprint of the current branch on its PR |
-| `/carbon-update` | Update to the latest version, whichever way you installed |
+| `/carbon-report` | Текстовый отчёт с итогами, автомобильным эквивалентом, долей бюджета 2 т и лучшими сессиями |
+| `/carbon-card`   | Создать карточки PNG для обмена                 |
+| `/carbon-badge`  | Значок shields.io с вашим общим следом для README |
+| `/carbon-pr`     | Опубликовать след разработки текущей ветки на её PR |
+| `/carbon-update` | Обновиться до последней версии, независимо от способа установки |
 
 <details>
-<summary>Scripts (run automatically, rarely needed manually)</summary>
+<summary>Сценарии (запускаются автоматически, вручную нужны редко)</summary>
 
-| Script               | What it does                                                                              |
+| Сценарий               | Что делает                                                                              |
 | -------------------- | ----------------------------------------------------------------------------------------- |
-| `setup.sh`           | Init database, backfill historical sessions, show total                                   |
-| `statusline.sh`      | Status line script (called automatically by Claude Code)                                  |
-| `persist-session.sh` | Stop hook (saves session data after each turn)                                            |
-| `persist-on-exit.sh` | SessionEnd hook (saves the session once more as it closes, in the background)             |
-| `safety-rescan.sh`   | SessionStart hook (throttled background re-scan, catches missed sessions)                 |
-| `agent-stop.sh`      | SubagentStop hook (the branch an agent worked on, for `/carbon-pr`)                       |
-| `backfill.sh`        | Re-parse all historical JSONL transcripts (incl. subagents)                               |
-| `recompute.sh`       | Re-derive cost/CO2 from stored tokens after a price/factor change (no transcripts needed) |
-| `generate-report.sh` | Export PNG report cards (CLI, with `--since` / `--until` / `--all`)                                   |
-| `generate-badge.sh`  | Print the shields.io badge markdown + URL (CLI)                                           |
-| `generate-pr-report.sh` | Post the branch's dev footprint on its PR (CLI, `--dry-run` / `--pr`)                  |
+| `setup.sh`           | Инициализирует базу, восстанавливает исторические сессии, показывает итог                                   |
+| `statusline.sh`      | Сценарий строки состояния (вызывается автоматически Claude Code)                                  |
+| `persist-session.sh` | Хук Stop (сохраняет данные сессии после каждого хода)                                            |
+| `persist-on-exit.sh` | Хук SessionEnd (ещё раз сохраняет сессию при закрытии, в фоне)             |
+| `safety-rescan.sh`   | Хук SessionStart (регулируемое фоновое повторное сканирование, ловит пропущенные сессии)                 |
+| `agent-stop.sh`      | Хук SubagentStop (ветка, над которой работал агент, для `/carbon-pr`)                       |
+| `backfill.sh`        | Повторно разобрать все исторические JSONL-транскрипты (включая субагентов)                               |
+| `recompute.sh`       | Пересчитать стоимость/CO2 из сохранённых токенов после смены цены/коэффициента (транскрипты не нужны) |
+| `generate-report.sh` | Экспорт карточек PNG (CLI, с `--since` / `--until` / `--all`)                                   |
+| `generate-badge.sh`  | Печатать markdown значка shields.io + URL (CLI)                                           |
+| `generate-pr-report.sh` | Опубликовать след разработки ветки на её PR (CLI, `--dry-run` / `--pr`)                  |
 
-Note: backfill now derives project names from the transcript's `cwd` (matching the live hook). Sessions backfilled before this change keep their old, possibly truncated names; delete those rows and re-run `backfill.sh` to normalize them.
+Примечание: теперь backfill выводит имена проектов из `cwd` транскрипта (как живой хук). Сессии, восстановленные до этого изменения, сохраняют старые, возможно обрезанные имена; удалите эти строки и снова запустите `backfill.sh`, чтобы привести их к виду.
 
 </details>
 
-## Badge
+## Значок
 
-`/carbon-badge` prints a ready-to-paste shields.io badge with your measured all-time footprint and the month it was taken, clickable to the methodology:
+`carbon-badge` печатает готовый к вставке значок shields.io с вашим измеренным общим следом и месяцем измерения, кликабельный к методике:
 
-[![Claude Code carbon footprint](https://img.shields.io/badge/claude--carbon-1139.2%20kg%20CO2e%2C%202026--09-2f6f4f)](https://github.com/gwittebolle/claude-carbon/blob/main/METHODOLOGY.md)
+[![Углеродный след Claude Code](https://img.shields.io/badge/claude--carbon-1139.2%20kg%20CO2e%2C%202026--09-2f6f4f)](https://github.com/gwittebolle/claude-carbon/blob/main/METHODOLOGY.md)
 
-<sub>That badge is live, not a mockup: the author's own total, 1,208 sessions measured between 15 January 2026 and 16 September 2026. It is one developer's footprint, not the project's.</sub>
+<sub>Этот значок живой, не макет: собственный итог автора, 1 208 сессий, измеренных с 15 января 2026 по 16 сентября 2026. Это след одного разработчика, не проекта.</sub>
 
 ```markdown
 [![Claude Code carbon footprint](https://img.shields.io/badge/claude--carbon-1139.2%20kg%20CO2e%2C%202026--09-2f6f4f)](https://github.com/gwittebolle/claude-carbon/blob/main/METHODOLOGY.md)
 ```
 
-The badge is a static image built from your local database, so the number is measured, not estimated on the fly, and nothing is sent anywhere. The month in the message says how old the figure is; re-run `/carbon-badge` whenever you want to refresh both.
+Значок — статическая картинка, собранная из вашей локальной базы, так что число измерено, а не оценено на лету, и ничего никуда не отправляется. Месяц в сообщении говорит, насколько число устарело; перезапустите `/carbon-badge`, когда захотите обновить и то, и другое.
 
-It is one developer's total, so it belongs in your profile README or a personal project. In a team or organisation repository, reviewers will ask what produced the number and why it links out of the organisation, and they will be right to.
+Это итог одного разработчика, так что он уместен в README вашего профиля или личного проекта. В репозитории команды или организации ревьюеры спросят, что произвело число и почему оно ссылается наружу организации, — и будут правы.
 
-Numbers follow the locale the report uses (`fr` prints `12,4 kg`, `us` and the world default print `12.4 kg`); `CLAUDE_CARBON_LOCALE` forces a set.
+Числа следуют локали отчёта (`fr` печатает `12,4 kg`, `us` и мировой умолчательный вариант — `12.4 kg`); `CLAUDE_CARBON_LOCALE` задаёт нужную принудительно.
 
-## The mod: /carbon-panel and the CO2 of each answer
+## Мод: /carbon-panel и CO2 каждого ответа
 
-The claude-carbon plugin also holds a [Claude Code mod](https://code.claude.com/docs/en/plugins/mods/overview) that shows the CO2 of each answer when it ends, computed locally with the same formula and factors as the status line, and the session's total with its API-price cost.
+Плагин claude-carbon также содержит [мод Claude Code](https://code.claude.com/docs/en/plugins/mods/overview), который показывает CO2 каждого ответа по его завершении, вычисляя его локально по той же формуле и коэффициентам, что и строка состояния, а также итог сессии со стоимостью по ценам API.
 
-- **Terminal**, including the integrated terminal of an editor and the JetBrains plugin: at the right end of the line that closes each answer, `✻ Worked for 38s · done 10:32 PM          16 gCO₂`. A line keeps its own answer's figure when it is drawn again (a resize, a scroll, ctrl+o); a line drawn for the first time later, such as one only ctrl+o shows, gets no figure.
-- **Desktop app, Code tab**: a line under the answer, only for an unusual answer.
-- **An unusual answer** shows the ratio, and the subagents' share when they weighed on it: `230 gCO₂ · 14× your median`. An answer is unusual when it is above the 97th percentile of your last 200 answers, over 3× their median and at least 10 g, which is about one answer in 27; none is flagged before 50 answers are recorded.
-- **The session total** is pinned under the prompt, CO2 and API-price cost: `This session: 142 gCO₂ · $3.41`, in French `Cette session : 142 gCO₂ · 3,41 $`. It shows unless the claude-carbon status line already gives it or the `showSessionTotal` option is off (both in a terminal only, see [ccstatusline](#using-with-ccstatusline)). The cost is the pay-as-you-go API list price of the same requests as the CO2, from `data/prices.json` with the formula of `/carbon-report`, cache writes at the 1-hour tier Claude Code uses; under a cent it reads `< $0.01`, and it is left out when the price list cannot be read, then until the total starts over, so the cost never covers only part of the requests. It is what the usage would cost on the API, not what a subscription bills. On a subscription the entry ends with the quota as the status line shows it, `Use 23% ↻14:00` (`Usage 23 % ↻14:00`): the share of the 5-hour window used and the local time it resets, or without a 5-hour window the weekly one, `Use 41% 7d ↻Sat` (`Usage 41 % 7j ↻sam.`), read from Claude Code itself after each answer, with no network call. Then come the status line's two hints: `⬆ 1.18.0 /carbon-update` when a newer version is out, and from the 1st to the 10th of the month the month just closed with its total, `📊 September: 84.2 kgCO₂ · /carbon-card`, until you make the card. Background subagents, which is how Claude Code starts most of them, count in the session total only: never in an answer, nor in your median. A foreground subagent counts in the answer that started it, not in the next one.
-- **`/carbon-panel` opens a pane** with the mascot, a pixel CO2 molecule. Its colour compares this session with the median of your past sessions, from dark blue (under an eighth of it) to dark red (over eight times it). Until 10 sessions are recorded it compares with a starting reference of 0.5 kgCO₂ instead, so it has a colour from the first answer. It hops a pixel up and down while Claude works, faster as it gets redder, and pulls faces as it goes: it looks around before the first answer, blinks and glances aside at work, smiles through a light session and sweats through a heavy one, reacts to each answer, winks at rest, and falls asleep after five minutes without a turn.
+- **Терминал**, включая встроенный терминал редактора и плагин JetBrains: в правом конце строки, закрывающей каждый ответ, `✻ Worked for 38s · done 10:32 PM          16 gCO₂`. Строка сохраняет число своего ответа при повторной отрисовке (изменение размера, прокрутка, ctrl+o); строка, нарисованная впервые позже, например только через ctrl+o, числа не получает.
+- **Приложение Desktop, вкладка Code**: строка под ответом, только для необычного ответа.
+- **Необычный ответ** показывает отношение и долю субагентов, если они на него повлияли: `230 gCO₂ · 14× your median`. Ответ необычен, если он выше 97-го перцентиля ваших последних 200 ответов, более чем в 3 раза превышает их медиану и составляет не менее 10 g — примерно один ответ из 27; до 50 записанных ответов ничего не помечается.
+- **Итог сессии** закреплён под запросом, CO2 и стоимость по ценам API: `This session: 142 gCO₂ · $3.41`, по-французски `Cette session : 142 gCO₂ · 3,41 $`. Показывается, если только строка состояния claude-carbon уже даёт его или выключена настройка `showSessionTotal` (оба варианта только в терминале, см. [ccstatusline](#using-with-ccstatusline)). Стоимость — цена pay-as-you-go API для тех же запросов, что и CO2, из `data/prices.json` по формуле `/carbon-report`, запись кэша по часовой категории Claude Code; меньше цента читается как `< $0.01`, а при недоступном прайс-листе число убирается до тех пор, пока итог не начнётся заново, чтобы стоимость никогда не покрывала лишь часть запросов. Это стоимость Usage на API, а не счёт подписки. По подписке запись заканчивается квотой, как её показывает строка состояния, `Use 23% ↻14:00` (`Usage 23 % ↻14:00`): доля использованного пятичасового окна и местное время его сброса, а без пятичасового окна — недельного, `Use 41% 7d ↻Sat` (`Usage 41 % 7j ↻sam.`), читается у самого Claude Code после каждого ответа, без сетевого вызова. Далее идут две подсказки строки состояния: `⬆ 1.18.0 /carbon-update`, когда есть новая версия, и с 1 по 10 число месяца только что закрывшийся месяц с итогом, `📊 September: 84.2 kgCO₂ · /carbon-card`, пока вы не сделали карточку. Фоновые субагенты, которыми Claude Code запускает большинство из них, учитываются только в итоге сессии: никогда в ответе и в вашей медиане. Приоритетный субагент учитывается в вызвавшем его ответе, а не в следующем.
+- **`/carbon-panel` открывает панель** с маскотом, пиксельной молекулой CO2. Её цвет сравнивает эту сессию с медианой ваших прошлых сессий, от тёмно-синего (меньше восьмой доли) до тёмно-красного (более чем в восемь раз больше). Пока не записано 10 сессий, сравнение идёт с начальным значением 0.5 kgCO₂, так что цвет есть с первого ответа. Она подпрыгивает на пиксель вверх-вниз, пока Claude работает, быстрее по мере покраснения, и строит рожицы: оглядывается перед первым ответом, моргает и смотрит в сторону во время работы, улыбается на лёгкой сессии и потеет на тяжёлой, реагирует на каждый ответ, подмигивает в покое и засыпает через пять минут без хода.
 
-  <p align="center"><img src="docs/molecule-moods.svg" width="560" alt="The molecule's eight moods: it looks around before the first answer, glances aside at work, smiles through a light session, sweats through a heavy one, smiles or startles after an answer, winks at rest and falls asleep after five idle minutes"></p>
+  <p align="center"><img src="docs/molecule-moods.svg" width="560" alt="Восемь настроений молекулы: оглядывается перед первым ответом, смотрит в сторону во время работы, улыбается на лёгкой сессии, потеет на тяжёлой, улыбается или вздрагивает после ответа, подмигивает в покое и засыпает через пять минут бездействия"></p>
 
-  - **In the desktop app** the pane opens on the right, its tab titled "claude-carbon", in two blocks. Under the molecule, the colour scale, the eight colours from blue to red, with a marker under this session's. *This session*: its CO2, answers, subagents and model, its context window's fill and API-price value, and a small molecule per subagent, coloured by its own CO2. *My usage*: the period you pick (the last 7 or 30 days, 12 months, everything, or two dates you type, `01/05/2026`), its figures as tiles (CO2 as the reports sum it, change against the same length of time before, sessions, API-price value, car equivalence), then warming stripes of that period, a day, a week or a month a stripe after its length, each coloured against the median of the periods shown. The stripe under the pointer lights up and its date, total and sessions show under the stripes. A tile with an (i) shows its note when you click the (i), and hides it at a second click: the API-price value is what this usage costs billed through the API, and a Pro, Max or Ultra subscription covers some or all of it (which session was billed how is not recorded, so the pane never says what you paid). A gear beside "My usage" turns the change, the API-price value, the car, the split by project (off until you turn it on, each folder with its share and kgCO2) and the detail on or off; the pane keeps your choices for the next session. The detail (off until you turn it on) splits the period by kind of token, uncached input, cache writes, cache reads and output: two coloured bars give each kind's share of the tokens and of the CO2 (the part under the pointer lights up and its figures show under the bar), then a line per kind its tokens, energy and CO2 with their shares. The CO2 of each session is the one stored, split with the weights the factors give each kind (cache reads 0.08 of an input token, output about 21 times one), so the parts add up to what was stored; a session stored with older factors (before July 2026), whose CO2 no longer matches its tokens, is left out and the block says over how many sessions it splits; the energy is the one the factors start from (energy per token, PUE included, converted to CO2 with the AWS us-east grid at 287 gCO2/kWh), found back by dividing that CO2 by the same intensity. It needs the tokens by kind in `sessions-history.tsv`, which the hooks write from this version on: after an update, the detail shows from the next answer. A "Get my 2026 card" button puts `/carbon-card` in an empty prompt for you to send (the card covers the calendar year so far, whatever range the pane shows); it never sends it and leaves a draft you have started alone. A few short lines at the foot link to this repository, the author's LinkedIn profile and TokenClimate, the business version.
-  - **In the terminal** `/carbon-panel` typed at the prompt shows this session in the band right above it, in the classic and the fullscreen rendering alike (sent from the desktop app or a phone to a session running in a terminal, through Remote Control, it opens the side pane there instead): a small molecule of 13 columns by 4 rows in half blocks, and beside it the session's CO2, answers, subagents (a dot each, in its colour), model, context window and API-price value. The period and the stripes live in the desktop app.
-  - Run `/carbon-panel` again to close the pane or clear the band. The command is also a skill of the plugin, so the desktop app lists it; where the mod does not run (the VS Code chat panel, a cloud session) it only says where the pane opens.
-- **The stripes' history** is `sessions-history.tsv`, which the Stop hook writes next to `carbon.db` after each answer, read-only on the database. Every recorded session is in it, older rows as they were stored (they keep the factors of their time and are never recomputed), so the stripes, the median and the totals count what `/carbon-report` counts. Another session running at the same time counts with its total so far. With no database yet (before the first session start of a plugin installed alone, or with `jq` or `sqlite3` missing), the pane shows the molecule and says what the history waits for.
+  - **В приложении Desktop** панель открывается справа, её вкладка называется «claude-carbon», в двух блоках. Под молекулой — шкала цвета, восемь оттенков от синего к красному, с меткой под этой сессией. *Эта сессия*: её CO2, ответы, субагенты и модель, заполненность окна контекста и стоимость по ценам API, а также маленькая молекула на каждого субагента, окрашенная по его собственному CO2. *Моё использование*: выбранный период (последние 7 или 30 дней, 12 месяцев, всё или две введённые вами даты, `01/05/2026`), его числа плитками (CO2, как его суммируют отчёты, изменение относительно такого же прежнего периода, сессии, стоимость по ценам API, автомобильный эквивалент), затем полосы потепления этого периода, полоса на день, неделю или месяц согласно её длительности, каждая окрашена относительно медианы показанных периодов. Полоса под указателем подсвечивается, а её дата, итог и число сессий показываются под полосами. У плитки с (i) появляется заметка по клику на (i) и скрывается по второму клику: стоимость по ценам API — это сколько стоило бы это Usage при биллинге через API, а подписка Pro, Max или Ultra покрывает часть или всё (как именно оплачена каждая сессия, не записывается, поэтому панель никогда не говорит, что вы заплатили). Шестерёнка рядом с «Моим использованием» включает или выключает изменение, стоимость по ценам API, автомобиль, разбиение по проектам (выключено, пока не включите; каждая папка со своей долей и kgCO2) и подробности; панель сохраняет ваш выбор в следующей сессии. Подробности (выключены, пока не включите) разбивают период по видам токенов: некэшированный ввод, записи кэша, чтения кэша и вывод; две цветные полосы дают долю каждого вида в токенах и в CO2 (часть под указателем подсвечивается и её числа показываются под полосой), затем по строке на вид с его токенами, энергией и CO2 с долями. CO2 каждой сессии — сохранённый, распределённый с весами, которые коэффициенты дают каждому виду (чтения кэша 0.08 ввода, вывод примерно в 21 раз больше), так что части складываются в сохранённое значение; сессия, сохранённая со старыми коэффициентами (до июля 2026), чей CO2 больше не совпадает с её токенами, исключается, и блок говорит, по скольким сессиям он распределён; энергия — та, с которой коэффициенты начинают (энергия на токен с учётом PUE, переведённая в CO2 по сети AWS us-east при 287 gCO2/kWh), и находится обратным делением того CO2 на ту же интенсивность. Нужны токены по видам в `sessions-history.tsv`, которые хуки пишут начиная с этой версии: после обновления подробности показываются с следующего ответа. Кнопка «Получить мою карточку 2026» кладёт `/carbon-card` в пустой запрос для вашей отправки (карточка покрывает текущий календарный год, независимо от периода на панели); она никогда не отправляет его и оставляет в покое начатый вами черновик. Несколько коротких строк внизу ведут в этот репозиторий, на LinkedIn автора и в TokenClimate, бизнес-версию.
+  - **В терминале** `/carbon-panel`, введённый в запросе, показывает эту сессию в полосе прямо над ним, и в классической, и в полноэкранной отрисовке (отправленная из приложения Desktop или с телефона в сессию, работающую в терминале, через Remote Control, она открывает там боковую панель): маленькая молекула 13 столбцов на 4 строки полублоками, а рядом CO2 сессии, ответы, субагенты (по точке в своём цвете), модель, окно контекста и стоимость по ценам API. Период и полосы живут в приложении Desktop.
+  - Запустите `/carbon-panel` снова, чтобы закрыть панель или убрать полосу. Команда также является навыком плагина, поэтому приложение Desktop её перечисляет; где мод не работает (чат-панель VS Code, облачная сессия), она только говорит, где панель открывается.
+- **История полос** — `sessions-history.tsv`, который хук Stop пишет рядом с `carbon.db` после каждого ответа, только для чтения базы. В нём есть каждая записанная сессия, старые строки как они сохранены (они хранят коэффициенты своего времени и никогда не пересчитываются), так что полосы, медиана и итоги считают то, что считает `/carbon-report`. Другая сессия, работающая одновременно, учитывается со своим текущим итогом. Пока базы ещё нет (до первого запуска сессии плагина, установленного отдельно, или при отсутствии `jq` или `sqlite3`), панель показывает молекулу и говорит, чего ждёт история.
 
-Claude Code draws mods in the terminal and in the desktop app's Code tab only: nothing appears in the VS Code extension's chat panel, in cloud sessions or with `claude -p`. Mods need Claude Code 2.1.287 or later (2.1.286 in the desktop app).
+Claude Code рисует моды только в терминале и во вкладке Code приложения Desktop: ничего не появляется в чат-панели расширения VS Code, в облачных сессиях или при `claude -p`. Модам нужен Claude Code 2.1.287 или новее (2.1.286 в приложении Desktop).
 
-The mod comes with the plugin. Already installed from the marketplace: run `/plugin marketplace update claude-carbon` and `/plugin update claude-carbon@claude-carbon`, then restart Claude Code.
+Мод поставляется с плагином. Уже установили из маркетплейса: выполните `/plugin marketplace update claude-carbon` и `/plugin update claude-carbon@claude-carbon`, затем перезапустите Claude Code.
 
-The plugin alone records your sessions, and sets the terminal status line when you have none (see [Install](#install)):
+Сам плагин записывает ваши сессии и задаёт строку состояния в терминале, если у вас её нет (см. [Установка](#install)):
 
 ```
 /plugin install claude-carbon --marketplace gwittebolle/claude-carbon
 ```
 
-At the first session start after the install, the plugin creates its database in `~/.claude/claude-carbon/` and fills it with the sessions whose transcripts are still on disk (about the last 30 days, every project), then records each session as it goes. A one-time message says so at one of the next session starts. It needs `jq` and `sqlite3`: when one is missing nothing is created, and `/carbon-panel` names it. This happens once: a database you delete is not brought back (delete the `auto-setup` file beside it to ask for a new one), a database path set with `CLAUDE_CARBON_DB` is never created for you, and `CLAUDE_CARBON_NO_AUTOSETUP=1` turns it off. From then on the daily background check for a newer release runs as it does for the installer (`CLAUDE_CARBON_NO_UPDATE_NOTIFIER=1` to opt out).
+При первом запуске сессии после установки плагин создаёт свою базу в `~/.claude/claude-carbon/` и заполняет её сессиями, чьи транскрипты ещё на диске (примерно последние 30 дней, все проекты), затем записывает каждую сессию по мере работы. Одноразовое сообщение об этом появится при одном из следующих запусков сессии. Нужны `jq` и `sqlite3`: если чего-то нет, ничего не создаётся, и `/carbon-panel` называет недостающее. Это происходит один раз: удалённая база не восстанавливается (удалите файл `auto-setup` рядом с ней, чтобы запросить новую), путь базы, заданный `CLAUDE_CARBON_DB`, никогда не создаётся за вас, а `CLAUDE_CARBON_NO_AUTOSETUP=1` выключает это. С этого момента ежедневная фоновая проверка новой версии работает так же, как для установщика (`CLAUDE_CARBON_NO_UPDATE_NOTIFIER=1` чтобы отказаться).
 
-#### In a team repository
+#### В командном репозитории
 
-To offer the plugin to everyone who works in a repository, commit this in its `.claude/settings.json`:
+Чтобы предложить плагин всем, кто работает в репозитории, зафиксируйте это в его `.claude/settings.json`:
 
 ```json
 {
@@ -433,122 +432,121 @@ To offer the plugin to everyone who works in a repository, commit this in its `.
 }
 ```
 
-Enabling it in the repository does not download it to anyone's machine, since the plugin comes from a remote marketplace: each collaborator runs `claude plugin install claude-carbon@claude-carbon --scope project` once in their clone, after trusting the folder. Anyone who does not want it sets `"claude-carbon@claude-carbon": false` under `enabledPlugins` in their own `.claude/settings.local.json`. Each person's figures stay on their machine.
+Включение в репозитории не скачивает плагин ни на чей компьютер, поскольку он приходит из удалённого маркетплейса: каждый участник один раз выполняет `claude plugin install claude-carbon@claude-carbon --scope project` в своём клоне, после доверия папке. Кто не хочет, задаёт `"claude-carbon@claude-carbon": false` под `enabledPlugins` в своём `.claude/settings.local.json`. Цифры каждого остаются на его компьютере.
 
-The curl, PowerShell and npm installers set up the status line, the database and the hooks, and copy the mod alone to `~/.claude/skills/claude-carbon/`, which Claude Code loads as `claude-carbon@skills-dir`. `/carbon-update` keeps that copy up to date. The copy holds no hook, so nothing runs twice. Restart Claude Code after the install; the mod loads once the folder you open is trusted. Its median starts from zero: answers recorded by another install of the mod do not carry over. With this copy the mod shows in the terminal, in the editor's integrated terminal and in the desktop app's Code tab.
+Установщики curl, PowerShell и npm настраивают строку состояния, базу и хуки, а мод копируют отдельно в `~/.claude/skills/claude-carbon/`, где Claude Code загружает его как `claude-carbon@skills-dir`. `/carbon-update` держит эту копию актуальной. В копии нет хука, поэтому ничего не работает дважды. Перезапустите Claude Code после установки; мод загружается, когда папка, которую вы открыли, пользуется доверием. Его медиана начинается с нуля: ответы, записанные другой установкой мода, не переносятся. С этой копией мод показывается в терминале, во встроенном терминале редактора и во вкладке Code приложения Desktop.
 
-To turn it off, run `claude plugin disable claude-carbon@skills-dir`. To remove it, run the installer with `CLAUDE_CARBON_NO_MOD=1` on the `bash` side (`curl … | CLAUDE_CARBON_NO_MOD=1 bash`); keep the variable set, in your shell or in the `env` block of `settings.json`, or the next `/carbon-update` puts it back. The installer leaves alone a `skills/claude-carbon/` folder it did not make, and skips the copy while the claude-carbon plugin is enabled. Pick one of the two: the plugin added on top of an installer runs the hooks twice.
+Чтобы выключить, выполните `claude plugin disable claude-carbon@skills-dir`. Чтобы удалить, запустите установщик с `CLAUDE_CARBON_NO_MOD=1` на стороне `bash` (`curl … | CLAUDE_CARBON_NO_MOD=1 bash`); держите переменную заданной в оболочке или в блоке `env` `settings.json`, иначе следующий `/carbon-update` вернёт копию. Установщик не трогает папку `skills/claude-carbon/`, которую не создавал, и пропускает копию, пока включён плагин claude-carbon. Выберите что-то одно: плагин поверх установщика запускает хуки дважды.
 
-Turn the per-answer figure off with the `showPerTurn` option in `/config`. The mod writes no database, starts no process, makes no network call and never changes what Claude does; besides its own data files, it reads only `sessions-history.tsv`, the two release flags of the daily check (`plugin-update-check.json`, `update-check.json`), `last-card-month`, and the two files the SessionStart hook leaves when it finds no database (`setup-needed`, `auto-setup`). Text is in French when the first of `CLAUDE_CARBON_LOCALE`, `LC_ALL`, `LC_MESSAGES` and `LANG` that is set starts with `fr`, and in English otherwise. When none is set, as in the desktop app and often on Windows, the `language` setting decides (`Français`, `English`), then French.
+Выключите число на каждый ответ настройкой `showPerTurn` в `/config`. Мод не пишет базу, не запускает процессов, не делает сетевых вызовов и никогда не меняет поведение Claude; помимо собственных файлов данных он читает только `sessions-history.tsv`, два флага выпуска ежедневной проверки (`plugin-update-check.json`, `update-check.json`), `last-card-month` и два файла, которые оставляет хук SessionStart, когда не нашёл базу (`setup-needed`, `auto-setup`). Текст на французском, если первая из заданных переменных `CLAUDE_CARBON_LOCALE`, `LC_ALL`, `LC_MESSAGES` и `LANG` начинается с `fr`, иначе на английском. Когда не задана ни одна, как в приложении Desktop и часто в Windows, решает настройка `language` (`Français`, `English`), а затем французский.
 
-The mod's own tests run with `bash tests/run-mod-kit.sh`, under `claude plugin test`, which mocks the engine: no login needed. CI runs them on every push with Claude Code 2.1.296.
+Собственные тесты мода запускаются `bash tests/run-mod-kit.sh` под `claude plugin test`, который подменяет движок: вход в аккаунт не нужен. CI гоняет их при каждом push на Claude Code 2.1.296.
 
-## Using with ccstatusline
+## Использование с ccstatusline
 
-Claude Code accepts a single `statusLine` command, so claude-carbon's full status line and [ccstatusline](https://github.com/sirmalloc/ccstatusline) cannot run side by side. If ccstatusline drives your status line, embed the CO2 segment instead: in the ccstatusline TUI, add a `Custom Command` widget pointing to
+Claude Code принимает одну команду `statusLine`, поэтому полная строка состояния claude-carbon и [ccstatusline](https://github.com/sirmalloc/ccstatusline) не могут работать вместе. Если строкой состояния управляет ccstatusline, встройте сегмент CO2: в TUI ccstatusline добавьте виджет `Custom Command`, указывающий на
 
 ```
 ~/code/claude-carbon/scripts/statusline.sh --segment
 ```
 
-(adjust the path if you installed with `CLAUDE_CARBON_DIR`). The widget receives the same status JSON on stdin and prints just the cost + CO2 pair, e.g. `$0.68 · 35gCO₂`. Segment mode never touches the network. Recording to the local database is unaffected either way: persistence runs from hooks, not from the status line.
+(подправьте путь, если установили с `CLAUDE_CARBON_DIR`). Виджет получает тот же JSON состояния на stdin и печатает только пару стоимость + CO2, например `$0.68 · 35gCO₂`. Режим сегмента никогда не обращается к сети. Запись в локальную базу от этого не зависит: сохранение идёт через хуки, а не через строку состояния.
 
-With the segment in ccstatusline, the [mod](#the-mod-carbon-panel-and-the-co2-of-each-answer)'s session entry under the prompt shows the total a second time. Turn it off with the `showSessionTotal` option in `/config`; the desktop app, which has no status line, keeps it.
+С сегментом в ccstatusline запись мода [мод](#the-mod-carbon-panel-and-the-co2-of-each-answer) под запросом показывает итог второй раз. Выключите её настройкой `showSessionTotal` в `/config`; приложение Desktop, у которого нет строки состояния, сохраняет её.
 
-## Emission factors
+## Коэффициенты выбросов
 
-Factors from [Jegham et al. 2025](https://arxiv.org/abs/2505.09598), an arXiv preprint that estimates the energy consumption of LLM inference on AWS infrastructure from public API performance data (latency, throughput) over inferred hardware configurations.
+Коэффициенты из [Jegham et al. 2025](https://arxiv.org/abs/2505.09598), препринта arXiv, который оценивает энергопотребление вывода LLM на инфраструктуре AWS по публичным данным API (задержка, пропускная способность) при предполагаемых конфигурациях оборудования.
 
-| Model  | Read for the first time (input, cache write) | Re-read (cache read) | Written (output) | Basis                       |
+| Модель  | Читается впервые (ввод, запись кэша) | Перечитывается (чтение кэша) | Записывается (вывод) | Основа                       |
 | ------ | -------------------------------------------- | -------------------- | ---------------- | --------------------------- |
-| Fable  | 156                                          | 12.5                 | 3304             | Extrapolated (2x Opus)      |
-| Opus   | 78                                           | 6.2                  | 1652             | Extrapolated (2x Sonnet)    |
-| Sonnet | 39                                           | 3.1                  | 826              | 3-point fit (Jegham v6)     |
-| Haiku  | 10                                           | 0.8                  | 207              | Extrapolated (0.25x Sonnet) |
+| Fable  | 156                                          | 12.5                 | 3304             | Экстраполяция (2× Opus)      |
+| Opus   | 78                                           | 6.2                  | 1652             | Экстраполяция (2× Sonnet)    |
+| Sonnet | 39                                           | 3.1                  | 826              | Аппроксимация по 3 точкам (Jegham v6)     |
+| Haiku  | 10                                           | 0.8                  | 207              | Экстраполяция (0.25× Sonnet) |
 
-In gCO2e per million tokens. In a Claude Code session, about 98% of the tokens are context Claude re-reads at each step. Each of them weighs little, but together they make about 60% of the CO2; the text Claude writes is under 1% of the tokens and about 30% of the CO2 (30 days of the author's sessions, October 2026).
+В гCO2e на миллион токенов. В сессии Claude Code около 98% токенов — контекст, который Claude перечитывает на каждом шаге. Каждый весит мало, но вместе они дают около 60% CO2; текст, который пишет Claude, — менее 1% токенов и около 30% CO2 (30 дней сессий автора, октябрь 2026).
 
-**Important: these are order-of-magnitude estimates, not precise measurements.**
+**Важно: это оценки порядка величины, а не точные измерения.**
 
-- Sonnet factors are a 3-point least-squares fit to the three Claude 3.7 Sonnet per-query energies estimated in Jegham et al. v6 (0.950 / 2.989 / 5.671 Wh), giving a ~21:1 output:input ratio; independent public estimates land within the same order of magnitude. Fable, Opus and Haiku are extrapolated (no public data from Anthropic on per-model energy consumption): Opus = 2x Sonnet (honest band 2x-5x), Haiku = 0.25x, Fable = 2x Opus. See [METHODOLOGY.md](METHODOLOGY.md).
-- Sessions run on non-Anthropic models (e.g. local models behind `ANTHROPIC_BASE_URL`) are stored with their raw tokens but zero cost/CO2 and excluded from reports - a datacenter factor doesn't apply to them. Add patterns to `exclude_models` in `data/factors.json` to exclude more models by name.
-- Cache read tokens are counted at a reduced factor (default 0.08 of an input token, set in `data/factors.json`). A cached token skips most of the prefill compute; the factor is the residual. This is an engineering estimate derived from the literature, not Anthropic's 0.1x billing ratio. The decode-phase re-read of the cache grows with context length x generated tokens and is not modelled yet; every session stores that product (`output_context_sum`) so a calibrated term can be applied to history later. See [METHODOLOGY.md](METHODOLOGY.md).
-- Reviewed against the April-September 2026 literature (measurement papers, provider disclosures, the Watershed framework) with a sensitivity run on 30 days of real transcripts: no factor moved, the displayed figure is more likely low than high, next review March 2027. See [Where the estimate stands](METHODOLOGY.md#where-the-estimate-stands-september-2026).
-- Carbon intensity uses the AWS region grid (location-based, 0.287 kgCO2e/kWh), not real-time grid data. This sits at the low end of the location-based range; the US national average is ~380 g/kWh.
-- Anthropic does not publish Scope 1, 2, or 3 emissions. These estimates are independent and based on academic research, not provider data.
+- Коэффициенты Sonnet — аппроксимация методом наименьших квадратов по трём точкам для трёх энергий на запрос Claude 3.7 Sonnet, оценённых в Jegham et al. v6 (0.950 / 2.989 / 5.671 Wh), что даёт отношение вывода к вводупримерно 21:1; независимые публичные оценки попадают в тот же порядок величины. Fable, Opus и Haiku экстраполированы (публичных данных Anthropic об энергопотреблении по моделям нет): Opus = 2× Sonnet (честный диапазон 2×–5×), Haiku = 0.25×, Fable = 2× Opus. См. [METHODOLOGY.md](METHODOLOGY.md).
+- Сессии на не-Anthropic моделях (например, локальные за `ANTHROPIC_BASE_URL`) сохраняются с сырыми токенами, но нулевой стоимостью/CO2 и исключаются из отчётов — коэффициент датацентра к ним неприменим. Добавьте шаблоны в `exclude_models` в `data/factors.json`, чтобы исключить больше моделей по имени.
+- Токены чтения кэша считаются с пониженным коэффициентом (по умолчанию 0.08 ввода, задаётся в `data/factors.json`). Кэшированный токен пропускает большую часть вычислений prefill; коэффициент — остаток. Это инженерная оценка, выведенная из литературы, а не биллинговое отношение Anthropic 0.1×. Перечитывание кэша на фазе декодирования растёт как длина контекста × сгенерированные токены и пока не моделируется; каждая сессия сохраняет это произведение (`output_context_sum`), чтобы позже применить откалиброванный член к истории. См. [METHODOLOGY.md](METHODOLOGY.md).
+- Проверено по литературе апреля–сентября 2026 (измерительные статьи, раскрытия провайдеров, фреймворк Watershed) с чувствительным прогоном на 30 днях реальных транскриптов: ни один коэффициент не сдвинулся, показываемое число скорее занижено, чем завышено, следующий пересмотр в марте 2027. См. [Где находится оценка](METHODOLOGY.md#where-the-estimate-stands-september-2026).
+- Интенсивность углерода использует сеть региона AWS (по местоположению, 0.287 kgCO2e/kWh), а не данные сети в реальном времени. Это нижний конец диапазона по местоположению; среднее по США — около 380 g/kWh.
+- Anthropic не публикует выбросы Scope 1, 2 и 3. Эти оценки независимы и основаны на академических исследованиях, а не на данных провайдера.
 
-The car equivalent in reports and cards follows your locale, since a km by car emits up to ~1.7x more in one country than in another: ADEME's 142 gCO2e/km on a French or undetected locale, EPA's 393 gCO2e/mile on a US locale, a 200 gCO2/km world average otherwise. Force a set with `CLAUDE_CARBON_LOCALE` (`fr`, `us`, `world`, or any locale string). The factors live in `data/factors.json` under `equivalences`.
+Автомобильный эквивалент в отчётах и карточках следует вашей локали, поскольку километр на машине выбрасывает до ~1.7 раза больше в одной стране, чем в другой: 142 gCO2e/km ADEME для французской или неопределённой локали, 393 gCO2e/милю EPA для американской, мировое среднее 200 gCO2/km иначе. Задайте принудительно через `CLAUDE_CARBON_LOCALE` (`fr`, `us`, `world` или любую строку локали). Коэффициенты лежат в `data/factors.json` под `equivalences`.
 
-`/carbon-report` also gives this calendar year's total as a share of 2 tCO2e, the 2050 per-person target for a whole footprint (ADEME, [Nos Gestes Climat](https://nosgestesclimat.fr/blog/environnement/reduire-empreinte-carbone-objectif-deux-tonnes), from the IPCC 1.5 °C scenarios; also Carbone 4, *Faire sa part ?*, 2019). It is there for scale: the 2 t covers everything a person emits in a year, AI included. Sources and caveats: [METHODOLOGY.md](METHODOLOGY.md#annual-budget-line).
+`/carbon-report` также даёт итог этого календарного года как долю от 2 тCO2e — цели на 2050 год на человека по полному следу (ADEME, [Nos Gestes Climat](https://nosgestesclimat.fr/blog/environnement/reduire-empreinte-carbone-objectif-deux-tonnes), из сценариев МГЭИК 1.5 °C; также Carbone 4, *Faire sa part ?*, 2019). Это для масштаба: 2 т покрывают всё, что человек выбрасывает за год, включая ИИ. Источники и оговорки: [METHODOLOGY.md](METHODOLOGY.md#annual-budget-line).
 
-Factors are editable in `data/factors.json`. See [METHODOLOGY.md](METHODOLOGY.md) for the full scientific basis, formula, and equivalences.
+Коэффициенты редактируются в `data/factors.json`. Полное научное обоснование, формула и эквиваленты — в [METHODOLOGY.md](METHODOLOGY.md).
 
-### Golden vectors
+### Золотые векторы
 
-The methodology is pinned by golden test vectors in [`tests/methodology-vectors.json`](tests/methodology-vectors.json): hand-computed expected CO2/cost values for known token breakdowns, replayed by `bash tests/run-vectors.sh` in CI on every push. Downstream consumers (such as TokenClimate) keep a copy of this file and verify weekly that their implementation produces the same numbers. If you edit `data/factors.json` or `data/prices.json`, update the vectors in the same commit, otherwise CI fails.
+Методика закреплена золотыми тестовыми векторами в [`tests/methodology-vectors.json`](tests/methodology-vectors.json): вручную посчитанные ожидаемые значения CO2/стоимости для известных разборов токенов, которые проигрывает `bash tests/run-vectors.sh` в CI при каждом push. Потребители ниже по потоку (например, TokenClimate) держат копиюэтот файл и еженедельно проверяют, что их реализация даёт те же числа. Если вы правите `data/factors.json` или `data/prices.json`, обновите векторы в том же коммите, иначе CI упадёт.
 
-## Updating
+## Обновление
 
-When a newer version is available, the status line shows a discreet `⬆ /carbon-update` hint. The check runs in the background (at most once a day, never on the status line's hot path); opt out with `CLAUDE_CARBON_NO_UPDATE_NOTIFIER=1`.
+Когда есть новая версия, строка состояния показывает ненавязчивую подсказку `⬆ /carbon-update`. Проверка идёт в фоне (не чаще раза в день, никогда не на горячем пути строки состояния); отказ — `CLAUDE_CARBON_NO_UPDATE_NOTIFIER=1`.
 
-- **In a terminal with a git-clone install**, that hint appears at the end of the status line, naming the new version.
-- **Everywhere the mod runs** (the desktop app, and a terminal without the claude-carbon status line), the same hint ends the session entry under the prompt, and the `/carbon-panel` pane names the version at the top of its foot. For a plugin install, the same daily background check asks GitHub for the release tags only and never touches Claude Code's plugin cache.
-- **Installed before the summer of 2026** (version 1.0, no hint at all)? Run the install again, from the app or the terminal, as in [Install](#install).
+- **В терминале с установкой из git-клона** эта подсказка появляется в конце строки состояния с именем новой версии.
+- **Везде, где работает мод** (приложение Desktop и терминал без строки claude-carbon), та же подсказка завершает запись сессии под запросом, а панель `/carbon-panel` называет версию вверху футера. Для установки из плагина та же ежедневная фоновая проверка запрашивает у GitHub только теги выпусков и никогда не трогает кэш плагинов Claude Code.
+- **Установлено до лета 2026** (версия 1.0, подсказки нет вовсе)? Запустите установку снова, из приложения или терминала, как в [Установке](#install).
 
-To update, run `/carbon-update` in Claude Code, whichever way you installed: for the plugin it runs Claude Code's `claude plugin marketplace update claude-carbon` and `claude plugin update claude-carbon@claude-carbon`, for the installer's clone its own updater. Restart Claude Code afterwards. With both installs, as when the status line runs from a clone, only the plugin is updated and the command gives the `git pull` for the clone. You can also re-run the installer:
+Для обновления выполните `/carbon-update` в Claude Code, независимо от способа установки: для плагина он запускает `claude plugin marketplace update claude-carbon` и `claude plugin update claude-carbon@claude-carbon`, для клона установщика — собственный обновлятор. Затем перезапустите Claude Code. При обеих установках, например когда строка состояния идёт из клона, обновляется только плагин, а команда даёт `git pull` для клона. Можно также перезапустить установщик:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/gwittebolle/claude-carbon/main/install.sh | bash
 ```
 
-- Updating an installer's clone re-prices your stored history with the new factors automatically (CO2 only; cost figures are left intact); updating the plugin does not. Run `scripts/recompute.sh --with-cost` yourself only after a price change.
-- If you edited `data/factors.json` or `data/prices.json` locally, the update keeps your edits; on a conflict with upstream it saves yours to `*.local.bak` and tells you.
-- The update also refreshes the [mod](#the-mod-carbon-panel-and-the-co2-of-each-answer)'s copy. When it asks for a restart (on Windows, a copy in use cannot be replaced), restart Claude Code and run it again; until then the previous copy stays.
-- Installed from the plugin marketplace, you can also let Claude Code update it by itself: in `/plugin`, tab **Marketplaces**, select `claude-carbon`, then **Enable auto-update**. The new version loads with the next session.
+- Обновление клона установщика автоматически переоценивает сохранённую историю по новым коэффициентам (только CO2; стоимость остаётся); обновление плагина — нет. Запускайте `scripts/recompute.sh --with-cost` сами только после смены цены.
+- Если вы правили `data/factors.json` или `data/prices.json` локально, обновление сохраняет ваши правки; при конфликте с upstream оно сохраняет ваши в `*.local.bak` и говорит вам.
+- Обновление также освежает копию [мода](#the-mod-carbon-panel-and-the-co2-of-each-answer). Когда он просит перезапустить (в Windows занятую копию нельзя заменить), перезапустите Claude Code и запустите снова; до этого остаётся прежняя копия.
+- Установленный из маркетплейса плагин можно обновить и средствами Claude Code: в `/plugin`, вкладка **Marketplaces**, выберите `claude-carbon`, затем **Enable auto-update**. Новая версия загрузится в следующей сессии.
 
-## Uninstalling
+## Удаление
 
-For an install made by the curl, PowerShell or npm installer:
+Для установки через установщик curl, PowerShell или npm:
 
 ```bash
 bash ~/code/claude-carbon/scripts/configure-settings.sh --remove
 ```
 
-(adjust the path if you installed with `CLAUDE_CARBON_DIR`). It takes the status line, the hooks, the `/carbon-*` commands and the mod's copy out of `~/.claude`, and nothing that belongs to another tool: a status line that calls `statusline.sh --segment` stays, and so does any other hook of a group it shared. Your history stays in `~/.claude/claude-carbon/`. To remove everything, delete that folder and the clone afterwards.
+(подправьте путь, если установили с `CLAUDE_CARBON_DIR`). Он убирает строку состояния, хуки, команды `/carbon-*` и копию мода из `~/.claude` и ничего, что принадлежит другому инструменту: строка состояния, вызывающая `statusline.sh --segment`, остаётся, как и любой другой хук общей группы. Ваша история остаётся в `~/.claude/claude-carbon/`. Чтобы удалить всё, удалите эту папку и затем клон.
 
-For the plugin: `claude plugin uninstall claude-carbon@claude-carbon`, then take the `statusLine` entry that names `claude-carbon/statusline.sh` out of `~/.claude/settings.json`: the plugin cannot do it as it goes, and once it is gone that status line prints nothing. A plugin turned off rather than uninstalled keeps drawing it, until you take that entry out. `CLAUDE_CARBON_NO_STATUSLINE=1` keeps the plugin from setting a status line at all. The plugin sets it once: to have it set again after you removed it, delete `~/.claude/claude-carbon/statusline-set`.
+Для плагина: `claude plugin uninstall claude-carbon@claude-carbon`, затем уберите из `~/.claude/settings.json` запись `statusLine`, называющую `claude-carbon/statusline.sh`: плагин не может сделать это при удалении, а когда его нет, эта строка состояния ничего не печатает. Плагин выключенный, а не удалённый, продолжает её рисовать, пока вы не уберёте запись. `CLAUDE_CARBON_NO_STATUSLINE=1` не даёт плагину вообще задавать строку состояния. Плагин задаёт её один раз: чтобы он задал её снова после того, как вы её удалили, удалите `~/.claude/claude-carbon/statusline-set`.
 
-Installing a second copy on top of a first one (another folder, or the installer after the plugin's clone) would run every hook twice. The installer stops when it finds another install wired into `settings.json`, names it, and gives the command that takes its place (`configure-settings.sh --replace`). Hooks left by an install whose folder was deleted are replaced without asking.
+Установка второй копии поверх первой (другая папка или установщик после клона плагина) запустит каждый хук дважды. Установщик останавливается, когда находит другую установку, подключённую в `settings.json`, называет её и даёт команду, которая её заменяет (`configure-settings.sh --replace`). Хуки, оставшиеся от установки, чья папка была удалена, заменяются без запроса.
 
-## Dependencies
+## Зависимости
 
-- `jq` - JSON parsing
-- `sqlite3` - local database
-- `git` - branch detection in status line (optional)
-- `curl` - subscription quota via Anthropic's `/api/oauth/usage` endpoint when Claude Code does not pass it (optional, at most once a minute)
-- `node` + Google Chrome, Microsoft Edge, Chromium or Brave (or `playwright-core` and its Chromium) - PNG export for `/carbon-card` (optional)
+- `jq` — разбор JSON
+- `sqlite3` — локальная база
+- `git` — определение ветки в строке состояния (необязательно)
+- `curl` — квота подписки через эндпоинт Anthropic `/api/oauth/usage`, когда Claude Code её не передаёт (необязательно, не чаще раза в минуту)
+- `node` + Google Chrome, Microsoft Edge, Chromium или Brave (или `playwright-core` и его Chromium) — экспорт PNG для `/carbon-card` (необязательно)
 
-`sqlite3` is pre-installed on every Mac, and `jq` from macOS 15 (Sequoia) on. On an older Mac with no `jq`, the installer downloads the official jq 1.8.1 binary for the Mac's processor, checks it against the SHA-256 the jq project publishes, and puts it in `~/.claude/claude-carbon/bin/`, where the scripts and the slash commands find it; a `jq` installed later (Homebrew, for one) takes precedence. On Linux: `apt install jq sqlite3`. On Windows, see below.
+`sqlite3` предустановлен на каждом Mac, `jq` — начиная с macOS 15 (Sequoia). На более старом Mac без `jq` установщик скачивает официальный бинарник jq 1.8.1 для процессора Mac, проверяет его по SHA-256, опубликованному проектом jq, и кладёт в `~/.claude/claude-carbon/bin/`, где сценарии и слэш-команды его находят; `jq`, установленный позже (например, через Homebrew), имеет приоритет. На Linux: `apt install jq sqlite3`. В Windows — ниже.
 
-`/carbon-card` draws its PNGs with a Chromium-family browser run headless, in a throwaway profile. It uses Playwright's Chromium when `playwright-core` is installed (looked for in node's own resolution, the global npm root, `~/node_modules` and Homebrew's node modules), and otherwise the first browser found in its usual place: Google Chrome, Microsoft Edge, Chromium or Brave on macOS, Chrome or Edge on Windows, and on Linux the first of them on the `PATH`. `CLAUDE_CARBON_BROWSER` names another one, by path or by command, or `none` to skip the lookup. A browser that has drawn nothing after 60 seconds is stopped and not tried again. With no browser at all, the card opens in your default browser as a page, and a screenshot of it is the card.
+`/carbon-card` рисует PNG через браузер семейства Chromium в headless-режиме, в одноразовом профиле. Он использует Chromium Playwright, если установлен `playwright-core` (ищется в разрешении Node, глобальном npm root, `~/node_modules` и node-модулях Homebrew), иначе первый найденный на обычном месте браузер: Google Chrome, Microsoft Edge, Chromium или Brave на macOS, Chrome или Edge в Windows, а в Linux — первый из них в `PATH`. `CLAUDE_CARBON_BROWSER` называет другой, по пути или по команде, либо `none`, чтобы пропустить поиск. Браузер, который ничего не нарисовал за 60 секунд, останавливается и больше не пробуется. Без браузера карточка открывается в браузере по умолчанию страницей, и её скриншот служит карточкой.
 
 ## Windows
 
-claude-carbon is bash, and stays bash on Windows. That is deliberate rather than a
-shortcut: on native Windows, Claude Code runs status line and hook commands through
-the bash that ships with [Git for Windows](https://git-scm.com/downloads/win), falling
-back to PowerShell only when Git Bash is absent
-([status line docs](https://code.claude.com/docs/en/statusline#windows-configuration),
-[hooks docs](https://code.claude.com/docs/en/hooks)). The plugin speaks the shell its
-host already spawns.
+claude-carbon написан на bash и остаётся bash на Windows. Это осознанный выбор, а не
+упрощение: в собственном Windows Claude Code запускает команды строки состояния и хуков через
+bash, поставляемый с [Git for Windows](https://git-scm.com/downloads/win), и откатывается к PowerShell, только если Git Bash отсутствует
+([документация по строке состояния](https://code.claude.com/docs/en/statusline#windows-configuration),
+[документация по хукам](https://code.claude.com/docs/en/hooks)). Плагин говорит на том языке оболочки, который
+уже порождает его хост.
 
-**Native Windows.** Install Git for Windows first, then restart Claude Code so that it finds Git Bash:
+**Собственный Windows.** Сначала установите Git for Windows, затем перезапустите Claude Code, чтобы он нашёл Git Bash:
 
 ```powershell
 winget install Git.Git --source winget
 ```
 
-Then, in the same terminal, install `jq` and `sqlite3`, the two commands Git for Windows does not ship, and run the installer:
+Затем в том же терминале установите `jq` и `sqlite3` — две команды, которых нет в Git for Windows — и запустите установщик:
 
 ```powershell
 winget install jqlang.jq --source winget
@@ -556,102 +554,101 @@ winget install SQLite.SQLite --source winget
 irm https://raw.githubusercontent.com/gwittebolle/claude-carbon/main/install.ps1 | iex
 ```
 
-The installer checks for both and prints the `winget` command for any still missing; it does not run `winget` itself.
+Установщик проверяет оба и печатает команду `winget` для недостающих; сам он `winget` не запускает.
 
-Everything else the plugin needs - `bash`, `awk`, `sed`, `grep`, `date`, `curl`,
-`git`, `cygpath` - comes with Git for Windows.
+Всё остальное, что нужно плагину — `bash`, `awk`, `sed`, `grep`, `date`, `curl`,
+`git`, `cygpath` — поставляется с Git for Windows.
 
-**WSL 2.** Nothing special: run the `curl | bash` installer inside your distribution.
-Claude Code, its transcripts and claude-carbon all live on the Linux side. This is
-the path to pick if your projects are already in WSL. VS Code reaches it through the
-Remote - WSL extension.
+**WSL 2.** Ничего особенного: запустите установщик `curl | bash` внутри своего дистрибутива.
+Claude Code, его транскрипты и claude-carbon живут на Linux-стороне. Это
+путь, если ваши проекты уже в WSL. VS Code доходит до него через расширение
+Remote - WSL.
 
-**Marketplace install.** `/plugin install claude-carbon@claude-carbon` behaves the
-same as on macOS, once Git for Windows, `jq` and `sqlite3` are present.
+**Установка из маркетплейса.** `/plugin install claude-carbon@claude-carbon` ведёт себя
+так же, как на macOS, когда есть Git for Windows, `jq` и `sqlite3`.
 
-### Windows specifics
+### Особенности Windows
 
-- **Git Bash is required.** Without it Claude Code routes commands to PowerShell,
-  which cannot run a `.sh` file. `claude doctor` tells you which shell it picked. If
-  Git is installed somewhere unusual, point Claude Code at it in `settings.json`:
+- **Git Bash обязателен.** Без него Claude Code направляет команды в PowerShell,
+  который не может запустить `.sh`. `claude doctor` скажет, какую оболочку он выбрал. Если
+  Git стоит в необычном месте, укажите его Claude Code в `settings.json`:
   `{"env": {"CLAUDE_CODE_GIT_BASH_PATH": "C:\\Program Files\\Git\\bin\\bash.exe"}}`.
-- **Paths in `settings.json` use forward slashes** (`C:/Users/you/code/claude-carbon/...`).
-  Git Bash eats unquoted backslashes, and the command then fails with no visible error.
-  The installer writes them correctly; only hand-edits need the care.
-- **Slash commands are copied, not symlinked.** Git Bash cannot create a real symlink
-  without Developer Mode, so `/carbon-report` and friends are copied into
-  `~/.claude/commands/` and refreshed on every update.
-- **Sandboxing is not available** on native Windows (a Claude Code limitation, not
-  this plugin's). Use WSL 2 if you need it.
-- **`/carbon-card` additionally needs Node.js**: `winget install OpenJS.NodeJS --source winget`.
-- **`winget` answers "Access is denied" (`0x80070005`)**: security software on the PC is
-  blocking it, an antivirus's behaviour protection for one. Allow `winget` there and run
-  the command again.
-- **Behind a TLS-inspecting proxy or antivirus**, the clone fails with
+- **Пути в `settings.json` используют прямой слеш** (`C:/Users/you/code/claude-carbon/...`).
+  Git Bash съедает некавыченные обратные слеши, и команда потом падает без видимой ошибки.
+  Установщик пишет их правильно; осторожность нужна только при ручном редактировании.
+- **Слэш-команды копируются, а не линкуются.** Git Bash не может создать настоящую символическую ссылку
+  без режима разработчика, поэтому `/carbon-report` и остальные копируются в
+  `~/.claude/commands/` и обновляются при каждом обновлении.
+- **Песочница недоступна** в собственном Windows (ограничение Claude Code, не
+  этого плагина). Если она нужна, используйте WSL 2.
+- **`/carbon-card` дополнительно нужен Node.js**: `winget install OpenJS.NodeJS --source winget`.
+- **`winget` отвечает «Access is denied» (`0x80070005`)**: защитное ПО на ПК
+  блокирует его, например защита поведения антивируса. Разрешите `winget` там и запустите
+  команду снова.
+- **За TLS-инспектирующим прокси или антивирусом** клонирование падает с
   `SSL certificate problem: unable to get local issuer certificate`. Git for Windows
-  checks certificates against its own bundled CA list, which does not know the root
-  such tools re-sign traffic with; the Windows certificate store does. Switch git to
-  it (verification stays on) and rerun the installer:
-  `git config --global http.sslBackend schannel`. The installer prints this hint
-  when it detects the case. The same interception is why `winget` needs
-  `--source winget` on those machines: the Microsoft Store source fails its
-  certificate check and, without an explicit source, winget aborts instead of
-  falling back.
+  проверяет сертификаты по собственному списку CA, который не знает корень, которым такие
+  инструменты переподписывают трафик; а хранилище сертификатов Windows его знает. Переключите git
+  на него (проверка остаётся включённой) и запустите установщик снова:
+  `git config --global http.sslBackend schannel`. Установщик печатает эту подсказку
+  когда обнаруживает такой случай. Та же перехватная проверка — причина, почему `winget` нуждается
+  в `--source winget` на таких машинах: источник Microsoft Store не проходит проверку
+  сертификата и без явного источника winget прерывается вместо переключения.
 
-CI runs the full test suite on `windows-latest` under Git Bash, alongside Ubuntu,
-plus two Windows-only suites: `tests/run-windows-e2e.sh` (native paths through the Stop
-hook and the status line, hook manifests spawned the way Claude Code spawns them) and
+CI гоняет полный набор тестов на `windows-latest` под Git Bash, наряду с Ubuntu,
+плюс два набора только для Windows: `tests/run-windows-e2e.sh` (собственные пути через хук Stop
+и строку состояния, манифесты хуков запущены так, как их запускает Claude Code) и
 `tests/run-install-ps1-tests.ps1`.
 
-## Reduce your footprint
+## Уменьшите свой след
 
-Measuring is step one. The levers below are ordered by what the 2026 measurement literature and this tool's own sensitivity run on real transcripts say matters most. None of them comes with a percentage: the emission factors carry a wider uncertainty band than any gain figure would. `/carbon-report` before and after a change, over several sessions, is the measurement that applies to you. The mechanism, the direction and the sources of each lever are in [docs/reduce.md](docs/reduce.md).
+Измерение — первый шаг. Рычаги ниже упорядочены по тому, что литература измерений 2026 и собственный чувствительный прогон инструмента на реальных транскриптах называют наиболее важным. Ни один из них не идёт с процентом: коэффициенты выбросов имеют более широкий диапазон неопределённости, чем любая цифра выигрыша. `/carbon-report` до и после изменения, на нескольких сессиях, — вот измерение, которое относится к вам. Механизм, направление и источники каждого рычага — в [docs/reduce.md](docs/reduce.md).
 
-- **Keep the context short when the model generates.** Almost every token of a session is a cache read, and the energy of a generated token grows with the context it is generated in. One session per task, `/clear` when the subject changes, `/btw` for side questions, subagents for exploration and verbose operations.
-- **Compact on your terms.** `/compact <instructions>` at a natural break, `/rewind` when abandoning a path, `/autocompact 150k` to bound the window, `CLAUDE_CODE_DISABLE_1M_CONTEXT=1` on models that run at 1M by default.
-- **Trim what every turn carries.** `/context` shows it. A short `CLAUDE.md` with the rest in skills, unused MCP servers off with `/mcp`, a CLI over an MCP server where both exist.
-- **Do not break the cache mid-session.** Pick the model and the effort level at the start; `/usage` shows the hit ratio and the likely cause of the last miss.
-- **Fewer turns, fewer failed loops.** A spec and a test the agent can run, a deterministic tool over a retry, `/clear` after two failed corrections, no `/loop` left running on an idle session.
-- **Ask the agent only what needs an agent.** An agentic task runs on the order of a thousand times the tokens of a chat exchange. A `--help` costs nothing.
-- **Match reasoning and model to the task.** `/effort low` on routine work, set at session start; Haiku for subagents via `CLAUDE_CODE_SUBAGENT_MODEL`.
+- **Держите контекст коротким, пока модель генерирует.** Почти каждый токен сессии — чтение кэша, а энергия сгенерированного токена растёт с контекстом, в котором он создаётся. Одна сессия на задачу, `/clear` при смене темы, `/btw` для побочных вопросов, субагенты для исследования и многословных операций.
+- **Сжимайте на своих условиях.** `/compact <instructions>` на естественной границе, `/rewind` при отказе от пути, `/autocompact 150k`, чтобы ограничить окно, `CLAUDE_CODE_DISABLE_1M_CONTEXT=1` на моделях, которые по умолчанию работают с 1M.
+- **Урежьте то, что несёт каждый ход.** `/context` показывает это. Короткий `CLAUDE.md` с остальным в навыках, неиспользуемые серверы MCP отключены через `/mcp`, CLI вместо сервера MCP, где есть оба.
+- **Не ломайте кэш посреди сессии.** Выберите модель и уровень усилий в начале; `/usage` показывает долю попаданий и вероятную причину последнего промаха.
+- **Меньше ходов, меньше неудачных циклов.** Спецификация и тест, которые агент может запустить, детерминированный инструмент вместо повтора, `/clear` после двух неудачных исправлений, не оставляйте `/loop` работающим в простаивающей сессии.
+- **Спрашивайте агента только о том, что требует агента.** Агентская задача расходует примерно в тысячу раз больше токенов, чем обмен в чате. `--help` ничего не стоит.
+- **Соответствуйте задаче уровнем рассуждений и моделью.** `/effort low` на рутинной работе, задаётся в начале сессии; Haiku для субагентов через `CLAUDE_CODE_SUBAGENT_MODEL`.
 
-The same document covers what does not hold up (shell output filters, prompt compressors, adding up percentages), the harness as a lever, and what is out of your hands for now.
+Там же документ описывает, что не выдерживает проверки (фильтры вывода shell, компрессоры подсказок, суммирование процентов), харнесс как рычаг и то, что пока от вас не зависит.
 
-### Related projects
+### Связанные проекты
 
-- [EcoLogits](https://ecologits.ai) - Python library estimating the footprint of GenAI API calls across providers.
-- [CodeCarbon](https://github.com/mlco2/codecarbon) - measures the emissions of compute you run yourself (training, local inference).
-- [ImpactIA](https://github.com/SNCFdevelopers/ImpactIA) - AI impact calculator and guide by SNCF, Wavestone and Resilio.
-- [green-claude](https://github.com/Institut-du-Numerique-Responsable/green-claude) - Claude Code skill that steers generated code toward eco-design rules (RGESN, GR491).
+- [EcoLogits](https://ecologits.ai) — библиотека Python, оценивающая след вызовов GenAI API у разных провайдеров.
+- [CodeCarbon](https://github.com/mlco2/codecarbon) — измеряет выбросы вычислений, которые вы запускаете сами (обучение, локальный вывод).
+- [ImpactIA](https://github.com/SNCFdevelopers/ImpactIA) — калькулятор и руководство по воздействию ИИ от SNCF, Wavestone и Resilio.
+- [green-claude](https://github.com/Institut-du-Numerique-Responsable/green-claude) — навык Claude Code, направляющий генерируемый код к правилам эко-дизайна (RGESN, GR491).
 
-### Further reading
+### Дополнительное чтение
 
-- [IEA - Energy and AI (2025)](https://www.iea.org/reports/energy-and-ai/) - data center projections
-- [Jegham et al. - How Hungry is AI?](https://arxiv.org/abs/2505.09598) - per-model energy estimates
-- [UCL/UNESCO - 90% AI energy reduction](https://www.ucl.ac.uk/news/2025/jul/practical-changes-could-reduce-ai-energy-demand-90) - frugal AI approaches
-- [GreenIT.fr - AI impacts 2025-2030](https://www.greenit.fr/impacts-ia-monde-2025-2030-rapport/) - French data
+- [IEA — Energy and AI (2025)](https://www.iea.org/reports/energy-and-ai/) — прогнозы по дата-центрам
+- [Jegham et al. — How Hungry is AI?](https://arxiv.org/abs/2505.09598) — оценки энергии по моделям
+- [UCL/UNESCO — снижение энергии ИИ на 90%](https://www.ucl.ac.uk/news/2025/jul/practical-changes-could-reduce-ai-energy-demand-90) — бережные подходы к ИИ
+- [GreenIT.fr — воздействие ИИ 2025–2030](https://www.greenit.fr/impacts-ia-monde-2025-2030-rapport/) — французские данные
 
-## Why
+## Зачем
 
-Every Claude Code session uses real compute, real energy, real emissions. The number is small per query, but it adds up. Making it visible is the first step to owning it.
+Каждая сессия Claude Code использует реальные вычисления, реальную энергию, реальные выбросы. Число невелико на запрос, но накапливается. Сделать его видимым — первый шаг к тому, чтобы взять его под контроль.
 
-## Citing
+## Как цитировать
 
-If claude-carbon's numbers or methodology end up in your article, talk or product, a citation is appreciated. GitHub's "Cite this repository" button generates BibTeX/APA from [CITATION.cff](CITATION.cff). Short form:
+Если числа или методика claude-carbon попали в вашу статью, доклад или продукт, ссылка приветствуется. Кнопка GitHub «Cite this repository» создаёт BibTeX/APA из [CITATION.cff](CITATION.cff). Короткая форма:
 
 > Wittebolle, G. (2026). claude-carbon: carbon footprint tracker for Claude Code sessions. https://github.com/gwittebolle/claude-carbon
 
-The shareable report cards already carry this attribution in their footer, so reposting a card as-is credits the tool.
+Карточки отчёта для обмена уже несут это указание в футере, так что перепубликование карточки как есть указывает на инструмент.
 
-## Open source
+## Открытый код
 
-claude-carbon is free and open source under the [MIT license](LICENSE). Contributions welcome.
+claude-carbon бесплатен и имеет открытый код по [лицензии MIT](LICENSE). Вклад приветствуется.
 
-<p align="center"><img src="docs/mascot-stripes.svg" width="696" alt="Eight pixel CO2 molecules, the claude-carbon mascot, walking from dark blue to dark red, the redder the faster: the blue ones smile, the red ones sweat"></p>
+<p align="center"><img src="docs/mascot-stripes.svg" width="696" alt="Восемь пиксельных молекул CO2, маскот claude-carbon, идут от тёмно-синего к тёмно-красному, чем краснее, тем быстрее: синие улыбаются, красные потеют"></p>
 
-The stripes of the banner and of `/carbon-panel` are inspired by Ed Hawkins' [warming stripes](https://showyourstripes.info), drawn here from your own sessions.
+Полосы баннера и `/carbon-panel` вдохновлены [полосами потепления](https://showyourstripes.info) Эда Хокинса, здесь они нарисованы из ваших собственных сессий.
 
-Built by [Gaëtan Wittebolle](https://gaetanwittebolle.com), carbon consultant turned solo builder in Bordeaux, France. Team version: [TokenClimate](https://tokenclimate.com).
+Создал [Gaëtan Wittebolle](https://gaetanwittebolle.com), консультант по углероду, ставший одиночным разработчиком в Бордо, Франция. Командная версия: [TokenClimate](https://tokenclimate.com).
 
 ## Источник и лицензия
 

@@ -101,7 +101,7 @@ export function galleryPane(look: Look, columns: number) {
             desktopSpinnerRow(look, svg, 'requesting', 'Waiting for the model'),
           )}
       {section(
-        'Band above the prompt: normal, then nudging to compact',
+        'Полоса над полем ввода: обычная, затем подталкивает к сжатию',
         usageBand(look, [{ label: 'context', percent: 42 }, { label: '5h', percent: 18 }], look.prefs.compact, () => undefined),
         usageBand(look, [{ label: 'context', percent: 85 }, { label: '5h', percent: 61 }], look.prefs.compact, () => undefined),
       )}

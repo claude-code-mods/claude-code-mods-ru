@@ -59,7 +59,7 @@ export function terminalSvg(output: ShellOutput, isErrored: boolean, palette: Pa
   const status = output.interrupted
     ? { text: 'interrupted', color: palette.warn }
     : output.timedOutAfterMs !== undefined
-      ? { text: 'timed out', color: palette.warn }
+      ? { text: 'тайм-аут', color: palette.warn }
       : isErrored
         ? { text: 'failed', color: palette.err }
         : { text: 'ok', color: palette.ok }

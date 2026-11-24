@@ -58,12 +58,12 @@ export const register = (on: Parameters<Register>[0], _options?: Parameters<Regi
   });
   on('command.run', { command: 'multi-usage' }, async ($, event) => {
     if (event.args.trim()) {
-      return { text: 'Use /multi-usage without arguments.' };
+      return { text: 'Используйте /multi-usage без аргументов.' };
     }
     const session = await $.session.id();
     const response = dashboard(accepted(await fetchUsage($, session)));
     if (!response) {
-      return { text: 'Multi usage is unavailable. Launch this session with claude-multi.' };
+      return { text: 'Статистика multi недоступна. Запустите этот сеанс через claude-multi.' };
     }
     const quotaAdviceEnabled = (await read($, advisorySessions)).includes(session);
     // The pane draws from this state: writing it redraws an open pane without an invalidate.
@@ -81,7 +81,7 @@ export const register = (on: Parameters<Register>[0], _options?: Parameters<Regi
     try {
       const opened = await $.ui.open({
         id: 'multi-usage',
-        title: 'Multi usage',
+        title: 'Статистика multi',
         focus: true,
         closeOnEscape: true,
         rows: 20,
@@ -90,7 +90,7 @@ export const register = (on: Parameters<Register>[0], _options?: Parameters<Regi
         return {};
       }
       // The pane waits undrawn (a surface that places no panes): say so, and show the numbers.
-      $.ui.toast(`Multi usage: ${opened.reason}`);
+      $.ui.toast(`Статистика multi: ${opened.reason}`);
       return { text: summary };
     } catch {
       return { text: summary };

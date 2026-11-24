@@ -88,7 +88,7 @@ export async function registerOpenItemsTool($: EngineInterface) {
         action: { type: 'string', enum: [...ACTIONS] },
         text: {
           type: 'string',
-          description: 'For `add`, and optionally `update`: the one-line, self-contained question or action.',
+          description: 'Для `add` и (необязательно) `update`: однострочный самостоятельный вопрос или действие.',
         },
         detail: {
           type: 'string',
@@ -96,7 +96,7 @@ export async function registerOpenItemsTool($: EngineInterface) {
             'For `add` and `update`, optional, one line. For a decision, the choices with the recommendation first. ' +
             'For an action, that only the user can do it. Add any context.',
         },
-        id: { type: 'string', description: "For `update` and `resolve`: the item's id, as `add` or `list` gave it." },
+        id: { type: 'string', description: "Для `update` и `resolve`: идентификатор пункта, выданный `add` или `list`." },
       },
       required: ['action'],
     },
@@ -314,6 +314,6 @@ async function runResolve($: EngineInterface) {
   try {
     await $.command.run({ command: RESOLVE_COMMAND })
   } catch {
-    $.ui.toast(`/${RESOLVE_COMMAND} did not start. Run it yourself.`, TOAST)
+    $.ui.toast(`/${RESOLVE_COMMAND} не запустилась. Выполните её сами.`, TOAST)
   }
 }

@@ -1271,7 +1271,7 @@ function reseat($: $, room: ShareRoom): Promise<Reseat> {
       // in flight with the old seat's token ends (`sameRoom`).
       if (s.live && s.key === roomIdentity(room)) s.token = joined.token
       await update($, roomA, r => (r && r.id === room.id && s.live ? { ...r, token: joined.token, seat: joined.seat } : r))
-      $.ui.log('Shared session: the room let this seat go; took a new one', { to: 'debug' })
+      $.ui.log('Общий сеанс: комната освободила это место; занято новое', { to: 'debug' })
       // Its answer's list isn't taken: the stream or a poll may have brought
       // a newer one meanwhile, which it would undo (a preview opened since
       // would end here for good), and the room's next page brings its list.
@@ -1656,10 +1656,10 @@ async function runStream($: $, generation: number) {
           else if (ask) answerRoomAsk($, room, ask, message[ask] as Record<string, unknown>)
           else if (message.peer && typeof message.peer === 'object')
             void takePeer($, room, host, message.peer as Record<string, unknown>).catch(error =>
-              $.ui.log(`Shared session: a message between sessions: ${String((error as Error)?.message ?? error)}`, { to: 'debug' }),
+              $.ui.log(`Общий сеанс: сообщение между сеансами: ${String((error as Error)?.message ?? error)}`, { to: 'debug' }),
             )
           else if (Array.isArray(message.events)) {
-            if (!streamUp && !delivered) $.ui.log('Shared session: listening on a stream', { to: 'debug' })
+            if (!streamUp && !delivered) $.ui.log('Общий сеанс: прослушивание потока', { to: 'debug' })
             // Connected: the Stops the room didn't hear are told again.
             if (host && !delivered) void endUnheard($, room, scope).catch(() => {})
             streamUp = true
@@ -1709,7 +1709,7 @@ async function setConnection($: $, state: 'live' | 'reconnecting') {
 }
 
 function startPolls($: $, generation: number, why: string) {
-  $.ui.log(`Shared session: polling (${why})`, { to: 'debug' })
+  $.ui.log(`Общий сеанс: опрос (${why})`, { to: 'debug' })
   void pollOnce($, generation)
 }
 
@@ -1868,8 +1868,8 @@ async function absorb($: $, room: ShareRoom, mode: ShareMode, event: ServerEvent
       const back = (lostAt.get(who) ?? -Infinity) > event.ts - 30 * 60_000
       lostAt.delete(who)
       if (live && !mine && !back) {
-        $.ui.log(`${who} joined`)
-        void cue($, 'join', `${who} joined your session`)
+        $.ui.log(`${who} присоединился`)
+        void cue($, 'join', `${who} присоединился your session`)
       }
       break
     }
@@ -1881,7 +1881,7 @@ async function absorb($: $, room: ShareRoom, mode: ShareMode, event: ServerEvent
       const removed = body.reason === 'removed'
       await note({ ts: event.ts, who, kind: 'leave', text: lost ? 'timeout' : removed ? 'removed' : undefined })
       if (lost) lostAt.set(who, event.ts)
-      else if (live && !mine) $.ui.log(removed ? `${who} left: no longer in the team` : `${who} left`)
+      else if (live && !mine) $.ui.log(removed ? `${who} ушёл: больше не в команде` : `${who} ушёл`)
       break
     }
     case 'prompt':
@@ -2263,7 +2263,7 @@ async function noteMention($: $, room: ShareRoom, who: string, text: string, whe
   const me = await meIn($, room)
   if (who === me || !mentionsOf(text, [me]).length) return
   const said = text.replace(/\s+/g, ' ').trim()
-  $.ui.toast(`${who} mentioned you${where === 'chat' ? ' in the chat' : ''}: ${said.slice(0, 120)}${said.length > 120 ? '…' : ''}`)
+  $.ui.toast(`${who} упомянул вас${where === 'chat' ? ' в чате' : ''}: ${said.slice(0, 120)}${said.length > 120 ? '…' : ''}`)
   void cue($, 'mention', `${who} mentioned you`)
   void $.prompt.suggest({ text: `@${who} ` }).catch(() => {})
   nudgeSidebar($)
@@ -2444,7 +2444,7 @@ async function updateHere($: $): Promise<{ ok: boolean; text: string }> {
 async function pressUpdate($: $) {
   if ((await read($, updatingA))?.state === 'running') return
   await update($, updatingA, () => ({ state: 'running' }))
-  const done = await updateHere($).catch(error => ({ ok: false, text: `Couldn't update Shared Sessions here: ${String((error as Error)?.message ?? error)}` }))
+  const done = await updateHere($).catch(error => ({ ok: false, text: `Не удалось обновить общие сеансы здесь: ${String((error as Error)?.message ?? error)}` }))
   const at = await $.clock.now()
   await update($, updatingA, () => ({ state: 'done' as const, ...done, at }))
   // The line goes after two minutes (a module a reload replaced loses this
@@ -2542,7 +2542,7 @@ async function receive($: $, mode: ShareMode, room: ShareRoom, page: EventsPage)
   if (mode === 'host') await noteBehind($, page.people)
   const hostIs = page.people.find(p => p.role === 'host')?.online
   if (mode === 'guest' && hostWas !== undefined && hostIs !== undefined && hostWas !== hostIs) {
-    $.ui.toast(hostIs ? `${room.host} is back` : `${room.host}'s Claude Code closed; the room waits for them`)
+    $.ui.toast(hostIs ? `${room.host} снова в сети` : `Claude Code у ${room.host} закрылся; комната ждёт его`)
   }
   // What's shared now, before the page's events: an artifact among them
   // shows a preview the list has.
@@ -2579,7 +2579,7 @@ async function receive($: $, mode: ShareMode, room: ShareRoom, page: EventsPage)
         if (mode === 'guest' && !(typeof body.turnId === 'string' && hostTurns.some(t => t.turnId === body.turnId))) {
           const shown = shownOf(event)
           if (shown) {
-            laterRides.push({ text: `${room.host} shared ${shown.name}`, ride: { kind: 'artifact', event } })
+            laterRides.push({ text: `${room.host} показал ${shown.name}`, ride: { kind: 'artifact', event } })
             scheduleRides($)
           }
         }
@@ -2711,7 +2711,7 @@ function closeRoom($: $, how: Exit, opts: ExitOptions = {}): Promise<void> {
   closing = closeSteps($, s, live, how, opts, stopping)
     .catch(error => {
       try {
-        $.ui.log(`Shared session: closing the room: ${String((error as Error)?.message ?? error)}`, { to: 'debug' })
+        $.ui.log(`Общий сеанс: закрытие комнаты: ${String((error as Error)?.message ?? error)}`, { to: 'debug' })
       } catch {}
     })
     .finally(() => {
@@ -2850,7 +2850,7 @@ async function closeSteps($: $, s: RoomScope, live: boolean, how: Exit, opts: Ex
   await update($, closingA, () => null)
   closeMark = 'down'
   // 7.
-  const said = how === 'ended' ? opts.log : how === 'keep' ? undefined : guest ? `Left ${room.host}'s session.` : 'Stopped sharing. The link no longer works.'
+  const said = how === 'ended' ? opts.log : how === 'keep' ? undefined : guest ? `Left ${room.host}'s session.` : 'Доступ по ссылке остановлен. Ссылка больше не действует.'
   if (said) $.ui.log(said)
   // What can wait, last in the bound: a window still opening closes what it
   // started, and left for good, the room's profile goes again (anything a
@@ -3002,7 +3002,7 @@ async function desk($: $, server: DeskServer, tool: string, args: Record<string,
     return text
   } catch (error) {
     const why = String((error as Error)?.message ?? error)
-    $.ui.log(`${server}.${tool} unavailable: ${why.slice(0, 200)}`, { to: 'debug' })
+    $.ui.log(`${server}.${tool} недоступен: ${why.slice(0, 200)}`, { to: 'debug' })
     failed?.(why)
     return null
   }
@@ -3040,7 +3040,7 @@ const DESK_TOOLS = [
 // session's) and the debug log: pins fail on other people's machines.
 const PIN_LOG = 'pinLog'
 async function notePin($: $, line: string) {
-  $.ui.log(`Shared session pin: ${line}`, { to: 'debug' })
+  $.ui.log(`Закрепление общего сеанса: ${line}`, { to: 'debug' })
   try {
     const log = ((await $.store.get(PIN_LOG)) as { at: number; line: string }[] | undefined) ?? []
     await $.store.set(PIN_LOG, [...log, { at: await $.clock.now(), line: line.slice(0, 300) }].slice(-30))
@@ -3097,7 +3097,7 @@ async function setPinned($: $, pinned: boolean, attempt = 0) {
 async function allowTools($: $, tools: readonly string[], said: string): Promise<boolean> {
   const found = await readSettings($)
   if (!found) {
-    $.ui.toast(`Couldn't read ${(await settingsFile($)) ?? 'your Claude Code settings'}, so nothing changed`)
+    $.ui.toast(`Не удалось прочитать ${(await settingsFile($)) ?? 'настройки Claude Code'}, поэтому ничего не изменилось`)
     return false
   }
   const permissions = { ...((found.settings.permissions ?? {}) as Record<string, unknown>) }
@@ -3106,7 +3106,7 @@ async function allowTools($: $, tools: readonly string[], said: string): Promise
   try {
     await $.fs.write(found.path, `${JSON.stringify({ ...found.settings, permissions }, null, 2)}\n`)
   } catch {
-    $.ui.toast(`Couldn't change ${found.path}`)
+    $.ui.toast(`Не удалось изменить ${found.path}`)
     return false
   }
   $.ui.toast(said)
@@ -3362,7 +3362,7 @@ async function share($: $, surface?: RenderSurface, opts: ShareOpts = {}): Promi
 // The room made, and this session sharing it (or the one it shares already).
 async function makeRoom($: $, surface: RenderSurface | undefined, opts: ShareOpts): Promise<ShareRoom> {
   const mode = await read($, modeA)
-  if (mode === 'guest') throw new Error('Leave the session you joined before sharing this one.')
+  if (mode === 'guest') throw new Error('Сначала выйдите из сеанса, к которому присоединились, прежде чем делиться этим.')
   await update($, askingA, () => null)
   const existing = await read($, roomA)
   if (mode === 'host' && existing) {
@@ -3452,21 +3452,21 @@ async function copyText($: $, text: string, done: string, surface?: RenderSurfac
 }
 
 // Invite, at the top of the Room: what it can do now, said every time, since
-// a press that changes nothing on screen reads as broken. Signed out, it opens
+// a press that changes nothing on screen reads as broken. Вы вышли из учётной записи, it opens
 // the Team panel's sign-in; with no teammate to ask on this server, it copies
 // the link instead; otherwise the People tab, each teammate with an Invite.
 async function pressInvite($: $, url: string, surface?: RenderSurface) {
   const t = await read($, teamsA)
   if (!t.account) {
-    $.ui.toast('Sign in to invite teammates: the Team panel shows how')
+    $.ui.toast('Войдите, чтобы пригласить коллег: как это сделать, показано на панели Team')
     return openTeam($)
   }
   const people = await read($, peopleA)
   const mates = (t.teammates ?? []).filter(m => !people.some(p => p.online && p.name === m.name))
   if (!mates.length) {
     const copied = await $.ui.copy({ text: url, surface }).catch(() => ({ isCopied: false }))
-    $.ui.toast(copied.isCopied ? 'No teammates to invite here yet · link copied' : 'No teammates to invite here yet: share the link instead')
-    if (!copied.isCopied) $.ui.log(`The share link: ${url}`)
+    $.ui.toast(copied.isCopied ? 'Пока здесь некого приглашать · ссылка скопирована' : 'Пока здесь некого приглашать: поделитесь ссылкой')
+    if (!copied.isCopied) $.ui.log(`Ссылка для доступа: ${url}`)
     return
   }
   await update($, roomTabA, () => 'people')
@@ -3475,8 +3475,8 @@ async function pressInvite($: $, url: string, surface?: RenderSurface) {
 
 async function copyLink($: $, url: string, surface?: RenderSurface) {
   const copied = await $.ui.copy({ text: url, surface }).catch(() => ({ isCopied: false }))
-  if (copied.isCopied) $.ui.toast('Link copied')
-  else $.ui.log(`The share link: ${url}`)
+  if (copied.isCopied) $.ui.toast('Ссылка скопирована')
+  else $.ui.log(`Ссылка для доступа: ${url}`)
 }
 
 // Stop sharing ends the room for everyone: the first press asks, a second
@@ -3526,7 +3526,7 @@ type RoomCheckpointFile = { version: 1; value: RoomCheckpoint | null }
 
 async function roomCheckpointDir($: $): Promise<string> {
   const dir = await configDirOf($)
-  if (!dir) throw new Error('No Claude configuration directory is available')
+  if (!dir) throw new Error('Каталог конфигурации Claude недоступен')
   return `${dir}/shared-session/rooms`
 }
 
@@ -3555,10 +3555,10 @@ async function readRoomCheckpoint($: $, key: string): Promise<RoomCheckpoint | u
     record = JSON.parse(text) as RoomCheckpointFile
   } catch {
     // JSON's syntax error may quote the damaged payload, which holds tokens.
-    throw new Error('A saved room checkpoint is invalid; it was left untouched')
+    throw new Error('Сохранённая контрольная точка комнаты недействительна; она оставлена без изменений')
   }
   if (record?.version !== 1 || (record.value !== null && !isRoomCheckpoint(record.value)))
-    throw new Error('A saved room checkpoint is invalid; it was left untouched')
+    throw new Error('Сохранённая контрольная точка комнаты недействительна; она оставлена без изменений')
   return record.value ?? undefined
 }
 
@@ -3574,12 +3574,12 @@ async function writeRoomCheckpoint($: $, key: string, value: RoomCheckpoint) {
     $,
     `umask 077\nset -e\nmkdir -p ${sq(dir)}\nchmod 700 ${sq(dir)}\ntmp=${sq(tmp)}\ntrap 'rm -f "$tmp"' 0\ncat > ${sq(tmp)} <<'${tag}'\n${body}\n${tag}\nchmod 600 ${sq(tmp)}\nmv ${sq(tmp)} ${sq(path)}\n`,
   )
-  if (result.code !== 0) throw new Error('Could not write the private saved room checkpoint')
+  if (result.code !== 0) throw new Error('Не удалось записать личную сохранённую контрольную точку комнаты')
 }
 
 async function deleteRoomCheckpoint($: $, key: string) {
   const path = `${await roomCheckpointDir($)}/${encodeURIComponent(key)}.json`
-  if ((await sh($, `rm -f -- ${sq(path)}\n`)).code !== 0) throw new Error('Could not delete the saved room checkpoint')
+  if ((await sh($, `rm -f -- ${sq(path)}\n`)).code !== 0) throw new Error('Не удалось удалить сохранённую контрольную точку комнаты')
 }
 
 async function roomCheckpointKeys($: $): Promise<string[]> {
@@ -4012,7 +4012,7 @@ async function resumeJoined($: $) {
     )
     for (const exchange of caught) laterRides.push({ text: exchange.prompt, ride: { kind: 'static', rows: exchange.rows } })
     startFeed($)
-    $.ui.log(caught.length ? `Back in ${room.host}'s session. What you missed follows.` : `Back in ${room.host}'s session.`)
+    $.ui.log(caught.length ? `Вы вернулись в сеанс ${room.host}. Ниже то, что вы пропустили.` : `Вы вернулись в сеанс ${room.host}.`)
     if (caught.length || running) scheduleRides($)
   } finally {
     if (reclaiming === back) reclaiming = null
@@ -4052,7 +4052,7 @@ async function resumeHosting($: $) {
       page = await eventsSince($, saved.room, saved.room.seq)
     } catch (error) {
       if (isGone(error)) {
-        if (current()) $.ui.log('The session you shared ended while this one was closed.')
+        if (current()) $.ui.log('Сеанс, которым вы поделились, завершился, пока этот был закрыт.')
         return
       }
       // Unreachable for now: share on, and the feed keeps trying.
@@ -4060,7 +4060,7 @@ async function resumeHosting($: $) {
     // The session ended meanwhile (its place saved again, or its room
     // ended), or the room was given up for another: nothing more of it here.
     if (!current()) return
-    if (page?.ended) return void $.ui.log('The session you shared ended while this one was closed.')
+    if (page?.ended) return void $.ui.log('Сеанс, которым вы поделились, завершился, пока этот был закрыт.')
     const room: ShareRoom = { ...saved.room, seq: page?.seq ?? saved.room.seq }
     const shares = sharesSaved(saved)
     await update($, roomA, v => (reclaiming === back ? room : v))
@@ -4116,7 +4116,7 @@ async function resumeHosting($: $) {
     }
     if (!s.live) return
     startFeed($)
-    $.ui.log(`Still sharing this session: ${room.url}`)
+    $.ui.log(`Этот сеанс всё ещё доступен по ссылке: ${room.url}`)
   } finally {
     if (reclaiming === back) reclaiming = null
     tookBack($, back)
@@ -4343,7 +4343,7 @@ async function runMailbox($: $, run: MailboxRun) {
       dir: own.slice(0, own.lastIndexOf('/')),
     }
     const late = () => {
-      $.ui.log("Shared session: the mailboxes' helper didn't start in 6 s", { to: 'debug' })
+      $.ui.log("Общий сеанс: помощник почтовых ящиков не запустился за 6 с", { to: 'debug' })
       return finishMailbox(run)
     }
     await runHelper(
@@ -4362,7 +4362,7 @@ async function runMailbox($: $, run: MailboxRun) {
         run.pid = pid
         // A module that replaces this one ends it by this.
         await update($, mailboxHelperA, () => ({ room: roomIdentity(run.room), pid, port: said.port as number }))
-        $.ui.log(`Shared session: the mailboxes' helper (${pid}) is ready`, { to: 'debug' })
+        $.ui.log(`Общий сеанс: помощник почтовых ящиков (${pid}) готов`, { to: 'debug' })
         // Stopped meanwhile (the room's end, or a reload): it goes now.
         if (run.stopped || run.scope.children.mailbox !== run || !run.scope.live) {
           const first = !run.stopping
@@ -4633,7 +4633,7 @@ function nextGuestPromptSoon($: $) {
   $.clock.after(
     250,
     () =>
-      void nextGuestPrompt($).catch(error => $.ui.log(`Shared session: a teammate's prompt: ${String((error as Error)?.message ?? error)}`, { to: 'debug' })),
+      void nextGuestPrompt($).catch(error => $.ui.log(`Общий сеанс: запрос коллеги: ${String((error as Error)?.message ?? error)}`, { to: 'debug' })),
   )
 }
 
@@ -4740,7 +4740,7 @@ async function stopTurn($: $, who: string) {
   if (!working) return
   try {
     await $.turn.abort({ turnId: working.turnId })
-    $.ui.toast(`${who} stopped the turn`)
+    $.ui.toast(`${who} остановил шаг`)
   } catch {}
 }
 
@@ -6113,7 +6113,7 @@ async function ensurePreview($: $, room: ShareRoom, port: number, title: string,
     // Still being told: the room would answer with the preview that Stop
     // then ends, whenever it arrives, so nothing is shared yet.
     if (s.endingPorts.has(port)) {
-      if (sameRoom(room, s)) $.ui.log(`Couldn't share localhost:${port} yet: the room is still being told it stopped. Try again in a moment.`)
+      if (sameRoom(room, s)) $.ui.log(`Не удалось поделиться localhost:${port} yet: the room is still being told it stopped. Try again in a moment.`)
       return null
     }
     const known = (await read($, sharesA))[String(port)]
@@ -6131,7 +6131,7 @@ async function ensurePreview($: $, room: ShareRoom, port: number, title: string,
     const share = await writeShare($, s, port, old => shareOver(old, pid, said, made))
     return share && sameRoom(room, s) ? share : null
   } catch (error) {
-    if (sameRoom(room, s)) $.ui.log(`Couldn't share localhost:${port}: ${String((error as Error)?.message ?? error)}`)
+    if (sameRoom(room, s)) $.ui.log(`Не удалось поделиться localhost:${port}: ${String((error as Error)?.message ?? error)}`)
     return null
   } finally {
     done()
@@ -6359,7 +6359,7 @@ async function shareLocal($: $, pages: LocalPage[]) {
     // (through it, that session's app would answer), and a later mention
     // looks again.
     if (await relayedHere($, port)) {
-      $.ui.log(`Not sharing localhost:${port}: another shared session's preview forwarded here`, { to: 'debug' })
+      $.ui.log(`Не делимся localhost:${port}: сюда перенаправлен предпросмотр другого общего сеанса`, { to: 'debug' })
       continue
     }
     mentionedPorts.add(port)
@@ -6396,7 +6396,7 @@ async function offerShow($: $, room: ShareRoom, page: LocalPage, opts: { title?:
       // Its own yes: the same-address question after it is a question of its own.
       await rememberHost($, room, m => ({ ...m, askedAt: Object.fromEntries(Object.entries(m.askedAt).filter(([p]) => Number(p) !== port)) }))
       shared = await sharePublic($, room, page, opts)
-      if (shared) $.ui.toast(`Sharing localhost:${port} with the room (stop it in the Room)`)
+      if (shared) $.ui.toast(`localhost:${port} доступен комнате (остановите его в Room)`)
       return { shared: [], refused: [] }
     })
   } finally {
@@ -6958,7 +6958,7 @@ async function ensureLocalPreview($: $, room: ShareRoom, s: RoomScope, shown: Sh
   const epoch = pid ? s.epoch(pid) : 0
   if (!sameRoom(room, s) || s.mode !== 'guest') return { error: 'This shared session is no longer open.' }
   if (!pid || !PREVIEW_ID.test(pid) || shown.closed || !validPort(port) || !path.startsWith('/') || /[\x00-\x20\\]/.test(path))
-    return { error: 'That preview has ended or has no valid localhost address.' }
+    return { error: 'Предпросмотр завершён или не имеет допустимого адреса localhost.' }
   const owner: RunOwner = 'window' in ask ? 'window' : 'listener',
     runs = s.children.listeners
   const bind: LocalBind = 'window' in ask ? { port: 0, strict: false } : ask.bind
@@ -7286,7 +7286,7 @@ async function openPublicPreview($: $, shown: ShareShown, surface?: RenderSurfac
   const live = async () => localRequestCurrent(room, s, pid, epoch)
   if (!(await live())) return
   const url = await previewTicket($, room, pid, shown.path)
-  if (!url) return void $.ui.toast('That preview has ended or is not reachable')
+  if (!url) return void $.ui.toast('Предпросмотр завершён или недоступен')
   await showPage($, room, url, surface, live, {
     copied: 'Public preview link copied: open it within 10 minutes',
     said: `Public preview link, for 10 minutes: ${url}`,
@@ -7412,7 +7412,7 @@ function noteOnce($: $, key: string, text: string, s?: RoomScope) {
 
 async function browserDirOf($: $): Promise<string> {
   const dir = await configDirOf($)
-  if (!dir) throw new Error('No Claude configuration directory is available')
+  if (!dir) throw new Error('Каталог конфигурации Claude недоступен')
   return `${dir}/shared-session/browser`
 }
 
@@ -7630,7 +7630,7 @@ async function runBrowserProxy($: $, proxy: BrowserProxy) {
           void syncBrowserRoutes($, proxy.scope)
         } else if (line.state === 'error') {
           proxy.error = line.code
-          throw new Error('Preview proxy failed')
+          throw new Error('Прокси предпросмотра не сработал')
         } else if (!proxy.port) return
         // It left the person's own proxy out (a host it can't take) and goes on without it.
         else if (line.state === 'upstream') {
@@ -8169,7 +8169,7 @@ async function openLook($: $, open: WindowOpen, profile: string): Promise<Window
 // A look that still knows nothing: the open writes, starts and closes
 // nothing more, and the person presses Open preview again.
 function unknownLook($: $, why: string): WindowOutcome {
-  $.ui.toast(`Couldn't tell whether the preview window is open (${why}). Press Open preview again.`)
+  $.ui.toast(`Не удалось проверить, открыто ли окно предпросмотра (${why}). Нажмите Open preview снова.`)
   return 'done'
 }
 
@@ -8222,7 +8222,7 @@ async function readyProxy($: $, open: WindowOpen): Promise<BrowserProxy | Window
   // Without Node nothing here opens a forwarded preview (its listeners run
   // under Node too): only the public link, which goes through the room.
   if ('error' in proxy && proxy.error === 'NODE') {
-    $.ui.toast('Preview windows need Node 22.18 or later on this computer. Install it, then press Open preview again, or choose Public link in Room → Shown.')
+    $.ui.toast('Для окон предпросмотра нужен Node 22.18 или новее. Установите его и нажмите Open preview снова либо выберите Public link в Room → Shown.')
     return 'done'
   }
   if ('error' in proxy) return { failed: "its proxy didn't start" }
@@ -8251,7 +8251,7 @@ async function readyProxy($: $, open: WindowOpen): Promise<BrowserProxy | Window
   // started, and nothing else, may go with it (`idleProxy`).
   if (!tunnel.run) {
     await idleProxy(open, proxy)
-    $.ui.toast(reseated ? RESEATED : (tunnel.error ?? 'That preview could not be opened.'))
+    $.ui.toast(reseated ? RESEATED : (tunnel.error ?? 'Не удалось открыть этот предпросмотр.'))
     return 'done'
   }
   await windowStep(open, syncBrowserRoutes($, s))
@@ -9195,7 +9195,7 @@ async function hostNeed($: $, room: ShareRoom, need: Record<string, unknown>) {
       // For a page of the guest's window, which one the need doesn't say;
       // a page shared through its link stays that page (`forwardFor`).
       const pid = await forwardFor($, room, port, target.label, true)
-      return typeof pid === 'string' ? { shared: [port], refused: [] } : { shared: [], refused: [pid?.refused ?? `Couldn't share localhost:${port}`] }
+      return typeof pid === 'string' ? { shared: [port], refused: [] } : { shared: [], refused: [pid?.refused ?? `Не удалось поделиться localhost:${port}`] }
     })
   } finally {
     hostAsking.delete(flight)
@@ -9403,10 +9403,10 @@ async function bindForOpen(
     }
     if (opened.inWindow) return undo({ inWindow: true })
     if (policy === 'same' && opened.refused) return undo({ port: want.port, refused: opened.refused })
-    if (policy === 'same' || flexible) return undo({ error: opened.error ?? `Couldn't forward localhost:${want.port}.` })
+    if (policy === 'same' || flexible) return undo({ error: opened.error ?? `Не удалось перенаправить localhost:${want.port}.` })
     if (opened.refused === 'denied') denied.push(want.port)
     else if (opened.refused) taken.push(want.port)
-    else failed.push(opened.error ?? `Couldn't forward localhost:${want.port}.`)
+    else failed.push(opened.error ?? `Не удалось перенаправить localhost:${want.port}.`)
   }
   const top = bound.find(b => b.pid === page.pid)!
   await commitMappings($, bound)
@@ -9445,10 +9445,10 @@ function elsewhereNote(room: ShareRoom, page: Forwarded, bound: Bound, why: Refu
 // else the Open goes on without it. `without`: why no window this time
 // (one just failed): the host's numbers, else elsewhere.
 async function openForwarded($: $, room: ShareRoom, s: RoomScope, shown: ShareShown, surface?: RenderSurface, without?: string): Promise<void> {
-  if (!isForwarded(shown)) return void $.ui.toast('That preview has ended or has no valid localhost address.')
+  if (!isForwarded(shown)) return void $.ui.toast('Предпросмотр завершён или не имеет допустимого адреса localhost.')
   // The host away: nothing of theirs answers now, so nothing is bound or opened.
   if ((await read($, peopleA)).some(p => p.role === 'host' && !p.online))
-    return void $.ui.toast(`${room.host} is offline, so their previews can't open now. Press Open again once they're back.`)
+    return void $.ui.toast(`${room.host} не в сети, поэтому его предпросмотры сейчас недоступны. Нажмите Open снова, когда он вернётся.`)
   const page = shown,
     pid = page.pid,
     epoch = s.epoch(pid)
@@ -9469,7 +9469,7 @@ async function openForwarded($: $, room: ShareRoom, s: RoomScope, shown: ShareSh
   const elsewhere = async (why: RefusedPort, noWindow: string) => {
     const bound = await bindForOpen($, room, s, page, uses, 'elsewhere')
     if (!(await live())) return
-    if (!('url' in bound)) return void $.ui.toast('error' in bound ? bound.error : 'That preview could not be opened.')
+    if (!('url' in bound)) return void $.ui.toast('error' in bound ? bound.error : 'Не удалось открыть этот предпросмотр.')
     if (!(await showPage($, room, bound.url, surface, async () => (await live()) && (await localRunCurrent($, pid, bound.run))))) return
     const note = elsewhereNote(room, page, bound, why, noWindow)
     noteOnce($, `elsewhere ${note}`, note, s)
@@ -9488,7 +9488,7 @@ async function openForwarded($: $, room: ShareRoom, s: RoomScope, shown: ShareSh
     // A port taken here: the page elsewhere, its note saying why there's no window.
     if ('refused' in why) return elsewhere(why, outcome.failed)
     // Open in the window before (its ports may be free here): the host's numbers, else elsewhere.
-    $.ui.toast(`Couldn't open the preview window: ${outcome.failed}.`)
+    $.ui.toast(`Не удалось открыть окно предпросмотра: ${outcome.failed}.`)
     return openForwarded($, room, s, page, surface, outcome.failed)
   }
   if (!without && (await previewOpenOf($)) === 'window') {
@@ -9568,12 +9568,12 @@ async function openShown($: $, shown: ShareShown, surface?: RenderSurface) {
   const room = await read($, roomA)
   if (!room) return
   const path = (await downloadShown($, room, shown.files ?? []))[0] ?? null
-  if (!path) return void $.ui.toast("Couldn't get that file")
+  if (!path) return void $.ui.toast("Не удалось получить файл")
   // A page opens in Claude's browser, where it runs (inside the project);
   // refused there (auto mode), in the Files pane as a file does.
   if (shown.kind === 'page' && (await inPane($, `file://${path}`, 'shared pages', 'in the Files pane'))) return
   const result = await desk($, 'ccd_view', 'show_pane', { pane: 'file', path })
-  if (result === null) $.ui.log(`Saved to ${path}`)
+  if (result === null) $.ui.log(`Сохранено в ${path}`)
 }
 
 // Host: the public link's HTTP. A guest's browser asked a preview for
@@ -10605,8 +10605,8 @@ function shareChoice($: $, el: UI, asking: ShareAsking, where: 'band' | 'room', 
   const keeps = kept ? ` ${keptNote(team)}` : ''
   const go = (opts: ShareOpts, surface?: RenderSurface) =>
     void inShareTurn($, () => share($, surface, opts)).catch(error => {
-      $.ui.toast("Couldn't share")
-      $.ui.log(`Couldn't share: ${String(error?.message ?? error)}`)
+      $.ui.toast("Не удалось поделиться")
+      $.ui.log(`Не удалось поделиться: ${String(error?.message ?? error)}`)
     })
   const pick = (chosen: SharePolicy['prompts'], surface?: RenderSurface) =>
     prompts ? void update($, askingA, a => (a ? { ...a, teammates: chosen } : a)) : go({ watch: chosen === 'watch' }, surface)
@@ -10679,10 +10679,10 @@ function joinFailure(error: unknown, server: string): string {
       : `${error.message} Once you're in, paste the link again.`
   }
   if (isGone(error)) return 'That shared session has ended: the host stopped sharing, or the room expired. Ask them for a new link.'
-  if (error instanceof ApiError) return `Couldn't join that shared session: ${error.message}`
+  if (error instanceof ApiError) return `Не удалось присоединиться that shared session: ${error.message}`
   // Only a request that got no answer is the network; anything else says what it was.
   if (error instanceof NetworkError) return `Couldn't reach the share server at ${server}. Check your connection, then paste the link again.`
-  return `Couldn't join that shared session: ${String((error as Error)?.message ?? error)}. Paste the link again; if it keeps happening, the update command may help: \`${UPDATE_COMMAND}\``
+  return `Не удалось присоединиться that shared session: ${String((error as Error)?.message ?? error)}. Paste the link again; if it keeps happening, the update command may help: \`${UPDATE_COMMAND}\``
 }
 
 // What a guest may do here, in a line.
@@ -10746,7 +10746,7 @@ async function flashCopied($: $) {
 // A teammate's name put in the prompt box, to mention them.
 async function mention($: $, name: string) {
   const filled = await $.prompt.fill({ text: `@${name} `, mode: 'insert' }).catch(() => null)
-  if (!filled?.isFilled) $.ui.toast(`Type @${name} in your prompt to mention them`)
+  if (!filled?.isFilled) $.ui.toast(`Введите @${name} в запросе, чтобы упомянуть его`)
 }
 
 // ---------------------------------------------------------------------------
@@ -11050,7 +11050,7 @@ async function refreshTeams($: $) {
   }
   const before = await read($, teamsA)
   const saved = await signInFor($, server)
-  // Signed out, the sign-in buttons are what's shown: asked for each time, so
+  // Вы вышли из учётной записи, the sign-in buttons are what's shown: asked for each time, so
   // a provider the server gains (or loses) shows up without a new session.
   const providers =
     saved && before.server === server && before.providers.length
@@ -11150,7 +11150,7 @@ async function startSignIn(
       signInRun++
       await saveSignIn($, server, { token: r.token, account: r.account, ...(r.joined ? { current: r.joined } : {}) })
       await update($, teamsA, x => ({ ...x, signingIn: null, invite: null }))
-      $.ui.toast(`Signed in as ${r.account.name}`)
+      $.ui.toast(`Вы вошли как ${r.account.name}`)
       await refreshTeams($)
       if (opts.then) await opts.then()
       return
@@ -11176,14 +11176,14 @@ async function signOut($: $, opts: { deleteAccount?: boolean } = {}) {
     await saveSignIn($, server, null)
   }
   await update($, teamsA, t => ({ ...NO_TEAMS, server, providers: t.providers }))
-  $.ui.toast(opts.deleteAccount ? 'Account deleted' : 'Signed out')
+  $.ui.toast(opts.deleteAccount ? 'Учётная запись удалена' : 'Вы вышли из учётной записи')
 }
 
 // A call to the team API as the person signed in; their sign-in ending signs them out here.
 async function teamCall<T>($: $, path: string, init: { method?: string; body?: unknown } = {}): Promise<T> {
   const server = await serverOf($)
   const saved = await signInFor($, server)
-  if (!saved) throw new ApiError('Sign in first: /team', 401)
+  if (!saved) throw new ApiError('Сначала войдите: /team', 401)
   try {
     return await api<T>($, server, path, { ...init, token: saved.token })
   } catch (error) {
@@ -11206,7 +11206,7 @@ async function createTeam($: $, name: string): Promise<ShareTeam | null> {
   if (!trimmed) return null
   const { team } = await teamCall<{ team: ShareTeam }>($, '/api/teams', { method: 'POST', body: { name: trimmed } })
   await setCurrentTeam($, team.id)
-  $.ui.toast(`Made ${team.name}. Copy its invite link for your teammates`)
+  $.ui.toast(`Команда ${team.name} создана. Скопируйте ссылку-приглашение для коллег`)
   return team
 }
 
@@ -11222,7 +11222,7 @@ async function newInvite($: $) {
   if (!t.current) return
   await teamCall($, `/api/teams/${t.current}/invite`, { method: 'POST' })
   await refreshTeams($)
-  $.ui.toast('New invite link. The old one no longer works')
+  $.ui.toast('Новая ссылка-приглашение. Старая больше не действует')
 }
 
 async function leaveTeam($: $) {
@@ -11234,7 +11234,7 @@ async function leaveTeam($: $) {
   const saved = await signInFor($, server)
   if (saved) await saveSignIn($, server, { ...saved, current: undefined })
   await refreshTeams($)
-  $.ui.toast(`Left ${team.name}`)
+  $.ui.toast(`Вы вышли из ${team.name}`)
 }
 
 const inviteUrl = (t: ShareTeams, team: ShareTeam) => `${t.server}/i/${team.invite}`
@@ -11392,16 +11392,16 @@ async function stopFromTeam($: $, roomId: string) {
   if (!(await pressedTwice($, `stop:${roomId}`))) return
   const server = await serverOf($)
   const saved = await signInFor($, server)
-  if (!saved) return void $.ui.toast('Sign in first: /team')
+  if (!saved) return void $.ui.toast('Сначала войдите: /team')
   let over = true
   try {
     await api($, server, `/api/rooms/${roomId}/end`, { method: 'POST', account: saved.token })
-    $.ui.toast('Stopped sharing. The link no longer works.')
+    $.ui.toast('Доступ по ссылке остановлен. Ссылка больше не действует.')
   } catch (error) {
     // Already over: it only had to leave the list.
     if (!(error instanceof ApiError && (error.status === 404 || error.status === 410))) {
       over = false
-      $.ui.toast("Couldn't stop it")
+      $.ui.toast("Не удалось остановить")
       $.ui.log(`Couldn't stop sharing: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
@@ -11417,13 +11417,13 @@ async function leaveFromTeam($: $, roomId: string) {
   if (!(await pressedTwice($, `leave:${roomId}`))) return
   const server = await serverOf($)
   const saved = await signInFor($, server)
-  if (!saved) return void $.ui.toast('Sign in first: /team')
+  if (!saved) return void $.ui.toast('Сначала войдите: /team')
   try {
     await api($, server, `/api/rooms/${roomId}/leave`, { method: 'POST', account: saved.token })
-    $.ui.toast('You left that session.')
+    $.ui.toast('Вы вышли из этого сеанса.')
   } catch (error) {
     if (!(error instanceof ApiError && (error.status === 404 || error.status === 410))) {
-      $.ui.toast("Couldn't leave it")
+      $.ui.toast("Не удалось выйти")
       $.ui.log(`Couldn't leave: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
@@ -11445,7 +11445,7 @@ async function pressedTwice($: $, key: string): Promise<boolean> {
 // The Team panel's Open: the session here that's in that room.
 async function openHere($: $, roomId: string) {
   const hold = await heldElsewhere($, roomId)
-  if (!hold) return void $.ui.toast('That session has closed')
+  if (!hold) return void $.ui.toast('Этот сеанс закрыт')
   if (!(await openHeld($, hold))) $.ui.toast(alreadyIn(hold, false))
 }
 
@@ -11457,13 +11457,13 @@ async function joinHere($: $, url: string) {
   try {
     const joined = await join($, link[1], link[2])
     laterRides.unshift({
-      text: `Join ${joined.room.host}'s session`,
+      text: `Присоединиться к сеансу ${joined.room.host}`,
       ride: { kind: 'note', text: await joinedNote($, joined), then: joined.history, open: joined.open },
     })
     scheduleRides($)
     void continueJoins($, joined.room.id).catch(() => {})
   } catch (error) {
-    $.ui.toast("Couldn't join")
+    $.ui.toast("Не удалось присоединиться")
     $.ui.log(joinFailure(error, link[1]).replace(/\*\*/g, ''))
   }
 }
@@ -11505,7 +11505,7 @@ async function setRoomTeam($: $, teamId: string | null) {
       body: { team: teamId },
     })
     await update($, roomA, rm => (rm ? { ...rm, team: r.team } : rm))
-    $.ui.toast(r.team ? `Shared with ${r.team.name}` : 'Shared by link alone now')
+    $.ui.toast(r.team ? `Доступ открыт для ${r.team.name}` : 'Теперь доступ только по ссылке')
     void refreshTeams($).catch(() => {})
   } catch (error) {
     $.ui.toast(`Couldn't change it: ${String((error as Error)?.message ?? error)}`)
@@ -11525,7 +11525,7 @@ async function teamCommand($: $, args: string): Promise<{ text: string }> {
     switch (verb.toLowerCase()) {
       case '':
         await openTeam($)
-        return { text: 'Opened the Team panel.' }
+        return { text: 'Панель Team открыта.' }
       case 'signin':
       case 'login': {
         await refreshTeams($)
@@ -11547,7 +11547,7 @@ async function teamCommand($: $, args: string): Promise<{ text: string }> {
       case 'signout':
       case 'logout':
         await signOut($)
-        return { text: 'Signed out.' }
+        return { text: 'Вы вышли из учётной записи.' }
       case 'delete-account':
         await signOut($, { deleteAccount: true })
         return { text: 'Deleted your account on the share server: your sign-in, and your place in every team.' }
@@ -11558,7 +11558,7 @@ async function teamCommand($: $, args: string): Promise<{ text: string }> {
       }
       case 'invite': {
         const team = t0.teams.find(x => x.id === t0.current)
-        if (!team) return { text: 'No team yet: /team create <name>' }
+        if (!team) return { text: 'Команды ещё нет: /team create <name>' }
         await copyText($, inviteUrl(t0, team), 'Invite link copied')
         return { text: `Anyone who opens this link (and signs in) joins ${team.name}: ${inviteUrl(t0, team)}` }
       }
@@ -11567,9 +11567,9 @@ async function teamCommand($: $, args: string): Promise<{ text: string }> {
         await refreshTeams($)
         const t = await read($, teamsA)
         const team = t.teams.find(x => x.id === t.current)
-        if (!t.account) return { text: 'Sign in first: /team signin' }
-        if (!team) return { text: 'No team yet: /team create <name>, or paste an invite link.' }
-        if (!t.sessions.length) return { text: `Nothing is shared with ${team.name} right now.` }
+        if (!t.account) return { text: 'Сначала войдите: /team signin' }
+        if (!team) return { text: 'Команды ещё нет: /team create <name>, or paste an invite link.' }
+        if (!t.sessions.length) return { text: `Сейчас с ${team.name} ничем не поделены.` }
         return {
           text: [
             `Shared with ${team.name}:`,
@@ -11582,12 +11582,12 @@ async function teamCommand($: $, args: string): Promise<{ text: string }> {
       case 'invites': {
         const server = await serverOf($)
         const saved = await signInFor($, server)
-        if (!saved) return { text: 'Sign in first: /team signin' }
+        if (!saved) return { text: 'Сначала войдите: /team signin' }
         const list = (await api<{ invites: ShareInvite[] }>($, server, '/api/me/invites', { token: saved.token })).invites
         await update($, invitesA, () => list)
-        if (!list.length) return { text: 'No invites right now.' }
+        if (!list.length) return { text: 'Приглашений сейчас нет.' }
         return {
-          text: ['Invited:', ...list.map((i, n) => `${n + 1}. ${i.room.title} (from ${i.from.name}): ${i.room.url}`), '', 'Paste a link to join.'].join('\n'),
+          text: ['Приглашённые:', ...list.map((i, n) => `${n + 1}. ${i.room.title} (from ${i.from.name}): ${i.room.url}`), '', 'Вставьте ссылку, чтобы присоединиться.'].join('\n'),
         }
       }
       case 'join': {
@@ -11603,23 +11603,23 @@ async function teamCommand($: $, args: string): Promise<{ text: string }> {
         const t = await read($, teamsA)
         if (arg.toLowerCase() === 'link') {
           await setCurrentTeam($, null)
-          return { text: 'Share now goes by link alone.' }
+          return { text: 'Теперь доступ предоставляется только по ссылке.' }
         }
         const team = t.teams.find(x => x.name.toLowerCase() === arg.toLowerCase() || x.id === arg)
-        if (!team) return { text: `Your teams: ${t.teams.map(x => x.name).join(', ') || 'none'}. /team use <name> or /team use link` }
+        if (!team) return { text: `Ваши команды: ${t.teams.map(x => x.name).join(', ') || 'нет'}. /team use <name> или /team use link` }
         await setCurrentTeam($, team.id)
-        return { text: `Share now goes to ${team.name}.` }
+        return { text: `Теперь доступ предоставляется команде ${team.name}.` }
       }
       case 'access': {
         const access = arg.toLowerCase()
         if (access !== 'members' && access !== 'link')
           return { text: '/team access members (only people in the team join its sessions) or /team access link (anyone with a link)' }
         await changeTeam($, { access })
-        return { text: access === 'members' ? 'Only people in the team join its sessions now.' : "Anyone with a link joins the team's sessions now." }
+        return { text: access === 'members' ? 'Теперь в сеансы команды попадают только её участники.' : "Теперь в сеансы команды может попасть любой, у кого есть ссылка." }
       }
       case 'domains':
         await changeTeam($, { domains: arg })
-        return { text: arg ? `People who sign in with a verified email at ${arg} join by themselves.` : 'No email domain joins by itself now.' }
+        return { text: arg ? `People who sign in with a verified email at ${arg} join by themselves.` : 'Теперь домены электронной почты не добавляются автоматически.' }
       case 'orgs':
         await changeTeam($, { githubOrgs: arg })
         return {
@@ -11629,14 +11629,14 @@ async function teamCommand($: $, args: string): Promise<{ text: string }> {
         }
       case 'leave':
         await leaveTeam($)
-        return { text: 'Left the team.' }
+        return { text: 'Вы вышли из команды.' }
       default:
         return {
           text: '/team opens the Team panel. Also: /team signin [github|google], /team create <name>, /team invite, /team invites, /team sessions, /team join <n|all>, /team use <name|link>, /team access members|link, /team domains <a.com …>, /team orgs <org …>, /team leave, /team signout, /team delete-account',
         }
     }
   } catch (error) {
-    return { text: `Couldn't: ${String((error as Error)?.message ?? error)}` }
+    return { text: `Не удалось: ${String((error as Error)?.message ?? error)}` }
   }
 }
 
@@ -11768,9 +11768,9 @@ async function joinInvited($: $, invite: ShareInvite, surface?: RenderSurface) {
 // Host: invite teammates (account ids) to this session.
 async function inviteToRoom($: $, ids: string[]): Promise<string> {
   const room = await read($, roomA)
-  if (!room || (await read($, modeA)) !== 'host') return 'Share this session first: press Share or type /share-session.'
+  if (!room || (await read($, modeA)) !== 'host') return 'Сначала откройте доступ к сеансу: нажмите Share или введите /share-session.'
   const saved = await signInFor($, room.server)
-  if (!saved) return 'Sign in first to invite teammates: press Team above the prompt, or /team signin.'
+  if (!saved) return 'Сначала войдите, чтобы пригласить коллег: нажмите Team над полем ввода или /team signin.'
   const r = await api<{ invited: string[]; refused: string[] }>($, room.server, `/api/rooms/${room.id}/invite`, {
     method: 'POST',
     token: room.token,
@@ -11789,7 +11789,7 @@ async function inviteCommand($: $, args: string): Promise<{ text: string }> {
   try {
     await refreshTeams($)
     const t = await read($, teamsA)
-    if (!t.account) return { text: 'Sign in first to invite teammates: press Team above the prompt, or /team signin.' }
+    if (!t.account) return { text: 'Сначала войдите, чтобы пригласить коллег: нажмите Team над полем ввода или /team signin.' }
     const mates = t.teammates ?? []
     const wanted = args
       .split(/[,\s]+/)
@@ -11807,10 +11807,10 @@ async function inviteCommand($: $, args: string): Promise<{ text: string }> {
         mates.find(m => m.name.toLowerCase().startsWith(w) || m.login?.toLowerCase().startsWith(w)),
     )
     const missing = wanted.filter((_, i) => !picks[i])
-    if (missing.length) return { text: `No teammate called ${missing.join(', ')}. You can invite: ${mates.map(m => m.name).join(', ') || 'nobody yet'}.` }
+    if (missing.length) return { text: `Нет коллег с именами ${missing.join(', ')}. Можно пригласить: ${mates.map(m => m.name).join(', ') || 'пока никого'}.` }
     return { text: await inviteToRoom($, [...new Set(picks.map(m => m!.id))]) }
   } catch (error) {
-    return { text: `Couldn't invite: ${String((error as Error)?.message ?? error)}` }
+    return { text: `Не удалось пригласить: ${String((error as Error)?.message ?? error)}` }
   }
 }
 
@@ -11846,7 +11846,7 @@ async function shareCommand($: $, e: { args: string }): Promise<{ text: string }
 // A server that keeps shared sessions' turns (server/traces) keeps them only
 // for a host it knows: they're filed under the host's account or team, the
 // only ones who can read them back (the plugin's MCP server, signed in the
-// same way). Signed out, Share would make a room whose turns nobody keeps, and
+// same way). Вы вышли из учётной записи, Share would make a room whose turns nobody keeps, and
 // say nothing: so it asks first. `signin` signs in, then shares as asked;
 // `unkept` shares as before. Null: nothing to ask, share.
 async function signedOutShare($: $, choice: string, byLink: boolean, watch: boolean, keep: string, provider: string): Promise<{ text: string } | null> {
@@ -11919,7 +11919,7 @@ async function shareAsked($: $, choice: string, byLink: boolean, watch: boolean,
       text: `Sharing this session${choice === 'new' ? ' from now on' : ''}${room.team ? ` with ${room.team.name}` : ''}${watch ? ', watch-only: teammates watch and chat, and only you prompt Claude' : ''}. ${whoJoins(room, team, watch)}: ${room.url}${kept}`,
     }
   } catch (error) {
-    return { text: `Couldn't share: ${String((error as Error)?.message ?? error)}` }
+    return { text: `Не удалось поделиться: ${String((error as Error)?.message ?? error)}` }
   }
 }
 
@@ -12073,16 +12073,16 @@ export const register: Register = (on, options) => {
   on('command.run', { command: 'shared-session:team' }, ($, e) => teamCommand($, e.args ?? ''))
 
   on('command.run', { command: 'room' }, async $ => {
-    if ((await read($, modeA)) === 'idle') return { text: 'This session is not shared. Press Share above the prompt, or type /share-session.' }
+    if ((await read($, modeA)) === 'idle') return { text: 'Этот сеанс не доступен другим. Нажмите Share над полем ввода или введите /share-session.' }
     await openRoom($)
-    return { text: 'Opened the Room.' }
+    return { text: 'Комната открыта.' }
   })
 
   // Who's here, as words the model can read too; the transcript draws it as a
   // card (the CommandOutput hook below).
   on('command.run', { command: 'who' }, async $ => {
     const v = await view($)
-    if (v.mode === 'idle' || !v.room) return { text: 'This session is not shared. Press Share above the prompt, or type /share-session.' }
+    if (v.mode === 'idle' || !v.room) return { text: 'Этот сеанс не доступен другим. Нажмите Share над полем ввода или введите /share-session.' }
     const people = faces(v)
     const here = people.filter(p => p.online).map(p => p.name)
     const away = people.filter(p => !p.online).map(p => p.name)
@@ -12107,20 +12107,20 @@ export const register: Register = (on, options) => {
 
   on('command.run', { command: 'share-file' }, async ($, e) => {
     const room = await read($, roomA)
-    if ((await read($, modeA)) !== 'host' || !room) return { text: 'Share this session first: press Share or type /share-session.' }
+    if ((await read($, modeA)) !== 'host' || !room) return { text: 'Сначала откройте доступ к сеансу: нажмите Share или введите /share-session.' }
     const arg = e.args.trim().replace(/^["']|["']$/g, '')
-    if (!arg) return { text: 'Which file? /share-file <path>' }
+    if (!arg) return { text: 'Какой файл? /share-file <path>' }
     const cwd = await $.session.cwd()
     const path = arg.startsWith('/') ? arg : `${cwd}/${arg}`
     const file = await uploadFile($, room, path)
-    if (!file) return { text: `Couldn't share ${arg}: no such file, or over 10 MB.` }
+    if (!file) return { text: `Не удалось поделиться ${arg}: no such file, or over 10 MB.` }
     send($, 'artifact', { kind: 'send', files: [file], display: 'render', caption: '' })
-    return { text: `Shared ${file.name} with everyone here.` }
+    return { text: `Файл ${file.name} показан всем здесь.` }
   })
 
   on('command.run', { command: 'share-preview' }, async ($, e) => {
     const room = await read($, roomA)
-    if ((await read($, modeA)) !== 'host' || !room) return { text: 'Share this session first: press Share or type /share-session.' }
+    if ((await read($, modeA)) !== 'host' || !room) return { text: 'Сначала откройте доступ к сеансу: нажмите Share или введите /share-session.' }
     const [first, ...rest] = e.args.trim().split(/\s+/)
     const url = LOCAL_URL.exec(first ?? '')
     const port = Number(url?.[1] ?? first)
@@ -12132,7 +12132,7 @@ export const register: Register = (on, options) => {
     // one that isn't asked about (`relatedSaid`).
     const page = url ? localPageOf(url) : null
     const forwarded = await hostForwards($, room, { port, title, path: page?.path ?? '/', host: page?.host, scheme: page?.scheme }, { offerRelated: 4_000 })
-    if (!forwarded) return { text: `Couldn't share localhost:${port}.` }
+    if (!forwarded) return { text: `Не удалось поделиться localhost:${port}.` }
     if ('refused' in forwarded) return { text: forwarded.refused }
     return { text: `${forwardedSaid([port])}${relatedSaid(await forwarded.related)}` }
   })
@@ -12141,7 +12141,7 @@ export const register: Register = (on, options) => {
     const mode = await read($, modeA)
     if (mode !== 'idle') await closeRoom($, mode === 'host' ? 'stop' : 'leave')
     return {
-      text: mode === 'idle' ? 'This session is not shared.' : mode === 'host' ? 'Stopped sharing. The link no longer works.' : 'Left the shared session.',
+      text: mode === 'idle' ? 'Этот сеанс не доступен другим.' : mode === 'host' ? 'Доступ по ссылке остановлен. Ссылка больше не действует.' : 'Вы вышли из общего сеанса.',
     }
   })
 
@@ -13381,7 +13381,7 @@ export const register: Register = (on, options) => {
     return next({ ...e, props: { ...e.props, hint } })
   })
 
-  // The Team panel. Signed out: what it's for and the sign-ins. In a team: its
+  // The Team panel. Вы вышли из учётной записи: what it's for and the sign-ins. In a team: its
   // name and where shares go, then its pages. Live: invites and the sessions
   // shared with it, a press from joining. People: who's in it and its invite
   // link. Settings: who may join, and your own.
@@ -13689,7 +13689,7 @@ export const register: Register = (on, options) => {
             ),
           )}
           {t.sessions.map(sessionRow)}
-          {t.sessions.length ? null : <Text dimColor>{`Nothing is shared with ${team.name} right now. A session someone shares with it shows up here.`}</Text>}
+          {t.sessions.length ? null : <Text dimColor>{`Сейчас с ${team.name} ничем не поделены. A session someone shares with it shows up here.`}</Text>}
           {joinable.length > 1 ? (
             <Text dimColor>{mode === 'idle' ? 'Join all: the first joins here, the rest in new sessions.' : 'Join all: each opens in a new session.'}</Text>
           ) : null}
@@ -13859,7 +13859,7 @@ export const register: Register = (on, options) => {
                 key="room-share"
                 label="Share this session"
                 variant="primary"
-                onPress={press => void requestShare($, press.surface).catch(error => $.ui.log(`Couldn't share: ${String(error?.message ?? error)}`))}
+                onPress={press => void requestShare($, press.surface).catch(error => $.ui.log(`Не удалось поделиться: ${String(error?.message ?? error)}`))}
               />
             </Box>
           )}
@@ -14275,7 +14275,7 @@ export const register: Register = (on, options) => {
     const invited = isHost ? await read($, invitedA) : {}
     const mates = (teamsNow?.teammates ?? []).filter(m => !people.some(p => p.online && p.name === m.name))
     const shownTeam = teamsNow?.teams.find(x => x.id === teamsNow.current) ?? null
-    // Signed out, the header's button says so ("Sign in to invite"): nothing here.
+    // Вы вышли из учётной записи, the header's button says so ("Sign in to invite"): nothing here.
     const inviteBlock =
       !isHost || !teamsNow?.account ? null : mates.length ? (
         <Box flexDirection="column" gap={1}>
@@ -14950,7 +14950,7 @@ export const register: Register = (on, options) => {
                 key="invite-join"
                 label="Join"
                 variant="primary"
-                onPress={press => void joinInvited($, invite, press.surface).catch(error => $.ui.toast(`Couldn't join: ${String(error?.message ?? error)}`))}
+                onPress={press => void joinInvited($, invite, press.surface).catch(error => $.ui.toast(`Не удалось присоединиться: ${String(error?.message ?? error)}`))}
               />
             ),
             <Button key="invite-dismiss" label="Dismiss" plain dimColor onPress={() => void dropInvite($, invite.room.id)} />,
@@ -14976,8 +14976,8 @@ export const register: Register = (on, options) => {
               plain
               onPress={press => {
                 void requestShare($, press.surface).catch(error => {
-                  $.ui.toast("Couldn't share")
-                  $.ui.log(`Couldn't share: ${String(error?.message ?? error)}`)
+                  $.ui.toast("Не удалось поделиться")
+                  $.ui.log(`Не удалось поделиться: ${String(error?.message ?? error)}`)
                 })
               }}
             />

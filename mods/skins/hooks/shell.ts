@@ -73,7 +73,7 @@ export function shellStatus(result: ShellResult, isErrored: boolean, ascii: bool
   }
 
   if (result.timedOutAfterMs !== undefined) {
-    return { tone: 'warn', text: 'timed out' }
+    return { tone: 'warn', text: 'тайм-аут' }
   }
 
   if (isErrored) {

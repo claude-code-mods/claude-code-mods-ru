@@ -33,10 +33,10 @@ export function extractFrontDoor(text, label = "front door template") {
   const begin = lines.findIndex((line) => line.startsWith(FRONT_DOOR_BEGIN));
   const end = lines.findIndex((line) => line.trim() === FRONT_DOOR_END);
   if (begin < 0 || end <= begin) {
-    throw new Error(`TavernWeave Host Front Door markers are missing or out of order: ${label}`);
+    throw new Error(`Маркеры TavernWeave Host Front Door отсутствуют или идут не по порядку: ${label}`);
   }
   const version = VERSION_PATTERN.exec(lines[begin].trim())?.[1];
-  if (!version) throw new Error(`TavernWeave Host Front Door version marker is invalid: ${label}`);
+  if (!version) throw new Error(`Маркер версии TavernWeave Host Front Door недействителен: ${label}`);
   return { version, body: `${lines.slice(begin + 1, end).join("\n").trim()}\n` };
 }
 

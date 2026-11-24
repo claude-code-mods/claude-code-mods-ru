@@ -5,7 +5,7 @@ export const CONTEXT_TOOL = 'mcp__turbo__context-level'
 export async function registerContextTool($: EngineInterface) {
   await $.tool.register({
     name: 'context-level',
-    description: "Reads how much of this session's context window remains.",
+    description: "Показывает, сколько места осталось в окне контекста этого сеанса.",
   })
 }
 

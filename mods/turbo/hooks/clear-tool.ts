@@ -26,9 +26,9 @@ export async function registerClearTool($: EngineInterface) {
     inputSchema: {
       type: 'object',
       properties: {
-        plan: { type: 'string', description: "The plan's slug: its file name under .turbo/plans/, without .md." },
-        worktree: { type: 'boolean', description: 'With `plan`: implement the plan in a git worktree of its own.' },
-        handoff: { type: 'string', description: "The handoff file's path. Pass it in place of `plan`." },
+        plan: { type: 'string', description: "Короткое имя плана: имя файла в .turbo/plans/ без .md." },
+        worktree: { type: 'boolean', description: 'С `plan`: реализовать план в отдельном git worktree.' },
+        handoff: { type: 'string', description: "Путь к файлу передачи. Укажите его вместо `plan`." },
       },
     },
   })
@@ -100,7 +100,7 @@ async function clearThenImplement($: EngineInterface, plan: PlanContinuation) {
   try {
     await $.command.run({ command: IMPLEMENT_COMMAND, args })
   } catch (error) {
-    $.ui.toast(`${messageOf(error)}: cleared, but the plan did not start. Run ${typed}`, TOAST)
+    $.ui.toast(`${messageOf(error)}: очистка выполнена, но план не запустился. Выполните ${typed}`, TOAST)
   }
 }
 
@@ -124,7 +124,7 @@ async function clearOrToast($: EngineInterface, next: string) {
 
     return true
   } catch (error) {
-    $.ui.toast(`${messageOf(error)}: clear failed. Run /clear, then ${next}`, TOAST)
+    $.ui.toast(`${messageOf(error)}: не удалось очистить. Выполните /clear, затем ${next}`, TOAST)
 
     return false
   }

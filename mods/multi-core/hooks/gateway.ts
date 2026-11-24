@@ -189,7 +189,7 @@ async function send<T extends GatewayResponse>(
 
 async function deadline(wire: Wire, ms: number, signal: AbortSignal): Promise<never> {
   await wire.sleep(ms, signal);
-  throw new Error('gateway request timeout');
+  throw new Error('тайм-аут запроса к шлюзу');
 }
 
 function refusal(result: { text: string; status: number }): GatewayResponse {

@@ -21,7 +21,7 @@ export function quotaAdvice(snapshot?: UsagePaneProps): string {
     `Account usage checked ${snapshot.updatedAt}:`,
     ...rows.map(
       (provider) =>
-        `${provider.name}: ${provider.status === 'ready' ? provider.summary : 'quota unknown or unavailable'}`,
+        `${provider.name}: ${provider.status === 'ready' ? provider.summary : 'квота неизвестна или недоступна'}`,
     ),
   ].join('\n');
 }

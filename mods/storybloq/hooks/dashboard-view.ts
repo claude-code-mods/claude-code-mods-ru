@@ -9,12 +9,12 @@ const BOARD_COLUMNS = 3;
 * What a card draws for a title that projected to nothing (ISS-1311): dimmed,
 * never shimmered, and a render choice only, so the cache keeps the empty string.
 */
-const UNTITLED = "(untitled)";
+const UNTITLED = "(без названия)";
 /** What a column with nothing in it says, rather than drawing a blank frame. */
 const EMPTY_COLUMNS = {
-  "board-open": { symbol: "◇", title: "Queue clear", short: "Queue clear", hint: "Add your next story." },
-  "board-inprogress": { symbol: "○", title: "Ready to begin", short: "Ready to start", hint: "Start a story from Open." },
-  "board-done": { symbol: "·", title: "Progress starts here", short: "Room to grow", hint: "Completed work gathers here." },
+  "board-open": { symbol: "◇", title: "Очередь пуста", short: "Очередь пуста", hint: "Добавьте следующую историю." },
+  "board-inprogress": { symbol: "○", title: "Готово к началу", short: "Можно начать", hint: "Начните историю из раздела «Открыто»." },
+  "board-done": { symbol: "·", title: "Здесь начинается прогресс", short: "Есть куда расти", hint: "Здесь собирается завершённая работа." },
 } as const;
 type BoardColumnKey = keyof typeof EMPTY_COLUMNS;
 /**

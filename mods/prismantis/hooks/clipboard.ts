@@ -9,20 +9,20 @@ export const MAC_TABLE_COPY = `
 ObjC.import('AppKit')
 var item = $.NSPasteboardItem.alloc.init
 if (!item.setStringForType(payload.html, $.NSPasteboardTypeHTML) ||
-    !item.setStringForType(payload.text, $.NSPasteboardTypeString)) throw new Error('Cannot encode table')
+    !item.setStringForType(payload.text, $.NSPasteboardTypeString)) throw new Error('Не удалось закодировать таблицу')
 var pasteboard = $.NSPasteboard.generalPasteboard
-if (!pasteboard || !pasteboard.writeObjects) throw new Error('macOS clipboard is unavailable to this session')
+if (!pasteboard || !pasteboard.writeObjects) throw new Error('Буфер обмена macOS недоступен в этом сеансе')
 pasteboard.clearContents
-if (!pasteboard.writeObjects($.NSArray.arrayWithObject(item))) throw new Error('Cannot write clipboard')
+if (!pasteboard.writeObjects($.NSArray.arrayWithObject(item))) throw new Error('Не удалось записать в буфер обмена')
 if (ObjC.unwrap(pasteboard.stringForType($.NSPasteboardTypeHTML)) !== payload.html ||
-    ObjC.unwrap(pasteboard.stringForType($.NSPasteboardTypeString)) !== payload.text) throw new Error('Clipboard verification failed')
+    ObjC.unwrap(pasteboard.stringForType($.NSPasteboardTypeString)) !== payload.text) throw new Error('Не удалось проверить буфер обмена')
 `
 
 export const LINUX_TABLE_COPY = `
 var table = JSON.parse(str(arguments[1]))
 copy('text/html', table.html, 'text/plain', table.text)
 if (str(clipboard('text/html')) !== table.html ||
-    str(clipboard('text/plain')) !== table.text) throw new Error('Clipboard verification failed')
+    str(clipboard('text/plain')) !== table.text) throw new Error('Не удалось проверить буфер обмена')
 `
 
 export const WIN_TABLE_COPY = `
@@ -79,7 +79,7 @@ var block = $('█').boundingRectWithSizeOptionsAttributes($.NSMakeSize(1000, 10
 var width = 2 * pad + Math.ceil(cell * payload.columns)
 var height = 2 * pad + line * payload.lines.length
 var bitmap = $.NSBitmapImageRep.alloc.initWithBitmapDataPlanesPixelsWidePixelsHighBitsPerSampleSamplesPerPixelHasAlphaIsPlanarColorSpaceNameBytesPerRowBitsPerPixel(null, width * 2, height * 2, 8, 4, true, false, $.NSDeviceRGBColorSpace, 0, 0)
-if (!bitmap) throw new Error('Cannot draw image')
+if (!bitmap) throw new Error('Не удалось отрисовать изображение')
 bitmap.size = $.NSMakeSize(width, height)
 $.NSGraphicsContext.saveGraphicsState
 $.NSGraphicsContext.setCurrentContext($.NSGraphicsContext.graphicsContextWithBitmapImageRep(bitmap))
@@ -142,11 +142,11 @@ payload.lines.forEach(function (glyphs, i) {
 $.NSGraphicsContext.restoreGraphicsState
 var png = bitmap.representationUsingTypeProperties($.NSBitmapImageFileTypePNG, $.NSDictionary.dictionary)
 var pasteboard = $.NSPasteboard.generalPasteboard
-if (!png || !pasteboard) throw new Error('macOS clipboard is unavailable to this session')
+if (!png || !pasteboard) throw new Error('Буфер обмена macOS недоступен в этом сеансе')
 pasteboard.clearContents
-if (!pasteboard.setDataForType(png, $.NSPasteboardTypePNG)) throw new Error('Cannot write clipboard')
+if (!pasteboard.setDataForType(png, $.NSPasteboardTypePNG)) throw new Error('Не удалось записать в буфер обмена')
 var back = pasteboard.dataForType($.NSPasteboardTypePNG)
-if (!back || !back.isEqualToData(png)) throw new Error('Clipboard verification failed')
+if (!back || !back.isEqualToData(png)) throw new Error('Не удалось проверить буфер обмена')
 `
 
 export const WIN_IMAGE_COPY = `

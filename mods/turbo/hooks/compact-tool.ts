@@ -13,7 +13,7 @@ export async function registerCompactTool($: EngineInterface) {
       'Call it only right before ending a turn at a handoff-then-compact gate.',
     inputSchema: {
       type: 'object',
-      properties: { handoff: { type: 'string', description: "The handoff file's path." } },
+      properties: { handoff: { type: 'string', description: "Путь к файлу передачи." } },
       required: ['handoff'],
     },
   })
@@ -49,12 +49,12 @@ export async function compactAfterTurn($: EngineInterface, reason: TurnCompleteR
     })
 
     if (compacted.skip !== undefined) {
-      $.ui.toast(`${compacted.skip}: compaction skipped. Run /compact, then reply "continue".`, TOAST)
+      $.ui.toast(`${compacted.skip}: сжатие пропущено. Выполните /compact, затем ответьте «continue».`, TOAST)
 
       return
     }
   } catch (error) {
-    $.ui.toast(`${messageOf(error)}: compaction failed. Run /compact, then reply "continue".`, TOAST)
+    $.ui.toast(`${messageOf(error)}: не удалось сжать контекст. Выполните /compact, затем ответьте «continue».`, TOAST)
 
     return
   }

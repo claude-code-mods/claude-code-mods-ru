@@ -24,7 +24,7 @@ export const SLOTS: readonly SkinSlot[] = [
 export const SLOT_HELP: Readonly<Record<SkinSlot, string>> = {
   user: 'accent: the rail, your prompt marker, the spinner',
   fg: 'body text',
-  muted: 'secondary text: commands, paths, timings',
+  muted: 'второстепенный текст: команды, пути, временные интервалы',
   surface: 'band behind a table header',
   zebra: 'every other table row; keep it a step off the background',
   ok: 'a finished call',

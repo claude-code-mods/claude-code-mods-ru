@@ -34,7 +34,7 @@ export function isNewer(latest: string, current: string): boolean {
 }
 
 export const updateNotice = (latest: string, current: string): string =>
-  `skins ${latest} is out (you have ${current}). Run: claude plugin update ${PLUGIN_ID}, then restart`
+  `Выпущен skins ${latest} (у вас ${current}). Выполните: claude plugin update ${PLUGIN_ID}, затем перезапустите`
 
 export const isDue = (raw: unknown, now: number): boolean => {
   const at = typeof raw === 'object' && raw !== null ? (raw as Partial<Checked>).at : undefined
@@ -46,7 +46,7 @@ export const isDue = (raw: unknown, now: number): boolean => {
 // kept the skin rather than someone still trying it out.
 const STAR_AFTER_MS = 3 * DAY_MS
 
-export const STAR_NOTICE = 'Enjoying skins? A ★ on GitHub helps others find it: https://github.com/hellosverre/claude-skins'
+export const STAR_NOTICE = 'Нравится skins? Поставьте ★ на GitHub — это поможет другим найти его: https://github.com/hellosverre/claude-skins'
 
 export type Star = { since: number; asked: boolean }
 

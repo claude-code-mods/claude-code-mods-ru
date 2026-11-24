@@ -88,7 +88,7 @@ export function convergeText(cfg: WorkModeConfig = getConfig()): string {
     'Do not open new branches of work; finish what is already open.',
     `Decision items go in a "${c.sectionHeading}" section at the end of the reply.`,
     `Show a decision item only when it is new or its status changed, with your recommendation, ${reply}. Do not repost items already shown: end the reply with one line giving how many decisions are still open, and relist them in full only when asked or in the final report.`,
-    `Start each decision item with one label: ${labels}. An item that fits none is yours to do now, not to ask (decision-label-guard blocks unlabeled items).`,
+    `Начинайте каждый пункт решения с одной метки: ${labels}. Пункт, не подходящий ни под одну, выполняйте сейчас, а не спрашивайте (decision-label-guard блокирует пункты без метки).`,
     `[${c.tradeoffLabel}] is not a catch-all: use it only when two paths are both reasonable and the choice turns on ${w.poss} preference, and state what each option gains (${example}). If you cannot name a preference-based reason for each side, do your recommendation now instead of asking. Layout, naming, wording, file placement, scheduling of your own follow-ups and other internal presentation choices are never decision items: pick one and report it.`,
     `Never start research, refactors, proposals, audits or scheduling ${w.subj} did not ask for; note such ideas as one-line follow-ups. Something new ${w.subj} raises while wrap is on is taken only if it can be finished in this session; otherwise record it as a todo and say so.`,
     close,
@@ -255,13 +255,13 @@ export function switchTexts(
   if (next.length === 0) {
     out.push(
       prev.length === 0
-        ? '[tempo: off] Work mode is off (/work-mode off).'
-        : `[tempo: off] ${w.Who} turned work mode off just now (/work-mode off): ${stopped.map(m => `[tempo: ${m}]`).join(' and ')} no longer applies. Back to normal behaviour from this point, including asking before steps the normal rules say to ask about.`,
+        ? '[tempo: выкл] Режим работы выключен (/work-mode off).'
+        : `[tempo: выкл] ${w.Who} только что выключил режим работы (/work-mode off): ${stopped.map(m => `[tempo: ${m}]`).join(' и ')} больше не действует. С этого момента всё возвращается к обычному поведению, включая вопросы перед шагами, о которых спрашивают обычные правила.`,
     )
     return out
   }
-  out.push(`[tempo] ${w.Who} switched work mode just now: ${next.map(m => SHORT[m]).join(' + ')} is on from this point.`)
-  if (stopped.length > 0) out.push(`[tempo: off] ${stopped.map(m => `[tempo: ${m}]`).join(' and ')} no longer applies.`)
+  out.push(`[tempo] ${w.Who} только что сменил режим работы: с этого момента включено ${next.map(m => SHORT[m]).join(' + ')}.`)
+  if (stopped.length > 0) out.push(`[tempo: off] ${stopped.map(m => `[tempo: ${m}]`).join(' и ')} больше не действует.`)
   for (const m of next) {
     if (prevSent && prev.includes(m)) continue
     out.push(modeText(m, cfg))
@@ -292,7 +292,7 @@ export function parseTempo(arg: string): TempoParse {
     // off next to other words adds nothing: the words already replace the whole state.
     if (w === 'off') continue
     const mode = WORDS[w]
-    if (!mode) return { kind: 'error', message: `Unknown mode ${w}.` }
+    if (!mode) return { kind: 'error', message: `Неизвестный режим ${w}.` }
     picked.add(mode)
   }
   return { kind: 'set', modes: ORDER.filter(m => picked.has(m)) }
@@ -367,7 +367,7 @@ export async function tempoStart($: EngineInterface): Promise<void> {
   await loadConfig($)
   await $.command.register({
     name: 'work-mode',
-    description: 'Work mode: auto (no questions) | out (delegate) | wrap (converge) | off',
+    description: 'Режим работы: auto (без вопросов) | out (делегирование) | wrap (свёртывание) | off',
     argumentHint: '[auto] [out] [wrap] | off',
     immediate: true,
   })
@@ -414,10 +414,10 @@ export async function tempoContext($: EngineInterface, sessionId: string): Promi
 /** One line, every reminderEveryTurns prompts, so the modes outlast a long conversation. */
 export function reminderText(list: readonly TempoMode[], cfg: WorkModeConfig = getConfig()): string {
   const parts: string[] = []
-  if (list.includes('autonomous')) parts.push('auto = decide internal reversible steps yourself, hard stops go on the pending list')
-  if (list.includes('dispatch')) parts.push(`out = batch reading and verifiable work go out (${cfg.dispatch.pickerHint}) before you read it; the main thread verifies`)
-  if (list.includes('converge')) parts.push(`wrap = no new branches, decisions under "${cfg.converge.sectionHeading}" with a label and a recommendation, close when nothing is open`)
-  return `[tempo] still on: ${list.map(m => SHORT[m]).join(' + ')}. ${parts.join('; ')}.`
+  if (list.includes('autonomous')) parts.push('auto = самостоятельно решайте обратимые внутренние шаги, жёсткие остановки идут в список ожидания')
+  if (list.includes('dispatch')) parts.push(`out = пакетное чтение и проверяемая работа передаются наружу (${cfg.dispatch.pickerHint}) до того, как вы их прочитаете; основной поток проверяет результат`)
+  if (list.includes('converge')) parts.push(`wrap = никаких новых ветвей, решения под заголовком "${cfg.converge.sectionHeading}" с меткой и рекомендацией, завершение, когда ничего не осталось открытым`)
+  return `[tempo] всё ещё включено: ${list.map(m => SHORT[m]).join(' + ')}. ${parts.join('; ')}.`
 }
 
 async function modeTexts($: EngineInterface, list: readonly TempoMode[]): Promise<string[]> {
@@ -480,14 +480,14 @@ export function registerTempo(on: On): void {
         parsed = parseTempo(pickedArgs(answer, cfg))
       } catch (err) {
         // Dismissed, or nobody to ask: fall through to the plain status line.
-        $.ui.log(`tempo picker unavailable: ${String(err).slice(0, 300)}`, { to: 'debug' })
+        $.ui.log(`выбор tempo недоступен: ${String(err).slice(0, 300)}`, { to: 'debug' })
       }
     }
     const usage = 'Use /work-mode with any of auto, out, wrap (any order), or off.'
     if (parsed.kind === 'error') return { text: `${parsed.message} ${usage}` }
     if (parsed.kind === 'status') {
       const label = tempoLabel(await read($, modes)) ?? 'off'
-      return { text: `Work mode: ${label}. ${usage}` }
+      return { text: `Режим работы: ${label}. ${usage}` }
     }
     const prev = await read($, modes)
     const prevSent = await read($, sent)

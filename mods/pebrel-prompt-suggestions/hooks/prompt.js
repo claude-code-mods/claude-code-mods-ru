@@ -105,13 +105,13 @@ async function bridge($) {
 
 function readJson(response) {
   if (!response.ok || typeof response.text !== "string" || response.text.length > 8192) {
-    throw new Error("Invalid prediction bridge response");
+    throw new Error("Недопустимый ответ моста прогнозирования");
   }
   let bytes = 0;
   for (const char of response.text) {
     const point = char.codePointAt(0);
     bytes += point <= 0x7f ? 1 : point <= 0x7ff ? 2 : point <= 0xffff ? 3 : 4;
-    if (bytes > 8192) throw new Error("Invalid prediction bridge response");
+    if (bytes > 8192) throw new Error("Недопустимый ответ моста прогнозирования");
   }
   return JSON.parse(response.text);
 }

@@ -69,7 +69,7 @@ const view: ClientModule<UsagePaneProps, State> = (props, surface) => {
       Text({ dimColor: true, children: `Account data checked ${props.updatedAt}` }),
       Button({
         key: 'quota-advice',
-        label: `Quota-aware model selection: ${props.quotaAdviceEnabled ? 'On' : 'Off'}`,
+        label: `Выбор модели с учётом квот: ${props.quotaAdviceEnabled ? 'Вкл' : 'Выкл'}`,
         onPress: () => surface.post({ action: 'toggle-quota-advice' }),
       }),
       ...(props.error ? [Text({ color: 'yellow', children: props.error })] : []),
@@ -80,7 +80,7 @@ const view: ClientModule<UsagePaneProps, State> = (props, surface) => {
       }),
       Button({
         key: 'refresh',
-        label: 'Refresh',
+        label: 'Обновить',
         onPress: () => surface.post({ action: refreshAction }),
       }),
     ],

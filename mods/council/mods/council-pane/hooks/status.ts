@@ -32,11 +32,11 @@ export function parseStatus(log: string): ProviderStatus[] {
 }
 
 const EVENT: Record<string, (name: string) => string> = {
-  complete: name => `${name} answered`,
-  cached: name => `${name} answered from cache`,
-  error: name => `${name} failed`,
+  complete: name => `${name}: ответил`,
+  cached: name => `${name}: ответил из кэша`,
+  error: name => `${name}: ошибка`,
   // Not always a failure: a CLI that cannot read an image is routed to its API by design.
-  fallback: name => `${name} answered through its API`,
+  fallback: name => `${name}: ответил через свой API`,
   querying: name => `запрос ${name}`,
 }
 

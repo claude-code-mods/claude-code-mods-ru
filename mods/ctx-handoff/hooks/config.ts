@@ -114,7 +114,7 @@ export function optionsOf(all: Record<string, { options?: Record<string, unknown
 export function resolveConfig(options: Record<string, unknown>, panel: Record<string, unknown> = {}): Config {
   const get = (key: string) => {
     const spec = specOf(key)
-    if (!spec) throw new Error(`unknown setting ${key}`)
+    if (!spec) throw new Error(`неизвестная настройка ${key}`)
     return settingValue(spec, panel[key] ?? options[key])
   }
   return {

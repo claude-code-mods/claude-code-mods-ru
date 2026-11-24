@@ -149,7 +149,7 @@ async function readCatalog($: EngineInterface) {
 type SetupOutcome = { readonly text: string } | { readonly turnRowOn: boolean }
 
 async function setupHeadsUp($: EngineInterface, state: PaneState, settings: PaneOptions): Promise<SetupOutcome> {
-  const ask = (question: string, options: string[]) => $.ui.ask(question, { header: 'Heads-up', options }).catch(() => undefined)
+  const ask = (question: string, options: string[]) => $.ui.ask(question, { header: 'Внимание', options }).catch(() => undefined)
   const closed = { text: 'Настройка завершена; ничего не изменилось.' }
   const scope = await ask(SCOPE_QUESTION, [SCOPE.project, SCOPE.all, SCOPE.off])
   if (scope === undefined) return closed
@@ -490,8 +490,8 @@ function seatInfo($: EngineInterface, ...args: ['discover'] | ['model' | 'allowl
 async function notASeat($: EngineInterface, seat: string): Promise<string | undefined> {
   const ok = await seatInfo($, 'allowlisted', seat)
   if (ok.exitCode === 0) return undefined
-  if (ok.exitCode !== 1) return `checking ${JSON.stringify(seat)} exited ${ok.exitCode}: ${ok.stderr.trim()}`
-  return `${JSON.stringify(seat)} is not a council seat; one of ${(await providerScripts($)).join(', ')}`
+  if (ok.exitCode !== 1) return `проверка ${JSON.stringify(seat)} завершилась с кодом ${ok.exitCode}: ${ok.stderr.trim()}`
+  return `${JSON.stringify(seat)} не является местом совета; одно из: ${(await providerScripts($)).join(', ')}`
 }
 
 // The runner's registry: one providers/<name>.sh per provider it can run.
@@ -524,7 +524,7 @@ async function launchHeadsUp($: EngineInterface, config: Extract<HeadsUpConfig, 
   const run = await $.process.run(['bash', `${$.plugin.root}/scripts/heads-up.sh`, ...args], { timeoutMs: HEADS_UP_LAUNCH_MS })
   if (run.exitCode === 0) return
   await $.process.run(['rm', '-rf', runDir])
-  throw new Error(`heads-up.sh exited ${run.exitCode}: ${run.stderr.trim()}`)
+  throw new Error(`heads-up.sh завершился с кодом ${run.exitCode}: ${run.stderr.trim()}`)
 }
 
 // One main-loop step: decide, write the session when it changed, and launch
@@ -605,8 +605,8 @@ async function pollHeadsUp($: EngineInterface, state: PaneState, phase: Extract<
   const lost = (detail: string): RunResult => ({ kind: 'failed', payloadBytes: 0, seats: [{ seat: 'runner', outcome: 'error', elapsedMs: now - phase.startedMs, detail }] })
   let result: RunResult
   if (await $.fs.exists(`${runDir}/.done`)) result = parseRunResult(checkId, await readText(files($), `${runDir}/result.json`))
-  else if (!(await $.fs.exists(runDir))) result = lost(`its run dir ${runDir} is gone`)
-  else if (await runHasDied($, state, runDir, now, 'headsUpCheckedAtMs')) result = lost('heads-up.sh stopped without writing a result')
+  else if (!(await $.fs.exists(runDir))) result = lost(`каталог запуска ${runDir} исчез`)
+  else if (await runHasDied($, state, runDir, now, 'headsUpCheckedAtMs')) result = lost('heads-up.sh остановился, не записав результат')
   else return
   // settle reads memory only to spot a repeated note.
   const memory = result.kind === 'note' ? await loadMemory($) : EMPTY_MEMORY
@@ -650,12 +650,12 @@ async function pressHeadsUp($: EngineInterface, answer: Exclude<Answer, 'typed-p
   if (answer === 'turn-off') {
     const file = await headsUpFile($)
     await $.fs.write(file.path, withEnabled(file.text, false))
-    $.ui.log(`heads-up: отключено для этого проекта (${CONFIG_FILE}); /${HEADS_UP_COMMAND} on turns it back on`)
+    $.ui.log(`heads-up: отключено для этого проекта (${CONFIG_FILE}); /${HEADS_UP_COMMAND} on снова включает`)
     return
   }
   if (answer !== 'tell') return
   const filled = await $.prompt.fill({ text: tellClaudeDraft(shown.note), mode: 'replace' })
-  if (!filled.isFilled) throw new Error(`the prompt box did not take the note: ${tellClaudeDraft(shown.note)}`)
+  if (!filled.isFilled) throw new Error(`поле ввода не приняло заметку: ${tellClaudeDraft(shown.note)}`)
 }
 
 // The person's own prompt while a note shows: it is typed past.
@@ -707,12 +707,12 @@ function headsUpRow(
     ? [
         <ui.Button key="heads-up:learn" hotkey="1" label="Подробнее" plain onPress={press.learn} />,
         <ui.Button key="heads-up:knew" hotkey="2" label="Уже знал(-а) об этом" plain onPress={press.knew} />,
-        <ui.Button key="heads-up:dismiss" hotkey="0" label="Dismiss" plain role="dismiss" onPress={press.dismiss} />,
+        <ui.Button key="heads-up:dismiss" hotkey="0" label="Скрыть" plain role="dismiss" onPress={press.dismiss} />,
       ]
     : [
-        <ui.Button key="heads-up:understood" hotkey="1" label="Understood" plain onPress={press.understood} />,
+        <ui.Button key="heads-up:understood" hotkey="1" label="Понятно" plain onPress={press.understood} />,
         <ui.Button key="heads-up:tell" hotkey="2" label="Сообщить Claude" plain onPress={press.tell} />,
-        <ui.Button key="heads-up:close" hotkey="0" label="Close" plain role="dismiss" onPress={press.dismiss} />,
+        <ui.Button key="heads-up:close" hotkey="0" label="Закрыть" plain role="dismiss" onPress={press.dismiss} />,
       ]
   return (
     <ui.Box key="heads-up" flexDirection="column" marginTop={1} paddingLeft={BAND_INDENT}>
@@ -758,7 +758,7 @@ function pausedRow(ui: Pick<Elements['terminal'], 'Box' | 'Button' | 'Text'>, pa
       </ui.Box>
       <ui.Box flexShrink={0}>
         <ui.Text>{'   '}</ui.Text>
-        <ui.Button key="heads-up-paused:dismiss" hotkey="0" label="Dismiss" plain role="dismiss" onPress={dismiss} />
+        <ui.Button key="heads-up-paused:dismiss" hotkey="0" label="Скрыть" plain role="dismiss" onPress={dismiss} />
       </ui.Box>
     </ui.Box>
   )
@@ -821,9 +821,9 @@ function retryRow(
       </ui.Box>
       <ui.Box flexShrink={0} flexDirection="row">
         {/* No letters in the labels: r and s answer only once the band holds the focus. */}
-        <ui.Button key="retry:accept" hotkey="r" label="retry" onPress={press.accept} />
+        <ui.Button key="retry:accept" hotkey="r" label="повторить" onPress={press.accept} />
         <ui.Text>{' '}</ui.Text>
-        <ui.Button key="retry:skip" hotkey="s" label="skip" onPress={press.skip} />
+        <ui.Button key="retry:skip" hotkey="s" label="пропустить" onPress={press.skip} />
         <ui.Text color={COLOR.accent}>{`  ${offer.bar}`}</ui.Text>
         <ui.Text dimColor>{` ${offer.remaining}s`}</ui.Text>
       </ui.Box>
@@ -843,7 +843,7 @@ export const register: Register = (on, options) => {
   on('session.start', async ($, e, next) => {
     await applyStoredValues($, stored)
     await $.command.register({ name: REOPEN_COMMAND, description: 'Откройте панель совета снова или забудьте, где было указано ее открыть', argumentHint: '[ask]', immediate: true })
-    await $.command.register({ name: HEADS_UP_COMMAND, description: 'Heads-up side-check: set it up in a few questions, switch it включено для этого проекта naming the seat, or off, or show its state and counts', argumentHint: '[настройка | включено [место] | выключено | статус]', immediate: true })
+    await $.command.register({ name: HEADS_UP_COMMAND, description: 'Сторонняя проверка: настройте её за несколько вопросов, включите для этого проекта, указав место, выключите или покажите состояние и счётчики', argumentHint: '[настройка | включено [место] | выключено | статус]', immediate: true })
     if (settings.offersTool) await $.tool.register({ name: TOOL_NAME, description: TOOL_DESCRIPTION, inputSchema: TOOL_SCHEMA })
     void logFailure($, state, () => introduceHeadsUp($, state, settings))
     // A reload drops the heads-up timer; a check still in flight needs it back.
@@ -910,7 +910,7 @@ export const register: Register = (on, options) => {
     // Its declared type is the union of the listed tools, none of them this one.
     const input = e as unknown as Record<string, unknown>
     const script = `${$.plugin.root}/scripts/run-council.sh`
-    if (!(await $.fs.exists(script))) return { deny: `council script not found at ${script}` }
+    if (!(await $.fs.exists(script))) return { deny: `скрипт council не найден: ${script}` }
     // The seats a default query runs, as /claude-council:ask offers them.
     const listed = await $.process.run(['bash', `${$.plugin.root}/scripts/query-council.sh`, '--list-default-models'], { timeoutMs: SEAT_INFO_MS })
     if (listed.exitCode !== 0) return { result: `При выводе списка мест в совете произошел выход из ${listed.exitCode}: ${listed.stderr.trim()}. Ничего не было отправлено.`, isError: true }
@@ -951,7 +951,7 @@ export const register: Register = (on, options) => {
 
   on('command.run', { command: HEADS_UP_COMMAND }, async ($, e) => {
     const command = headsUpCommand(e.args)
-    if (command.action === 'unknown') return { text: `${command.why}. Usage: /${HEADS_UP_COMMAND} [on [seat] | off | setup | status]; one seat, a provider name such as codex, gemini or grok-cli.` }
+    if (command.action === 'unknown') return { text: `${command.why}. Использование: /${HEADS_UP_COMMAND} [on [место] | off | setup | status]; одно место — имя провайдера, например codex, gemini или grok-cli.` }
     if (command.action === 'setup') {
       const outcome = await setupHeadsUp($, state, settings)
       if ('text' in outcome) return outcome
@@ -962,7 +962,7 @@ export const register: Register = (on, options) => {
       }
     } else if (command.action !== 'status') {
       const unknown = command.action === 'on' && command.seat !== undefined ? await notASeat($, command.seat) : undefined
-      if (unknown !== undefined) return { text: `${unknown}; nothing changed.` }
+      if (unknown !== undefined) return { text: `${unknown}; ничего не изменилось.` }
       const file = await headsUpFile($)
       await $.fs.write(file.path, withEnabled(file.text, command.action === 'on', command.action === 'on' ? command.seat : undefined))
       // On is the one way to resume a session the seat's credits paused; off leaves the pause.

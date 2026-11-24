@@ -50,22 +50,22 @@ export function parseConfig(text: string | undefined, rowOn: boolean): HeadsUpCo
   try {
     raw = JSON.parse(text)
   } catch {
-    return off(' is not valid JSON')
+    return off(' не является корректным JSON')
   }
-  if (!isRecord(raw)) return off(' must hold a JSON object')
-  if (raw.enabled !== undefined && typeof raw.enabled !== 'boolean') return off(': enabled must be true or false')
-  if (raw.seats !== undefined) return off(': seats is not a key; one seat goes under "seat"')
-  if (raw.models !== undefined) return off(': models is not a key; the seat\'s pick goes under "model"')
+  if (!isRecord(raw)) return off(' должен содержать объект JSON')
+  if (raw.enabled !== undefined && typeof raw.enabled !== 'boolean') return off(': enabled должен быть true или false')
+  if (raw.seats !== undefined) return off(': ключ seats не существует; одно место указывается в "seat"')
+  if (raw.models !== undefined) return off(': ключ models не существует; выбор модели указывается в "model"')
   const seat = raw.seat ?? DEFAULT_SEAT
-  if (typeof seat !== 'string' || !SEAT_SHAPE.test(seat)) return off(`: seat ${JSON.stringify(seat)} is not a plain lowercase word`)
+  if (typeof seat !== 'string' || !SEAT_SHAPE.test(seat)) return off(`: место ${JSON.stringify(seat)} не является простым словом в нижнем регистре`)
   const every = raw.every ?? DEFAULT_EVERY
-  if (typeof every !== 'number' || !Number.isInteger(every) || every < 2) return off(`: every must be a whole number of at least 2, got ${JSON.stringify(every)}`)
+  if (typeof every !== 'number' || !Number.isInteger(every) || every < 2) return off(`: интервал должен быть целым числом не менее 2, получено ${JSON.stringify(every)}`)
   let model: SeatPick | undefined
   if (raw.model !== undefined) {
     const pick = raw.model
-    if (!isRecord(pick)) return off(': model must be an object of {model, effort}')
-    if (pick.model !== undefined && typeof pick.model !== 'string') return off(`: model for ${seat} must be a string, got ${JSON.stringify(pick.model)}`)
-    if (pick.effort !== undefined && (typeof pick.effort !== 'string' || !EFFORT_SHAPE.test(pick.effort))) return off(`: effort for ${seat} must be lowercase letters, got ${JSON.stringify(pick.effort)}`)
+    if (!isRecord(pick)) return off(': model должен быть объектом {model, effort}')
+    if (pick.model !== undefined && typeof pick.model !== 'string') return off(`: модель для ${seat} должна быть строкой, получено ${JSON.stringify(pick.model)}`)
+    if (pick.effort !== undefined && (typeof pick.effort !== 'string' || !EFFORT_SHAPE.test(pick.effort))) return off(`: усилие для ${seat} должно состоять из строчных букв, получено ${JSON.stringify(pick.effort)}`)
     if (pick.model !== undefined || pick.effort !== undefined) model = { ...(pick.model === undefined ? {} : { model: pick.model }), ...(pick.effort === undefined ? {} : { effort: pick.effort }) }
   }
   if (raw.enabled === false || (raw.enabled === undefined && !rowOn)) return { enabled: false }
@@ -180,14 +180,14 @@ export function tokenCount(n: number): string {
 export function tokensLine(t: Tokens): string {
   const counted = t.checks + t.unreported
   if (counted === 0) return 'нет с этой версии'
-  const checks = `${counted} ${counted === 1 ? 'check' : 'checks'}`
-  const parts = [t.unreported === 0 ? `${checks} since this version` : `${t.checks} of ${checks} reported since this version`]
+  const checks = `${counted} ${counted === 1 ? 'проверка' : 'проверок'}`
+  const parts = [t.unreported === 0 ? `${checks} с этой версии` : `${t.checks} из ${checks} сообщили с этой версии`]
   if (t.checks > 0) {
-    const split = (amount: number, gave: number, name: string) => (gave === 0 ? '' : `, ${tokenCount(amount)} ${name}${дал < t.checks ? ` on ${gave} of ${t.checks}` : ''}`)
+    const split = (amount: number, gave: number, name: string) => (gave === 0 ? '' : `, ${tokenCount(amount)} ${name}${дал < t.checks ? ` на ${gave} из ${t.checks}` : ''}`)
     parts.push(
       `${tokenCount(t.input)} in${split(t.cached, t.cachedChecks, 'cached')}`,
       `${tokenCount(t.output)} out${split(t.reasoning, t.reasoningChecks, 'reasoning')}`,
-      `${tokenCount(Math.round((t.input + t.output) / t.checks))} per check`,
+      `${tokenCount(Math.round((t.input + t.output) / t.checks))} за проверку`,
     )
   }
   return parts.join(' \u00b7 ')
@@ -208,13 +208,13 @@ export type HeadsUpCommand =
 export function headsUpCommand(args: string): HeadsUpCommand {
   const [word = '', ...rest] = args.trim().toLowerCase().split(/[\s,]+/).filter(part => part !== '')
   if (word === '' || word === 'status') return { action: 'status' }
-  if (word === 'off') return rest.length === 0 ? { action: 'off' } : { action: 'unknown', why: 'off takes no words' }
-  if (word === 'setup') return rest.length === 0 ? { action: 'setup' } : { action: 'unknown', why: 'setup takes no words' }
-  if (word !== 'on') return { action: 'unknown', why: `unknown word ${JSON.stringify(word)}` }
-  if (rest.length > 1) return { action: 'unknown', why: `on takes one seat, got ${rest.length}: ${rest.join(', ')}` }
+  if (word === 'off') return rest.length === 0 ? { action: 'off' } : { action: 'unknown', why: 'off не принимает аргументов' }
+  if (word === 'setup') return rest.length === 0 ? { action: 'setup' } : { action: 'unknown', why: 'setup не принимает аргументов' }
+  if (word !== 'on') return { action: 'unknown', why: `неизвестное слово ${JSON.stringify(word)}` }
+  if (rest.length > 1) return { action: 'unknown', why: `on принимает одно место, получено ${rest.length}: ${rest.join(', ')}` }
   const [seat] = rest
   if (seat === undefined) return { action: 'on' }
-  if (!SEAT_SHAPE.test(seat)) return { action: 'unknown', why: `seat ${JSON.stringify(seat)} is not a plain lowercase word` }
+  if (!SEAT_SHAPE.test(seat)) return { action: 'unknown', why: `место ${JSON.stringify(seat)} не является простым словом в нижнем регистре` }
   return { action: 'on', seat }
 }
 
@@ -263,7 +263,7 @@ export type HeadsUpStatus = { state: string; rows: [string, string][] }
 export function headsUpStatus(config: HeadsUpConfig, rowOn: boolean, fileText: string | undefined, counts: Counts, tokens: Tokens, paused: Paused | null): HeadsUpStatus {
   const row = rowOn ? 'on' : 'off'
   const file = fileText === undefined ? undefined : fileEnabled(fileText)
-  const fileNote = fileText === undefined ? `здесь нет ${CONFIG_FILE}` : `${CONFIG_FILE} leaves it to the row`
+  const fileNote = fileText === undefined ? `здесь нет ${CONFIG_FILE}` : `${CONFIG_FILE} оставляет это строке /config`
   const rows: [string, string][] = []
   let state: string
   if (!config.enabled && config.problem !== undefined) {
@@ -271,16 +271,16 @@ export function headsUpStatus(config: HeadsUpConfig, rowOn: boolean, fileText: s
     rows.push(['problem', config.problem])
   } else if (config.enabled) {
     state = file === true ? 'включено для этого проекта' : 'включено для каждого проекта'
-    rows.push(['by', file === true ? `${CONFIG_FILE} (the /config row is ${row})` : `строка /config (${fileNote})`])
-    rows.push(['seat', seatLabel(config.seat, config.model)], ['every', `${config.every} requests`])
+    rows.push(['by', file === true ? `${CONFIG_FILE} (строка /config: ${row})` : `строка /config (${fileNote})`])
+    rows.push(['seat', seatLabel(config.seat, config.model)], ['every', `запросов: ${config.every}`])
   } else if (file === false) {
     state = 'отключено для этого проекта'
-    rows.push(['by', `${CONFIG_FILE} (the /config row is ${row})`], ['включить', `/${COMMAND} on [seat] turns it on here`])
+    rows.push(['by', `${CONFIG_FILE} (строка /config: ${row})`], ['включить', `/${COMMAND} on [seat] включает его здесь`])
   } else {
     state = 'off'
-    rows.push(['by', `строка /config отключена, ${fileNote}`], ['включить', `/${COMMAND} on [seat] for this project, the /config row "Heads-up side-check" for every project`])
+    rows.push(['by', `строка /config отключена, ${fileNote}`], ['включить', `/${COMMAND} on [seat] для этого проекта; строка /config «Heads-up side-check» — для всех проектов`])
   }
-  if (paused !== null) rows.push(['paused', `${paused.seat}: ${paused.detail} · /${COMMAND} on resumes this session`])
+  if (paused !== null) rows.push(['paused', `${paused.seat}: ${paused.detail} · /${COMMAND} on возобновляет в этой сессии`])
   rows.push(['checks', countsLine(counts)], ['tokens', tokensLine(tokens)], ['presses', pressesLine(counts)])
   return { state, rows }
 }
@@ -329,20 +329,20 @@ export function seatOptions(available: readonly string[]): string[] {
 export function seatFromAnswer(answer: string): { seat: string } | { why: string } {
   const words = answer.toLowerCase().split(/[\s,]+/).filter(part => part !== '')
   const [seat] = words
-  if (seat === undefined) return { why: 'no seat named' }
-  if (words.length > 1) return { why: `one seat, got ${words.length}: ${words.join(', ')}` }
-  return SEAT_SHAPE.test(seat) ? { seat } : { why: `seat ${JSON.stringify(seat)} is not a plain lowercase word` }
+  if (seat === undefined) return { why: 'место не указано' }
+  if (words.length > 1) return { why: `нужно одно место, получено ${words.length}: ${words.join(', ')}` }
+  return SEAT_SHAPE.test(seat) ? { seat } : { why: `место ${JSON.stringify(seat)} не является простым словом в нижнем регистре` }
 }
 
 export function everyFromAnswer(answer: string): { every: number } | { why: string } {
   const digits = /^(?:every\s+)?(\d+)(?:\s+requests?)?$/i.exec(answer.trim())
   const every = digits === null ? NaN : Number(digits[1])
-  return Number.isInteger(every) && every >= 2 ? { every } : { why: `every must be a whole number of at least 2, got ${JSON.stringify(answer.trim())}` }
+  return Number.isInteger(every) && every >= 2 ? { every } : { why: `интервал должен быть целым числом не менее 2, получено ${JSON.stringify(answer.trim())}` }
 }
 
 export const MODEL_QUESTION = (seat: string) => `Какую модель должен использовать ${seat}?`
 export const EFFORT_QUESTION = 'Насколько усердно должен думать Codex?'
-const KEEP = 'Keep '
+const KEEP = 'Оставить '
 const TYPE_ONE = 'Введите идентификатор модели в разделе «Другое»'
 
 /** The current model first; then the catalog's others, four in all; or a prompt to type one. */
@@ -361,14 +361,14 @@ export function modelFromAnswer(answer: string): string | undefined {
 export function effortOptions(efforts: readonly string[], defaultEffort: string): string[] {
   const others = efforts.filter(effort => effort !== defaultEffort)
   if (defaultEffort === '') return (others.length > 0 ? others : ['low', 'medium', 'high', 'xhigh']).slice(0, 4)
-  return [`${defaultEffort} (default)`, ...others].slice(0, 4)
+  return [`${defaultEffort} (по умолчанию)`, ...others].slice(0, 4)
 }
 
 /** The chosen effort, {} to keep codex's default, or why the answer is unusable. */
 export function effortFromAnswer(answer: string): { effort?: string } | { why: string } {
   const text = answer.trim()
-  if (text.endsWith(' (default)')) return {}
-  return EFFORT_SHAPE.test(text) ? { effort: text } : { why: `effort must be lowercase letters, got ${JSON.stringify(text)}` }
+  if (text.endsWith(' (по умолчанию)')) return {}
+  return EFFORT_SHAPE.test(text) ? { effort: text } : { why: `усилие должно состоять из строчных букв, получено ${JSON.stringify(text)}` }
 }
 
 /** What a check that found nothing leaves on the prompt hint: "heads-up: gemini read 8.5 KB in 11 s, nothing to flag". */
@@ -579,7 +579,7 @@ export type RunResult =
 export function parseRunResult(checkId: string, text: string): RunResult {
   const unread: RunResult = {
     kind: 'failed', payloadBytes: 0,
-    seats: [{ seat: 'runner', outcome: 'error', elapsedMs: 0, detail: `result.json does not read as a run result: ${JSON.stringify(cut(text, UNREAD_CHARS))}` }],
+    seats: [{ seat: 'runner', outcome: 'error', elapsedMs: 0, detail: `result.json не читается как результат запуска: ${JSON.stringify(cut(text, UNREAD_CHARS))}` }],
   }
   let raw: unknown
   try {
@@ -755,7 +755,7 @@ export function checkLine(r: RunResult): string {
   if (r.kind === 'skipped') return `предупреждение: пропущено · ${r.detail}`
   if (r.kind === 'quota') return `предупреждение: приостановлено · ${r.seat} после ${seconds(totalMs(r.seats))}: ${r.detail} · /${COMMAND} вкл. для возобновления`
   if (r.kind === 'refused') return `предупреждение: приостановлено · ${r.seat}: ${r.detail} · /${COMMAND} при возобновлении`
-  const reasons = r.seats.map(seat => `${seat.seat} ${seat.outcome} after ${seconds(seat.elapsedMs)}${seat.detail ? `: ${seat.detail}` : ''}`)
+  const reasons = r.seats.map(seat => `${seat.seat}: ${seat.outcome} через ${seconds(seat.elapsedMs)}${seat.detail ? `: ${seat.detail}` : ''}`)
   return `предупреждение: сбой · ${kilobytes(r.payloadBytes)} · ${reasons.join('; ')}`
 }
 
@@ -767,11 +767,11 @@ export function checkLine(r: RunResult): string {
  * You should know is a fact to weigh against the plan.
  */
 export function tellClaudeDraft(n: Note): string {
-  const raised = `A side check by ${n.seat} (not you) flagged this: ${n.headline}`
+  const raised = `Сторонняя проверка ${n.seat} (не вы) отметила: ${n.headline}`
   const more = [n.title, ...n.points.map(point => `- ${point}`)].filter(part => part !== '').join('\n')
   const close = n.tag === 'Heads up'
-    ? `Treat this as a claim, not a conclusion. Before continuing: verify it against the evidence, report what you find, and only then act on ${n.points.length === 0 ? 'it' : 'the last bullet'}.`
-    : 'Take this into account before continuing and say whether it changes your plan.'
+    ? `Считайте это утверждением, а не выводом. Прежде чем продолжить: проверьте его по имеющимся данным, сообщите, что обнаружили, и только тогда действуйте на основе ${n.points.length === 0 ? 'него' : 'последнего пункта'}.`
+    : 'Учтите это, прежде чем продолжить, и скажите, меняет ли это ваш план.'
   return [raised, more, close].filter(part => part !== '').join('\n\n')
 }
 

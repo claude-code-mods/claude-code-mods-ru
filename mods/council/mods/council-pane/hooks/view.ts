@@ -83,7 +83,7 @@ const jumpKey = (name: string) => `jump:${name}`
 const fold = (kind: 'seat' | 'synthesis', key: string) => `${kind}:${key}`
 
 function seconds(ms: number | undefined): string {
-  return ms === undefined ? '' : `${(ms / 1000).toFixed(1)}s`
+  return ms === undefined ? '' : `${(ms / 1000).toFixed(1)} с`
 }
 
 export function parseColors(log: string): Record<string, string> {
@@ -114,11 +114,11 @@ function summaryText(providers: ProviderStatus[]): string {
   const tally = (state: string, word: string) => (count(providers, state) > 0 ? `${count(providers, state)} ${word}` : '')
   const slowest = Math.max(0, ...providers.map(provider => provider.ms ?? 0))
   return [
-    `${count(providers, ...ANSWERED_STATES)} of ${providers.length} answered`,
-    tally('error', 'error'),
-    tally('cancelled', 'cancelled'),
+    `ответили ${count(providers, ...ANSWERED_STATES)} из ${providers.length}`,
+    tally('error', 'ошибка'),
+    tally('cancelled', 'отменено'),
     tally('fallback', 'отступил'),
-    tally('cached', 'cached'),
+    tally('cached', 'из кэша'),
     slowest > 0 ? seconds(slowest) : '',
   ].filter(Boolean).join(' \u00b7 ')
 }
@@ -200,7 +200,7 @@ export function paneSections(
   // A querying provider's time runs from when the pane first saw it, in whole tenths.
   const elapsed = (name: string) => {
     const since = queryingSinceMs[name]
-    return since === undefined ? '' : `${(Math.floor(Math.max(0, nowMs - since) / 100) / 10).toFixed(1)}s`
+    return since === undefined ? '' : `${(Math.floor(Math.max(0, nowMs - since) / 100) / 10).toFixed(1)} с`
   }
   const shownTime = (provider: ProviderStatus) => {
     const state = shownState(provider)

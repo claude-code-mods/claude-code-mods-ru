@@ -42,8 +42,9 @@ const DRAWS_NOTHING = /\p{Cf}/gu
 // for the recipients or push them out of view.
 export function confirmQuestion(question: string, seats: string[], verbosity: string): string {
   const line = question.replace(DRAWS_NOTHING, '').replace(NOT_ONE_LINE, ' ').trim()
-  const shown = line.length > SHOWN_MAX ? `${line.slice(0, SHOWN_MAX)}… (the first ${SHOWN_MAX} of ${line.length} characters; the whole question is sent)` : line
-  return `Отправить в ${seats.length} ${seats.length === 1 ? 'seat' : 'seats'} на ${verbosity} с уровнем детализации: ${seats.join(', ')}\nВопрос: ${shown}`
+  const shown = line.length > SHOWN_MAX ? `${line.slice(0, SHOWN_MAX)}… (первые ${SHOWN_MAX} из ${line.length} символов; отправляется весь вопрос)` : line
+  return `Отправить ${seats.length} ${seats.length === 1 ? 'месту' : 'местам'} с детализацией ${verbosity}: ${seats.join(', ')}
+Вопрос: ${shown}`
 }
 
 // Only the exact send label sends. `answer` is undefined when the dialog
@@ -164,23 +165,23 @@ export function askableSeats(defaults: string[], discovered: string[], scripts: 
 // and the run receives.
 export function councilArgs(input: Record<string, unknown>, askable: Askable): { args: string[]; seats: string[] | undefined } | { deny: string } {
   const { question, providers, verbosity } = input
-  if (typeof question !== 'string' || question.trim() === '') return { deny: 'question must be a non-empty string' }
+  if (typeof question !== 'string' || question.trim() === '') return { deny: 'вопрос должен быть непустой строкой' }
   const flags: string[] = []
   let seats: string[] | undefined
   if (providers !== undefined) {
     if (!Array.isArray(providers) || providers.length === 0 || !providers.every(name => typeof name === 'string')) {
-      return { deny: 'providers must be a list of seat names, such as codex or openrouter-2' }
+      return { deny: 'провайдеры должны быть списком имён мест, например codex или openrouter-2' }
     }
     seats = [...new Set(providers as string[])]
     const refused = seats.filter(name => !askable.found.includes(name) && !askable.namedOnly.includes(name))
     if (refused.length > 0) {
-      const offer = askable.found.length > 0 ? `The seats found here are ${askable.found.join(', ')}.` : 'No seat was found here.'
-      return { deny: `Not seats the council can ask now: ${refused.join(', ')}. ${offer} Nothing was sent.` }
+      const offer = askable.found.length > 0 ? `Здесь найдены места: ${askable.found.join(', ')}.` : 'Здесь не найдено ни одного места.'
+      return { deny: `Не места, к которым совет может обратиться сейчас: ${refused.join(', ')}. ${offer} Ничего не отправлено.` }
     }
     flags.push(`--providers=${seats.join(',')}`)
   }
   if (verbosity !== undefined) {
-    if (typeof verbosity !== 'string' || !VERBOSITIES.includes(verbosity)) return { deny: 'verbosity must be brief, standard or detailed' }
+    if (typeof verbosity !== 'string' || !VERBOSITIES.includes(verbosity)) return { deny: 'детализация должна быть brief, standard или detailed' }
     flags.push(`--verbosity=${verbosity}`)
   }
   return { args: [...flags, '--', question], seats }

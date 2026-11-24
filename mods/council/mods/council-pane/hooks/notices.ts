@@ -10,9 +10,9 @@ export function finishNotice({ providers }: RunProgress, jobId = ''): string {
   const errors = count(providers, 'error')
   const cancelled = count(providers, 'cancelled')
   // The band draws the COUNCIL label ahead of this, so the text does not repeat the name.
-  const subject = jobId ? `задача ${jobId} завершена` : 'finished'
-  const answered = `${count(providers, ...ANSWERED_STATES)} of ${providers.length} answered`
-  return `${subject}: ${answered}${errors > 0 ? `, ${errors} error` : ''}${cancelled > 0 ? `, ${cancelled} cancelled` : ''}`
+  const subject = jobId ? `задача ${jobId} завершена` : 'завершено'
+  const answered = `ответили ${count(providers, ...ANSWERED_STATES)} из ${providers.length}`
+  return `${subject}: ${answered}${errors > 0 ? `, ошибок: ${errors}` : ''}${cancelled > 0 ? `, отменено: ${cancelled}` : ''}`
 }
 
 
@@ -40,14 +40,14 @@ export function progressBand(
   return {
     bar: bar({ kind: 'sweep', frame }, BAND_CELLS),
     ...(startedAtMs === undefined ? {} : { clock: runClock(startedAtMs, nowMs) }),
-    event: `${finished} of ${providers.length} done${latest ? ` \u00b7 ${latest}` : ''}`,
+    event: `завершено ${finished} из ${providers.length}${latest ? ` · ${latest}` : ''}`,
   }
 }
 
 // A run whose process died without writing .done: what the band says instead.
 export function abandonedNotice({ providers }: RunProgress, jobId = ''): string {
-  const subject = jobId ? `Задача ${jobId} остановлена` : 'stopped'
-  return `${subject} before it finished: ${count(providers, ...ANSWERED_STATES)} of ${providers.length} answered`
+  const subject = jobId ? `Задача ${jobId} остановлена` : 'остановлено'
+  return `${subject} до завершения: ответили ${count(providers, ...ANSWERED_STATES)} из ${providers.length}`
 }
 
 // The pid a run left in its watch dir, fit to hand to kill -0: digits, not zero.

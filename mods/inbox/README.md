@@ -1,65 +1,65 @@
 # Inbox
 
-I have ADHD. Working with an agent in a chat thread format is very cognitively taxing. The number of things you're having to hold in your head begins to compound the longer the session goes on. The questions, bugs, ideas, and tasks all begin to pile up and intermix making it difficult to keep everything in line.
+У меня СДВГ. Работать с агентом в формате чат-потока очень тяжело для ума. Число вещей, которые приходится держать в голове, растёт с каждым ходом сессии. Вопросы, баги, идеи и задачи начинают накапливаться и перемешиваться, и следить за всем становится трудно.
 
-Inbox provides immediately apparent relief here by giving your agent an organized, stable place to surface everything that needs a decision. Inbox also makes sure your agent always provides a proactive, anticipatory set of quick actions on each item, including a recommended action.
+Inbox сразу облегчает это: он даёт агенту упорядоченное, стабильное место, где показывать всё, что требует решения. Inbox также следит, что агент всегда заранее предлагает набор быстрых действий по каждому пункту, включая рекомендуемое.
 
-Even better, Inbox provides your agent a place to surface latent issues and opportunities, ones that it might otherwise gloss over in the interest of exclusively addressing the task at hand.
+Более того, Inbox даёт агенту место, где показывать скрытые проблемы и возможности, которые он мог бы пропустить ради решения только текущей задачи.
 
-Inbox is available for Claude Code in the terminal and desktop app, Codex in the ChatGPT desktop app, and omp in the terminal. In the Herdr app, it can also open in a pane beside the terminal. Each variant is uniquely crafted for each platform, but works in same fundamental way in all of them.
+Inbox доступен для Claude Code в терминале и приложении Desktop, для Codex в приложении ChatGPT Desktop и для omp в терминале. В приложении Herdr он также может открываться в панели рядом с терминалом. Каждый вариант сделан особенно для своей платформы, но работает везде одинаково в основе.
 
-## How it works
+## Как это работает
 https://github.com/user-attachments/assets/a493119c-4d8b-46e0-a18a-bd0ecf041b6b
 
 
 ## Установка
 
-If you're like me, just paste a link to this Github repo to your agent and ask it to install.
+Если вы похожи на меня, просто вставьте ссылку на этот репозиторий GitHub агенту и попросите установить.
 
-If you want to do things the old way, proceed...
+Если хотите сделать это по-старому, продолжайте...
 
 ### Claude Code
 
-In a Claude Code session in the terminal, type:
+В сессии Claude Code в терминале введите:
 
 ```
 /plugin install inbox --marketplace petekp/inbox
 ```
 
-Answer `y` to add the marketplace, then choose a scope. It starts working in
-that session. A user-scope install also covers Code sessions in the Claude
-desktop app on this machine.
+Ответьте `y`, чтобы добавить маркетплейс, затем выберите область. Он начинает работать в
+этой сессии. Установка с областью пользователя покрывает и Code-сессии в приложении Claude
+Desktop на этом компьютере.
 
-To install from the Claude desktop app instead, open a Code session:
+Чтобы установить из приложения Claude Desktop, откройте Code-сессию:
 
-1. Click **+** beside the prompt, then **Plugins**, then **Manage plugins**.
-2. On the Plugins page, click **Add** at the top right, then **Add
-   marketplace**, then **Add from a repository**.
-3. Type `petekp/inbox`, pick **inbox / petekp** from the list, and click
+1. Нажмите **+** рядом с полем ввода, затем **Plugins**, затем **Manage plugins**.
+2. На странице Plugins нажмите **Add** в правом верхнем углу, затем **Add
+   marketplace**, затем **Add from a repository**.
+3. Введите `petekp/inbox`, выберите **inbox / petekp** из списка и нажмите
    **Sync**.
-4. On Inbox, click **Add to this computer**.
-5. Go back to your session and type `/inbox` to open the pane.
+4. В Inbox нажмите **Add to this computer**.
+5. Вернитесь в сессию и введите `/inbox`, чтобы открыть панель.
 
-This installs it for your user account, so it works in the terminal too.
-`/plugin` does not run in the desktop app, and the inbox does not reach the
-app's cloud sessions.
+Это устанавливает его для вашей учётной записи, поэтому он работает и в терминале.
+`/plugin` не работает в приложении Desktop, и инбокс не доходит до
+облачных сессий приложения.
 
-If your organization manages Claude Code, an inbox you install yourself
-works with two differences. After `/clear` or a resume, it loads that
-conversation's list at your first message. A permission prompt reaches the
-inbox about a second and a half after it appears. To get everything, ask
-an admin to list the inbox in your organization's managed settings.
+Если ваша организация управляет Claude Code, самостоятельно установленный инбокс
+работает с двумя отличиями. После `/clear` или возврата он загружает список этой
+беседы при вашем первом сообщении. Запрос разрешений доходит до инбокса примерно через
+полторы секунды после появления. Чтобы получить всё, попросите
+администратора добавить инбокс в управляемые настройки организации.
 
-To update, run these, then `/reload-plugins` in any session that's already
-open:
+Для обновления выполните эти команды, затем `/reload-plugins` в любой уже
+открытой сессии:
 
 ```sh
 claude plugin marketplace update inbox
 claude plugin update inbox
 ```
 
-- It makes two Sonnet calls after each of Claude's replies, one for the rows and one for the Status tab. See [Cost](#cost).
-- It was built and tested with Claude Code 2.1.300.
+- Он делает два вызова Sonnet после каждого ответа Claude: один для строк, один для вкладки Status. См. [Стоимость](#cost).
+- Он создан и проверен на Claude Code 2.1.300.
 
 ### Codex
 
@@ -68,23 +68,23 @@ codex plugin marketplace add petekp/inbox
 codex plugin add inbox@inbox
 ```
 
-If your shell says `command not found: codex`, use the copy inside the
-ChatGPT app in place of `codex` in both commands:
+Если оболочка говорит `command not found: codex`, используйте копию внутри приложения
+ChatGPT вместо `codex` в обеих командах:
 
 ```sh
 /Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex
 ```
 
-Then, in the ChatGPT desktop app, trust the plugin's hooks: click the hook icon
-beside the prompt's approval setting, then Allow all. If the icon isn't there,
-open Settings, then Hooks, then Inbox, then Trust all. Codex runs a plugin's
-hooks only after you trust them. On Codex 0.164.0 and later, an update stops
-the hooks, so trust them again after each update. To open the inbox, open the
-side panel and choose the ⋯ menu beside New, then Inbox. This was checked on
-2026-11-14 in the ChatGPT app with Codex 0.169.
+Затем в приложении ChatGPT Desktop доверьте хуки плагина: нажмите значок хука
+рядом с настройкой одобрения запроса, затем Allow all. Если значка нет,
+откройте Settings, затем Hooks, затем Inbox, затем Trust all. Codex запускает хуки плагина
+только после того, как вы им доверят. На Codex 0.164.0 и новее обновление останавливает
+хуки, поэтому доверяйте им снова после каждого обновления. Чтобы открыть инбокс, откройте
+боковую панель и выберите меню ⋯ рядом с New, затем Inbox. Это проверено
+2026-11-14 в приложении ChatGPT с Codex 0.169.
 
-[codex/README.md](codex/README.md) covers updating and running the `codex`
-command from inside the app.
+[codex/README.md](codex/README.md) описывает обновление и запуск команды `codex`
+изнутри приложения.
 
 ### omp
 
@@ -93,25 +93,25 @@ omp plugin marketplace add petekp/inbox
 omp plugin install inbox@inbox-omp
 ```
 
-The inbox starts working in the next omp session. `omp plugin list` shows it
-as `inbox@inbox-omp`. It reads `.omp-plugin/marketplace.json`, which omp looks
-for before the `.claude-plugin/` folder that Claude Code reads.
+Инбокс начинает работать в следующей сессии omp. `omp plugin list` показывает его
+как `inbox@inbox-omp`. Он читает `.omp-plugin/marketplace.json`, который omp ищет
+перед папкой `.claude-plugin/`, читаемой Claude Code.
 
-To update, run these, then restart omp:
+Для обновления выполните эти команды, затем перезапустите omp:
 
 ```sh
 omp plugin marketplace update inbox-omp
 omp plugin upgrade inbox@inbox-omp
 ```
 
-After each reply, the inbox makes two model calls, one to update the rows and one to write the Status tab. It uses
-the first of these that your omp can run:
+После каждого ответа инбокс делает два вызова модели: один для обновления строк, один для записи вкладки Status. Он использует
+первый из них, который сможет запустить ваш omp:
 
-1. The model your `@inbox` role names.
-2. The newest Sonnet from your providers, `anthropic` first.
-3. Your `@smol` role.
+1. Модель, названную вашей ролью `@inbox`.
+2. Новейший Sonnet от ваших провайдеров, с приоритетом `anthropic`.
+3. Вашу роль `@smol`.
 
-To set `@inbox`, add it under `modelRoles` in omp's `config.yml`, then restart
+Чтобы задать `@inbox`, добавьте его под `modelRoles` в config.yml omp, затем перезапустите
 omp:
 
 ```yaml
@@ -119,182 +119,182 @@ modelRoles:
   inbox: anthropic/claude-sonnet-5-5
 ```
 
-Only Sonnet is tested. Another model may work, but nobody has checked how well.
+Проверена только Sonnet. Другая модель может работать, но никто не проверял, насколько хорошо.
 
-Your provider bills each call at that model's rate.
+Ваш провайдер тарифицирует каждый вызов по ставке этой модели.
 
-If `@inbox` is unset, or names a model omp cannot use, such as an unknown model
-or one you are not signed in to, the inbox uses the next choice. The panel's
-footer shows the model it uses. A model that omp can use but that fails when
-called does not fall through: that update fails, and the next reply retries it.
-Without a usable model, the footer says "no inbox model: set @inbox" and the
-inbox cannot update.
+Если `@inbox` не задан или называет модель, которую omp не может использовать, например неизвестную
+или ту, под которую вы не вошли, инбокс берёт следующий вариант. Внизу панели показана
+используемая модель. Модель, которую omp может использовать, но вызов которой завершился
+неудачно, не передаётся дальше: обновление не удалось, и следующий ответ повторит его.
+Без пригодной модели внизу написано «нет модели инбокса: задайте @inbox», и
+инбокс не может обновляться.
 
-### For all
+### Для всех
 
-The PRs tab needs the GitHub CLI, `gh`, signed in.
+Вкладка PRs требует GitHub CLI `gh` с выполненным входом.
 
-## Using it
+## Использование
 
-Type `/inbox` in Claude Code or omp, or open the Inbox tab in the ChatGPT app. The
-inbox has four tabs: Status, Asks, Finds and PRs.
+Введите `/inbox` в Claude Code или omp либо откройте вкладку Inbox в приложении ChatGPT. У
+инбокса четыре вкладки: Status, Asks, Finds и PRs.
 
-The inbox starts empty. Give your agent a task, and the first rows come after
-its reply: a question it asked you, with its answers as buttons, and the Status
-of the work. In Claude Code, the line above the prompt shows once the inbox
-has something.
+Инбокс начинается пустым. Дайте агенту задачу, и первые строки появятся после
+его ответа: вопрос, который он задал вам, с вариантами ответа в виде кнопок, и Status
+работы. В Claude Code строка над полем ввода показывает, что в инбоксе
+что-то есть.
 
-To see every part with sample items, run `/inbox demo` in Claude Code or omp.
-Presses on them change only the samples. In Claude Code, press Hide demo or run
-the command again to go back. `/inbox demo recording` leaves out the notices
-that mark the samples, for a video. In omp, they last until the panel closes.
+Чтобы увидеть всё с примерными пунктами, выполните `/inbox demo` в Claude Code или omp.
+Нажатия на них меняют только примеры. В Claude Code нажмите Hide demo или выполните
+команду снова, чтобы вернуться. `/inbox demo recording` убирает пометки
+о примерах для видео. В omp они живут до закрытия панели.
 
 ### Status
 
-Where the session's work stands, for someone coming back to it cold. The page
-names what the session is focused on now, then each part of the work with
-where it stands. A part idle for a day says how long. Subagents and other work
-running under a part show beneath it. A part that waits on a question or task
-of yours says so, and View opens it. A line marks where you last looked, so
-what changed since then sits above it. Finished work folds into a count you can
-open.
+Где находится работа сессии — для того, кто вернулся к ней холодным. Страница
+называет, на чём сессия сосредоточена сейчас, затем каждую часть работы с
+её положением. Часть, простаивавшая день, говорит как долго. Субагенты и другая работа
+под частью показываются под ней. Если часть ждёт вашего вопроса или задачи,
+об этом сказано, а View открывает её. Черта отмечает, где вы смотрели последний раз,
+поэтому изменившееся с тех пор находится выше. Завершённая работа сворачивается в счётчик,
+который можно открыть.
 
-You can set a goal with a finish line, such as "2.5 in the store". The page
-then groups the work under the goal's milestones, and the inbox keeps the goal
-and its milestones current. You can edit or remove the goal at any time. One
-you typed stays until it is met. One the inbox inferred moves on when the work
-does.
+Вы можете задать цель с финишной чертой, например «2.5 в магазине». Тогда страница
+группирует работу по вехам цели, а инбокс держит цель и её вехи
+актуальными. Цель можно изменить или удалить в любое время. Введённая вами
+живёт, пока не будет достигнута. Выведенная инбоксом сдвигается вместе с работой.
+Страница — руководство по работе, не журнал. Её пишет второй вызов модели после
 
-The page is a guide to the work, not a log. The second model call after each
-reply writes it. When that call fails, the page says so.
-
+каждого ответа. Когда вызов даёт сбой, страница говорит об этом.
 ### Asks
 
-Questions the agent asked you, and tasks only you can do.
+Вопросы, которые агент задал вам, и задачи, которые можете сделать только вы.
 
-The agent doesn't have to do anything special to put a question here. After
-each reply, a model reads what the agent wrote and records each question in
-it, with its possible answers. The agent's recommended answer comes first.
-Press an answer and it goes to the agent as your message, a few seconds later,
-so Undo can take back a wrong press. You can also type
-your own reply, or press Explain to have the agent say more before you decide.
+Агенту не нужно делать ничего особенного, чтобы поместить вопрос сюда. После
 
-When a question is a design choice, such as two layouts or two ways to build a
-feature, Compare has the agent try each answer against your code and make a
-page that shows them side by side, which opens from the question. The page
-leads with the agent's pick, and the agent's reply gives the pick, its reason
-and the page's path. Where the agent can run a subagent in the background, the
-comparison runs there, so you can keep working. The question reads
-"Comparing…" until the agent reports back. After 30 minutes with no report, it
-reads "No comparison came back", and you can press Compare again.
+каждого ответа модель читает, что написал агент, и записывает каждый вопрос
+с возможными ответами. Рекомендуемый ответ агента идёт первым.
+Нажмите ответ — и он уходит агенту как ваше сообщение через несколько секунд,
+поэтому Undo может отменить ошибочное нажатие. Вы также можете напечатать
+собственный ответ или нажать Explain, чтобы агент сказал больше до решения.
+Когда вопрос — выбор дизайна, например две раскладки или два способа сделать
 
-A task is something like signing in or adding an API key. It comes with
-buttons for its steps, such as copying a command or opening a file. In Claude
-Code, running the command with `!` closes the task once it succeeds. Dismiss
-drops a task you won't do, without a message to the agent.
+функцию, Compare просит агента проверить каждый ответ на вашем коде и сделать
+страницу со сравнением рядом, которая открывается из вопроса. На странице
+сначала идёт выбор агента, а его ответ называет выбор, причину
+и путь страницы. Где агент может запустить субагента в фоне, сравнение идёт
+там, чтобы вы могли продолжать работать. Пока сравнение не готово, вопрос читается
+как «Сравниваю…». Через 30 минут без ответа он читается
+«Сравнение не вернулось», и вы можете нажать Compare снова.
+Задача — что-то вроде входа или добавления ключа API. К ней идут
 
+кнопки для шагов, например скопировать команду или открыть файл. В Claude
+Code выполнение команды через `!` закрывает задачу после успеха. Dismiss
+отбрасывает задачу, которую вы не будете делать, без сообщения агенту.
 ### Finds
 
-Bugs, risks and ideas the agent noticed outside the task it's working on. The
-agent records them and carries on with its task, and you decide later which
-ones to act on. Fix on an issue, or Do it on an idea, hands it to the agent.
-File issue has the agent file it in your issue tracker, such as Linear or
-GitHub, or link the issue that already covers it. Reply sends your own words
-about it. Explain has the agent say why it matters and what fixing it would
-involve, without acting. Discuss talks it through, and Dismiss drops it.
+Баги, риски и идеи, которые агент заметил вне задачи, над которой работает. Агент
 
+записывает их и продолжает задачу, а вы позже решаете, с чем
+разобраться. Fix на issue или Do it на идею передаёт это агенту.
+File issue просит агента завести его в вашем трекере, например Linear или
+GitHub, или привязать уже существующий issue. Reply отправляет ваши собственные слова
+об этом. Explain просит агента сказать, почему это важно и что
+потребует исправление, без действий. Discuss обсуждает это, а Dismiss отбрасывает.
 ### PRs
 
-Pull requests from this session and your current branch. Each one is marked
-Blocked, Ready or Waiting, and lists what blocks it: review comments waiting
-on you, failing checks and merge conflicts. Buttons hand the work to the
-agent: address one review comment or all of them, draft a reply, fix a
-failing check, resolve conflicts, or merge. Fix and Resolve conflicts show only
-while GitHub still shows the problem. A PR that merges or closes leaves the tab
-on its own, with Undo to keep it there. Clear merged and closed, at the top of
-the tab, clears any that stay, except your current branch's own.
+Пулл-реквесты из этой сессии и вашей текущей ветки. Каждый помечен
 
-Your agent can also put the PRs in an order, such as which to merge first. The
-tab then lists them first, numbered, under what the order is for and why. When
-a ranked PR changes, the tab says so and offers Rank again.
+Blocked, Ready или Waiting и перечисляет, что его блокирует: комментарии
+ревью, ждущие вас, падающие проверки и конфликты слияния. Кнопки передают работу
+агенту: ответить на один комментарий ревью или на все, подготовить ответ, исправить
+падающую проверку, разрешить конфликты или выполнить merge. Fix и Resolve conflicts видны только
+пока GitHub всё ещё показывает проблему. PR, который слит или закрыт, уходит из вкладки
+сам, с Undo, чтобы оставить его. Clear merged and closed вверху
+вкладки очищает оставшиеся, кроме PR вашей текущей ветки.
+Ваш агент может также расставить PRs в порядке, например что сливать первым. Тогда
 
-### It keeps itself up to date
+вкладка перечисляет их первыми с номерами, с объяснением, зачем и почему такой
+порядок. Когда PR с рангом меняется, вкладка говорит об этом и предлагает Rank снова.
+### Он держит себя в актуальном состоянии
 
-When you answer a question in your own message, a task gets done, or the
-agent fixes a finding, the inbox closes the item. Closed items fold away under
-the open ones, each with how it ended. One you dismissed keeps Reopen there for
-the rest of the session.
+Когда вы отвечаете на вопрос собственным сообщением, задача выполнена или
 
-The agent reads the inbox too. Beside each of your prompts, it sees what's
-still open and what you answered, even after the conversation is compacted.
+агент исправил находку, инбокс закрывает пункт. Закрытые пункты сворачиваются под
+открытыми, каждый с указанием, как он завершился. Отброшенный вами сохраняет Reopen до
+конца сессии.
+Агент тоже читает инбокс. Рядом с каждым вашим запросом он видит, что
 
-Every press shows what it did right away. Discuss reads "Discussing…" until
-the agent replies, then "✓ Discussed".
+ещё открыто и на что вы ответили, даже после сжатия беседы.
+Каждое нажатие сразу показывает, что оно сделало. Discuss читается «Обсуждаю…», пока
 
-### In each app
+агент не ответит, затем «✓ Обсуждено».
+### В каждом приложении
 
-Help lists the keys and what each mark means.
+Help перечисляет клавиши и значение каждого значка.
 
-- **Terminal:** each action shows the letter that runs it. The number keys
-  switch tabs, and `j` and `k` move up and down. On the Status, they move
-  between the rows that have a button, and the letter beside a button presses
-  it. ctrl+x tab moves focus from the prompt to the line above it, then to the
-  panel, then back to the prompt.
-- **Claude desktop app:** you click. Type `/inbox` to open the pane. Clicks in
-  the pane are checked on the Claude Code engine 2.1.309 and later. On 2.1.295,
-  a click after a press could only give the pane its focus back.
-- **ChatGPT app:** you click, or press the same keys as in the terminal. The
-  tab shows no letters.
-- **Herdr app:** see [Herdr app pane](#herdr-app-pane).
-- **omp:** `/inbox` opens the panel over the conversation, and esc closes it.
-  Each action shows the letter that runs it, and Reply is `t`. Arrow keys move
-  between rows and between a row's buttons, and enter presses the focused
-  button. Tab, or the number keys, switch tabs. On the Status, `j` and `k`
-  move between the rows that have a button, and the up and down arrows scroll
-  the page.
+- **Терминал:** каждое действие показывает букву, которая его запускает. Цифровые клавиши
 
-In Claude Code, a line above your prompt counts what needs you and the
-findings waiting, with a button that opens the panel. When Claude stops on an
-error, a second line says why, with a Resume button after an API error. The
-ChatGPT app has no such line. omp has a line with the same counts. It says
-`/inbox` opens the panel, and it has no stop line.
+  переключают вкладки, а `j` и `k` двигают вверх и вниз. В Status они двигаются
+  между строками с кнопкой, а буква рядом с кнопкой нажимает её. ctrl+x tab переносит фокус с запроса на строку над ним, затем на
+  панель, затем обратно на запрос.
+- **Приложение Claude Desktop:** вы нажимаете мышью. Введите `/inbox`, чтобы открыть панель. Нажатия в
+  панели проверены на движке Claude Code 2.1.309 и новее. На 2.1.295,
+  нажатие после нажатия могло лишь вернуть панели фокус.
+- **Приложение ChatGPT:** вы нажимаете мышью или те же клавиши, что и в терминале.
+  Вкладка не показывает букв.
+- **Приложение Herdr:** см. [панель Herdr](#herdr-app-pane).
+- **omp:** `/inbox` открывает панель поверх беседы, а esc закрывает её.
+  Каждое действие показывает букву, которая его запускает, Reply — `t`. Стрелки двигают
+  между строками и кнопками строки, enter нажимает сфокусированную
+  кнопку. Tab или цифровые клавиши переключают вкладки. В Status `j` и `k`
+  двигают между строками с кнопкой, а стрелки вверх и вниз прокручивают
+  страницу.
+В Claude Code строка над вашим запросом считает, что требует вас, и
+ожидающие находки, с кнопкой, открывающей панель. Когда Claude остановился из-за
 
-### Herdr app pane
+ошибки, вторая строка говорит почему, с кнопкой Resume после ошибки API. У
+приложения ChatGPT такой строки нет. У omp есть строка с теми же счётчиками.
+Она говорит, что `/inbox` открывает панель, и не имеет строки останова.
+### Панель приложения Herdr
+В терминале приложения Herdr инбокс может открыться в панели рядом с терминалом.
 
-In a Herdr app terminal, the inbox can open in a pane beside the terminal.
+1. Запустите Claude Code или omp в терминале Herdr и введите `/inbox`.
 
-1. Start Claude Code or omp in a Herdr app terminal, and type `/inbox`. The
-   first time, the inbox opens in the terminal and asks "Install the inbox's
-   Herdr mod?". Press Install. The ChatGPT app asks the same question on its
-   Inbox tab.
-2. Type `/inbox` again. The inbox opens in a pane to the right of the
-   terminal. Claude Code's Open inbox button does the same. If you pressed
-   Install in another session or app and the inbox still opens in the
-   terminal, restart Claude Code.
-3. The pane shows the inbox of the terminal you last focused in its tab. It has
-   Asks, Finds and PRs, and you can press every button. ← and → switch tabs,
-   `j` and `k` move between rows, and esc gives the keys back to the terminal.
-   Help lists the rest.
+   В первый раз инбокс откроется в терминале и спросит: «Установить мод Herdr для инбокса?».
 
-Don't install saves your answer. Run `/inbox herdr` in Claude Code or omp to be
-asked again.
+   Нажмите Install. Приложение ChatGPT задаёт тот же вопрос
+   на вкладке Inbox.
+2. Введите `/inbox` снова. Инбокс откроется в панели справа от
+   терминала. Кнопка Open inbox в Claude Code делает то же. Если вы нажали
+   Install в другой сессии или приложении, а инбокс всё ещё открывается в
+   терминале, перезапустите Claude Code.
+3. Панель показывает инбокс терминала, который вы последним сфокусировали в его вкладке. В ней
+   есть Asks, Finds и PRs, и можно нажать любую кнопку. ← и → переключают вкладки,
+   `j` и `k` двигают между строками, а esc возвращает клавиши терминалу.
+   Остальное перечисляет Help.
+Don't install сохраняет ваш ответ. Выполните `/inbox herdr` в Claude Code или omp, чтобы
+спросить снова.
 
-The Codex CLI has no `/inbox`. Open the pane for it with
+У Codex CLI нет `/inbox`. Откройте для него панель через
 `herdr-app do pane.split '{"direction":"right","pane":"<pane id>","mod":"inbox"}'`,
-taking the pane id from `herdr-app ls`.
 
-Inside a Herdr pane, Claude Code, omp and the Codex CLI also report to Herdr's
-sidebar, as pane tokens:
+взяв id панели из `herdr-app ls`.
+Внутри панели Herdr Claude Code, omp и Codex CLI тоже сообщают в боковую панель Herdr,
+как токены панели:
 
-| Token | Holds |
+| Токен | Содержит |
+| `inbox` | Что ждёт вас, одной строкой |
+
+| `inbox-needs-you`, `inbox-findings`, `inbox-prs` | Только счётчик вкладки, например `2`. `inbox-needs-you` — вкладки Asks, `inbox-findings` — вкладки Finds. Пусто, когда на вкладке ничего не ждёт. |
 |---|---|
-| `inbox` | What waits on you, in one line |
-| `inbox-needs-you`, `inbox-findings`, `inbox-prs` | The tab's count alone, such as `2`. `inbox-needs-you` is the Asks tab's, and `inbox-findings` the Finds tab's. Empty when the tab has nothing waiting. |
-| `inbox-stop` | Why the agent stopped. The count tokens stay empty until the stop clears, so the sidebar has room for it. |
-| `inbox-focus` | What the session is focused on, from its Status. A session that started this one as a Herdr delegate shows it as the delegate's row. No sidebar row needs it. |
+| `inbox-stop` | Причина, по которой агент остановился. Токены счётчиков остаются пустыми, пока остановка не сброшена, чтобы в боковой панели было место. |
+| `inbox-focus` | На чём сосредоточена сессия, из её Status. Сессия, которая запустила эту как делегата Herdr, показывает её как строку делегата. Ни одна строка боковой панели не требует его. |
+Чтобы различать счётчики по цвету вкладок, добавьте эту строку в `rows` под
+`[ui.sidebar.agents]` в конфиге Herdr:
 
-To tell the counts apart by each tab's color, add this row to `rows` under
-`[ui.sidebar.agents]` in Herdr's config:
+Herdr ставит ` · ` между токенами со значением и убирает строку,
+когда ни у одного нет значения.
 
 ```toml
 [
@@ -305,101 +305,101 @@ To tell the counts apart by each tab's color, add this row to `rows` under
 ],
 ```
 
-Herdr puts ` · ` between the tokens that have a value, and leaves the line out
-when none has one.
+## Стоимость
+В Claude Code инбокс добавляет две вещи:
 
-## Cost
+| Что добавляет инбокс | Токены | Стоимость по ценам API |
 
-In Claude Code, the inbox adds two things:
+| Вызов Sonnet после каждого ответа Claude для обновления инбокса | 3–4k ввода, около 2k из кэша. 100–250 вывода. | Около 0.5 цента за ответ или 1 цент после 5 минут простоя |
 
-| What the inbox adds | Tokens | Cost at API prices |
+| Второй вызов Sonnet для записи вкладки Status | Около 1.2k ввода и 14–44 вывода на коротком обмене (три прогона оценки: 1,175–1,214 ввода). Догоняющий просмотр всей беседы читает больше: 1,358 ввода и 100 вывода в одном прогоне. | Меньше первого вызова, который читает около 3k ввода |
 |---|---|---|
-| A Sonnet call after each of Claude's replies, to update the inbox | 3–4k in, about 2k of it cached. 100–250 out. | About 0.5¢ per reply, or 1¢ after 5 idle minutes |
-| A second Sonnet call, to write the Status tab | About 1.2k in and 14–44 out on a short exchange (three eval runs: 1,175–1,214 in). A catch-up over a conversation reads more: 1,358 in and 100 out in the one run. | Less than the first call, which reads about 3k in |
-| Its instructions and tools, sent with every request Claude makes | About 1,350, cached | Under 0.1¢ per request |
+| Его инструкции и инструменты, отправляемые с каждым запросом Claude | Около 1,350, из кэша | Менее 0.1 цента за запрос |
+На тарифе Claude это идёт в счёт лимитов использования.
+В Codex обновление после каждого ответа идёт через бинарник `codex` внутри
 
-On a Claude plan, these count toward your usage limits.
+приложения Desktop с вашим входом в Codex. Он делает два вызова за ответ. Каждый
 
-In Codex, the update after each reply runs through the `codex` binary inside
-the desktop app, with your Codex sign-in. It makes two calls per reply. Each
-carries about 12,000 input tokens of base instructions, which every
-`codex exec` call includes, plus its own prompt. The earlier single call came
-to about 16,000. It counts toward your plan's usage.
+несёт около 12 000 входных токенов базовых инструкций, которые включает каждый
+`codex exec`, плюс собственную подсказку. Раньше один вызов давал
+около 16 000. Это идёт в счёт использования вашего тарифа.
+## Что он запускает, отправляет и меняет
+Это про мод Claude Code. [codex/README.md](codex/README.md) описывает
 
-## What it runs, sends and changes
+плагин Codex. Расширение omp выполняет те же запросы `gh`. Его запрос обновления
 
-This covers the Claude Code mod. [codex/README.md](codex/README.md) covers
-the Codex plugin. The omp extension runs the same `gh` queries. Its update
-request goes through omp's own connection to the provider of the model it
-uses, and holds the same things as the Claude Code request.
+идет через собственное соединение omp с провайдером используемой модели и несёт
+те же вещи, что и запрос Claude Code.
+**Что уходит с компьютера.** Три вещи, и больше ничего:
+- После каждого ответа Claude инбокс отправляет два запроса Sonnet
 
-**What leaves your machine.** Three things, and nothing else:
+  Anthropic через собственное соединение Claude Code с моделью. Оба несут ваш последний
 
-- After each of Claude's replies, the inbox sends two Sonnet requests to
-  Anthropic through Claude Code's own model connection. Both hold your last
-  prompt, Claude's reply, the inbox's open items, and a line for each tool
-  Claude ran. A tool line reads like `ran: npm test` or
-  `edited src/app.ts`. [Cost](#cost) gives the request's size.
-- When the inbox may have missed a turn, it asks the same model, with the same two calls, to update it
-  from the whole conversation. It forks the conversation for this, or reads
-  the transcript after a resume.
-- To fill the PRs tab, it runs read-only `gh` queries: `gh pr view`, and
-  `gh api graphql` for review threads. They reach GitHub under your own `gh`
-  sign-in. The inbox never reads your GitHub token.
+  запрос, ответ Claude, открытые пункты инбокса и по строке на каждый инструмент,
+  который запустил Claude. Строка инструмента выглядит как `ran: npm test` или
+  `edited src/app.ts`. [Стоимость](#cost) даёт размер запроса.
+- Когда инбокс мог пропустить ход, он просит ту же модель теми же двумя вызовами
+  обновить его по всей беседе. Для этого он разветвляет беседу или читает
+  транскрипт после возврата.
+- Чтобы заполнить вкладку PRs, он выполняет запросы `gh` только на чтение: `gh pr view` и
+  `gh api graphql` для веток ревью. Они доходят до GitHub под вашим собственным `gh`
+  входом. Инбокс никогда не читает ваш токен GitHub.
+**Программы, которые он запускает.**
+| Программа | Когда |
 
-**Programs it starts.**
+| `gh` | Чтобы заполнить вкладку PRs |
 
-| Program | When |
+| `open` | Когда вы нажимаете кнопку, открывающую ссылку, файл или папку |
 |---|---|
-| `gh` | To fill the PRs tab |
-| `open` | When you press a button that opens a link, file or folder |
-| `test -x` | Before opening a file. An executable file is shown in Finder, not run. |
-| `herdr pane report-metadata` | Only inside a Herdr pane, to show what waits on you and each tab's count in Herdr's sidebar |
+| `test -x` | Перед открытием файла. Исполняемый файл показывается в Finder, а не запускается. |
+| `herdr pane report-metadata` | Только внутри панели Herdr, чтобы показать, что ждёт вас, и счётчик каждой вкладки в боковой панели Herdr |
+**Сообщения, которые он отправляет от вашего имени.** Когда вы нажимаете кнопку ответа или действия,
+инбокс отправляет Claude сообщение от вашего имени. Сообщение — это выбранный вами
 
-**Messages it sends as you.** When you press an answer or action button, the
-inbox sends Claude a message in your name. The message is the answer you
-chose, or a request about the item, such as asking Claude to fix a finding.
-Resume, on a stopped turn, sends `Continue`. Every message it sends starts
-from a press. When you mark a task Done that Claude is waiting on, the inbox
-tells Claude a few seconds later, or once Claude's running turn ends.
+ответ или просьба по пункту, например просьба исправить находку.
+Resume на остановленном ходе отправляет `Continue`. Каждое сообщение начинается
+с нажатия. Когда вы отмечаете задачу Done, которой ждёт Claude, инбокс
+сообщает ему через несколько секунд или когда завершается текущий ход Claude.
+**Что он добавляет в контекст Claude.**
+- Его инструкции, около 1,350 токенов, в каждом запросе.
 
-**What it adds to Claude's context.**
+- Заметку рядом с вашим запросом, когда вы отвечаете на один из пронумерованных
 
-- Its instructions, about 1,350 tokens, in every request.
-- A note beside your prompt when you answer one of Claude's numbered
-  questions, or when the inbox changed since Claude last saw it.
-- Its open items after the conversation is compacted, so Claude keeps them.
+  вопросов Claude или когда инбокс изменился с последнего просмотра Claude.
+- Его открытые пункты после сжатия беседы, чтобы Claude их сохранил.
+**Что видят его хуки.**
+- Вызовы инструментов. Инбокс читает каждый вызов, чтобы записать строки инструментов выше,
 
-**What its hooks see.**
+  показать вопрос, пока открыт диалог вопросов Claude, и найти PR, открытый
 
-- Tool calls. The inbox reads each call to write the tool lines above, to
-  show a question while Claude's question dialog is open, and to find a PR
-  this session opens with `gh pr create`. It passes every call on unchanged,
-  except calls to its own two tools. `record` saves a question, a task or a
-  finding and `close` closes an item. The inbox answers these itself, so they run
-  without a permission prompt.
-- Permission prompts. While Claude Code asks you to approve a tool call, the
-  inbox shows a row for it, then passes the request on unchanged. It never
-  approves or denies a permission prompt.
-- Tool descriptions. It lists its own two tools to Claude up front, instead
-  of behind tool search. It leaves other tools' descriptions alone.
-- Shell commands you run with `!`, and their output. A command that runs
-  with nothing on stderr closes a task that asked you to run it.
-- Session starts. After `/clear`, a resume or a fork, the inbox loads that
-  conversation's items. It passes the event on unchanged.
-- Your theme setting, to match its colors.
+  этой сессией через `gh pr create`. Он передаёт каждый вызов без изменений,
+  кроме вызовов двух собственных инструментов. `record` сохраняет вопрос, задачу или
+  находку, а `close` закрывает пункт. Инбокс отвечает на них сам, поэтому они
+  работают без запроса разрешений.
+- Запросы разрешений. Пока Claude Code просит одобрить вызов инструмента, инбокс
+  показывает для него строку, затем передаёт запрос без изменений. Он никогда
+  не одобряет и не отклоняет запрос разрешений.
+- Описания инструментов. Он заранее перечисляет Claude свои два инструмента вместо
+  поиска инструментов. Описания других инструментов он не трогает.
+- Команды оболочки, которые вы запускаете через `!`, и их вывод. Команда, завершившаяся
+  с пустым stderr, закрывает задачу, просившую вас её запустить.
+- Начала сессий. После `/clear`, возврата или ответвления инбокс загружает пункты
+  этой беседы. Событие он передаёт без изменений.
+- Вашу настройку темы, чтобы подобрать цвета.
+**Что он сохраняет.** Инбокс сохраняет пункты каждой сессии и отслеживаемые
+PRs в хранилище плагинов Claude Code на этом компьютере. Он держит 40
 
-**What it keeps.** The inbox saves each session's items, and the PRs it
-tracks, in Claude Code's plugin storage on this machine. It keeps the 40
-most recent sessions and deletes older ones. An item can summarize part of
-the conversation, so it may name the people in it. Nothing goes to the
-plugin's author.
+последних сессий и удаляет более старые. Пункт может кратко пересказывать часть
+беседы, поэтому в нём могут быть имена людей. Автору плагина ничего не уходит.
+Он также добавляет команду `/inbox`.
+## Разработка
+[docs/developing.md](docs/developing.md): как запускать и собирать инбокс из клона.
 
-It also adds the `/inbox` command.
+Он также добавляет команду `/inbox`.
 
-## Developing
+## Разработка
 
-[docs/developing.md](docs/developing.md) says how to run and build the inbox from a clone.
+[docs/developing.md](docs/developing.md): как запускать и собирать инбокс из клона.
 
 ## Источник и лицензия
 
